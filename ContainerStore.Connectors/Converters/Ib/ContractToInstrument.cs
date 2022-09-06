@@ -25,4 +25,16 @@ internal static class ContractToInstrument
         Strike = Helper.ConvertDoubleToDecimal(contract.Contract.Strike),
         OptionType = contract.Contract.Right == "C" ? OptionType.Call : OptionType.Put
     };
+    public static Contract ToIbContract(this Instrument instrument) => new Contract
+    {
+        ConId = instrument.Id,
+        LocalSymbol = instrument.FullName,
+        Exchange = instrument.Exchange,
+        Currency = instrument.Currency,
+        SecType = instrument.Type == InstrumentType.Future ? "FUT" : "FOP",
+        Strike = Convert.ToDouble(instrument.Strike),
+        LastTradeDateOrContractMonth = instrument.LastTradeDate.ToString("yyyyMMdd"),
+        Right = instrument.Type == InstrumentType.Future ? null : 
+            instrument.OptionType == OptionType.Call ? "C" : "R",
+    };
 }

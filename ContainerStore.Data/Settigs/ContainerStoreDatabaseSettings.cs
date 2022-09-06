@@ -1,4 +1,4 @@
-﻿namespace ContainerStore.Data.Models;
+﻿namespace ContainerStore.Data.Settings;
 
 public class ContainerStoreDatabaseSettings
 {

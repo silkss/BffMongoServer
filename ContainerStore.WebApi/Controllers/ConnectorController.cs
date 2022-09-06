@@ -18,7 +18,7 @@ public class ConnectorController : ControllerBase
 		IsConnected = _connector.IsConnected,
 		Accounts = _connector.GetAccounts(),
 	};
-public ConnectorController(IConnector connector)
+	public ConnectorController(IConnector connector)
 	{
 		_connector = connector;
 	}

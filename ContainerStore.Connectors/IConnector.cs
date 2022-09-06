@@ -20,5 +20,6 @@ public interface IConnector
     #endregion
     #region Instruments Requests
     Instrument? RequestInstrument(string fullname, string exchange);
+    void RequestMarketData(Instrument instrument);
     #endregion
 }

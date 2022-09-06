@@ -22,11 +22,18 @@ public class InstrumentController : ControllerBase
 		{
 			exchange = "GLOBEX";
 		}
-		var instument = _connector.RequestInstrument(localName, exchange);
+		var instument = _connector.RequestInstrument(localName, exchange); // this is for test. REMOVE later!
 		if (instument is null)
 		{
 			return NotFound("Не удалось получить инструмент. Проверь логи!");
 		}
 		return Ok(instument);
+	}
+
+	[HttpPost]
+	public IActionResult Post(Instrument instrument)
+	{
+		_connector.RequestMarketData(instrument);
+		return Ok();
 	}
 }

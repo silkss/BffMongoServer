@@ -1,6 +1,6 @@
 using ContainerStore.Connectors;
 using ContainerStore.Connectors.Ib;
-using ContainerStore.Data.Models;
+using ContainerStore.Data.Settings;
 using ContainerStore.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,10 +1,11 @@
-﻿using ContainerStore.Connectors.Ib.Caches;
+﻿using ContainerStore.Connectors.Converters.Ib;
+using ContainerStore.Connectors.Ib.Caches;
 using ContainerStore.Connectors.Models;
 using ContainerStore.Data.Models;
-using IBApi;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading;
+using IBApi;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -12,7 +13,6 @@ public class IbConnector : IConnector
 {
 	private readonly RequestInstrumentCache _requestInstrument;
 	private readonly IbCallbacks _callbacks;
-
     private readonly EClientSocket _client;
     private readonly EReaderSignal _signalMonitor = new EReaderMonitorSignal();
     private readonly ILogger<IbConnector> _logger;
@@ -85,5 +85,11 @@ public class IbConnector : IConnector
             Currency = "USD",
         };
         return reqContract(contract);
+    }
+
+    public void RequestMarketData(Instrument instrument)
+    {
+        _callbacks.PriceChange += instrument.OnPriceChange;
+        _client.reqMktData(instrument.Id, instrument.ToIbContract(), string.Empty, false, false, null);
     }
 }

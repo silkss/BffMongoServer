@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System.Collections.Generic;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ContainerStore.Data.Models;
 
@@ -38,4 +39,5 @@ public class Container
     public double ProcentPriceGapForSellClosure { get; set; } = 20;
 
     public int OrderPriceShift { get; set; } = 2;
+    public List<Straddle>? Straddles { get; } = new();
 }

@@ -1,4 +1,5 @@
 ﻿using ContainerStore.Common.Enums;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 
 namespace ContainerStore.Data.Models;
@@ -18,4 +19,35 @@ public class Instrument
     public decimal Strike { get; set; }
     public OptionType OptionType { get; set; }
     public int Multiplier { get; set; }
+    [BsonIgnore]
+    public decimal Ask { get; set; }
+    [BsonIgnore]
+    public decimal Bid { get; set; }
+    [BsonIgnore]
+    public decimal Last { get; set; }
+    [BsonIgnore]
+    public decimal TheorPrice { get; set; }
+    public void OnPriceChange(object? sender, PriceChangedEventArgs args)
+    {
+        if (args.TickerId != Id) return;
+
+        switch (args.Tick)
+        {
+            case (Tick.Ask):
+                Ask = args.Price;
+                break;
+            case (Tick.Bid):
+                Bid = args.Price;
+                break;
+            case (Tick.Last):
+                Last = args.Price;
+                break;
+            case (Tick.TheorPrice):
+                TheorPrice = args.Price;
+                break;
+            default:
+                break;
+
+        }
+    }
 }
