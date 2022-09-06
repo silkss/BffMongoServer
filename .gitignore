@@ -1,0 +1,13 @@
+/db
+
+/bin
+/obj
+*/bin
+*/obj
+/.vs
+/.vscode
+*/.vs
+*/.vscode
+
+*.zip
+*.bak

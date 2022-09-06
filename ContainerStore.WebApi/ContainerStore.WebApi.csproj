@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContainerStore.Connectors\ContainerStore.Connectors.csproj" />
+    <ProjectReference Include="..\ContainerStore.Data\ContainerStore.Data.csproj" />
+  </ItemGroup>
+
+</Project>
