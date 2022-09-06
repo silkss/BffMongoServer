@@ -1,7 +1,7 @@
 GET http://localhost:5001/api/connector HTTP/1.1
-
 ###
-
+GET http://localhost:5001/api/instrument?localName=6eu2 HTTP/1.1
+###
 POST http://localhost:5001/api/connector HTTP/1.1
 Content-Type: application/json
 
@@ -11,3 +11,39 @@ Content-Type: application/json
     "clientId" : 12,
     "isConnected" : true
 }
+
+###
+POST http://localhost:5001/api/containers HTTP/1.1
+Content-Type: application/json
+
+{
+    "Account" :"DU2768344",
+    "ParentInstrument" : 
+    {
+        "id": 289230371,
+        "type": 1,
+        "fullName": "6EU2",
+        "symbol": "EUR",
+        "tradeClass": "6E",
+        "exchange": "GLOBEX",
+        "currency": "USD",
+        "minTick": 0.00005,
+        "marketRuleID": 0,
+        "lastTradeDate": "2022-09-19T00:00:00",
+        "strike": 0,
+        "optionType": 1,
+        "multiplier": 125000
+    },
+    "StraddleTargetPnl": 300.00,
+    "StraddleLiveDays": 2,
+    "StraddleExpirationDays": 10,
+    "ClosureStrikeStep":2,
+    "ProcentPriceGapForSellClosure": 20,
+    "OrderPriceShift": 2
+}
+
+###
+
+GET http://localhost:5001/api/containers HTTP/1.1
+
+###

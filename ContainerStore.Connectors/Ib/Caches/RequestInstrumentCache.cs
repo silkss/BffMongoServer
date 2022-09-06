@@ -1,4 +1,6 @@
 ﻿using ContainerStore.Data.Models;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ContainerStore.Connectors.Ib.Caches;
 
@@ -20,6 +22,7 @@ internal class RequestInstrumentCache
         _instruments.Remove(key);
         return instrument;
     }
+    public bool ContainsKey(int key) => _instruments.ContainsKey(key);
     public void WaitForResponce()
     {
         lock (locker)

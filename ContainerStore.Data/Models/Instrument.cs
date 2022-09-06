@@ -14,7 +14,7 @@ public class Instrument
     public string? Currency { get; set; }
     public decimal MinTick { get; set; }
     public int MarketRuleID { get; set; }
-    public DateOnly LastTradeDate { get; set; }
+    public DateTime LastTradeDate { get; set; }
     public decimal Strike { get; set; }
     public OptionType OptionType { get; set; }
     public int Multiplier { get; set; }

@@ -1,7 +1,10 @@
 ﻿using ContainerStore.Connectors.Ib.Caches;
 using ContainerStore.Connectors.Models;
+using ContainerStore.Data.Models;
 using IBApi;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -14,6 +17,18 @@ public class IbConnector : IConnector
     private readonly EReaderSignal _signalMonitor = new EReaderMonitorSignal();
     private readonly ILogger<IbConnector> _logger;
 
+    private Instrument? reqContract(Contract contract)
+    {
+        var reqid = _callbacks.NextOrderId++;
+        _client.reqContractDetails(reqid, contract);
+
+        while (!_requestInstrument.ContainsKey(reqid))
+        {
+            _requestInstrument.WaitForResponce();
+        }
+        return _requestInstrument.GetByKey(reqid);
+    }
+
     public IbConnector(ILogger<IbConnector> logger)
 	{
         _logger = logger;
@@ -22,10 +37,14 @@ public class IbConnector : IConnector
 		_callbacks = new IbCallbacks(_logger, _requestInstrument);
         _client = new EClientSocket(_callbacks, _signalMonitor);
     }
+    #region Connector props
     public string Host { get; private set; } = "127.0.0.1";
     public int Port { get; private set; } = 7497;
     public int ClientId { get; private set; } = 12;
     public bool IsConnected { get => _client.IsConnected(); }
+    public IEnumerable<Account> GetAccounts() => _callbacks.Accounts;
+    #endregion
+    #region Connect / Disconnect
     public void Connect()
     {
         Connect(Host, Port, ClientId);
@@ -55,5 +74,16 @@ public class IbConnector : IConnector
     {
         _client.eDisconnect();
     }
-    public IEnumerable<Account> GetAccounts() => _callbacks.Accounts;
+    #endregion
+    public Instrument? RequestInstrument(string fullname, string exchange)
+    {
+        var contract = new Contract
+        {
+            LocalSymbol = fullname.Trim().ToUpper(),
+            Exchange = exchange.Trim().ToUpper(),
+            SecType = "FUT",
+            Currency = "USD",
+        };
+        return reqContract(contract);
+    }
 }

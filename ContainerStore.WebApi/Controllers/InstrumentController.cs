@@ -1,7 +1,6 @@
-﻿using ContainerStore.Data.Models;
-using Microsoft.AspNetCore.Http;
+﻿using ContainerStore.Connectors;
+using ContainerStore.Data.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ContainerStore.WebApi.Controllers;
 
@@ -9,17 +8,25 @@ namespace ContainerStore.WebApi.Controllers;
 [ApiController]
 public class InstrumentController : ControllerBase
 {
-	private readonly ILogger<InstrumentController> _logger;
+	private readonly IConnector _connector;
 
-	public InstrumentController(ILogger<InstrumentController> logger)
+	public InstrumentController(IConnector connector)
 	{
-		_logger = logger;
+		_connector = connector;
 	}
 
-	//[HttpGet] 
-	//public ActionResult<Instrument> Get(string localName, string? exchange)
-	//{
-
-	//}
-
+	[HttpGet] 
+	public ActionResult<Instrument> Get(string localName, string? exchange)
+	{
+		if (exchange is null)
+		{
+			exchange = "GLOBEX";
+		}
+		var instument = _connector.RequestInstrument(localName, exchange);
+		if (instument is null)
+		{
+			return NotFound("Не удалось получить инструмент. Проверь логи!");
+		}
+		return Ok(instument);
+	}
 }
