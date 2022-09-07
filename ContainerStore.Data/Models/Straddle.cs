@@ -1,4 +1,5 @@
 using ContainerStore.Common.Enums;
+using ContainerStore.Data.Models.TradeUnits;
 using System;
 
 namespace ContainerStore.Data.Models;

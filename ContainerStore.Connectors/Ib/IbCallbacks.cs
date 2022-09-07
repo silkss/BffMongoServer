@@ -56,7 +56,7 @@ internal class IbCallbacks : DefaultEWrapper
 	}
 	public override void tickPrice(int tickerId, int field, double price, TickAttrib attribs)
 	{
-		_logger.LogInformation($"{tickerId}:{TickType.getField(field)}:\t{price}");
+		//_logger.LogInformation($"{tickerId}:{TickType.getField(field)}:\t{price}");
 		switch (field)
         {
             case TickType.ASK:

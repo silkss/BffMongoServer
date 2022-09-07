@@ -1,48 +1,60 @@
-﻿using ContainerStore.Connectors;
-using ContainerStore.Data.Models;
-using System.Collections.Generic;
+﻿using ContainerStore.Data.Models;
+using ContainerStore.Connectors;
 using System.Linq;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ContainerStore.Traders.Base;
 
 public class Trader
 {
+	private readonly object _lock = new();
     private readonly List<Container> _containers = new();
 	private readonly IConnector _connector;
-
+	private void work(Container container)
+	{
+		if (container.ParentInstrument == null) return;
+		container.TotalPnl = container.ParentInstrument.Last;
+	}
 	public Trader(IConnector connector)
 	{
 		_connector = connector;
-	}
+
+		new Thread(() =>
+		{
+			while (true)
+			{
+				lock (_lock)
+				{
+					_containers.ForEach(c => work(c));
+				}
+			}
+		})
+		{ IsBackground = true }
+		.Start();
+    }
 	public (bool isAdded, string message) AddToTrade(Container container)
 	{
-		if (_containers.FirstOrDefault(c => c.Id == container.Id) is not null)
+		lock (_lock)
 		{
-			return (false, "Контейнер с таким ID уже в торговле!");
-		}
-        if (container.ParentInstrument == null)
-        {
-			return (false, "У контейнера не родительского инструмента!");
-        }
-		
-        _containers.Add(container);
-		_connector.RequestMarketData(container.ParentInstrument);
-		if (container.Straddles == null)
-		{
-			return (true, "Контейнер добавлен, но у него нет стрэдлов!");
-		}
-		foreach (var straddle in container.Straddles)
-		{
-			if (straddle.CallLeg == null || straddle.PutLeg == null) continue;
-			_connector.RequestMarketData(straddle.CallLeg.Instrument);
-			_connector.RequestMarketData(straddle.PutLeg.Instrument);
-		}
+			if (_containers.FirstOrDefault(c => c.Id == container.Id) is not null)
+			{
+				return (false, "Контейнер с таким ID уже в торговле!");
+			}
+			if (container.ParentInstrument == null)
+			{
+				return (false, "У контейнера не родительского инструмента!");
+			}
 
-		return (true, "Контейнер добавлен!");
+			_containers.Add(container);
+			_connector.RequestMarketData(container.ParentInstrument);
+			return (true, "Контейнер добавлен!");
+		}
 	}
 	public IEnumerable<Container> GetContainers() => _containers;
 	public bool RemoveFromTrade(Container container)
 	{
 		return _containers.Remove(container);
 	}
+
 }

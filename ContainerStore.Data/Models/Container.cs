@@ -10,6 +10,8 @@ public class Container
     public string? Id { get; set; }
     public string Account { get; set; }
     public Instrument ParentInstrument { get; set; }
+
+    public decimal TotalPnl { get; set; }
     public decimal StraddleTargetPnl { get; set; } = 300.00m;
 
     /// <summary>
