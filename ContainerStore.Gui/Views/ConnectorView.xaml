@@ -1,0 +1,39 @@
+﻿<Window x:Class="ContainerStore.Gui.Views.ConnectorView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ContainerStore.Gui.Views"
+        mc:Ignorable="d"
+        Title="Connector" Height="250" Width="300"
+        Loaded="onWindowLoaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <UniformGrid Rows="1">
+            <Label Content="Host"/>
+            <TextBox x:Name="tbHost"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="1">
+            <Label Content="Port"/>
+            <TextBox x:Name="tbPort"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="2">
+            <Label Content="ClientID"/>
+            <TextBox x:Name="tbClientId"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="3">
+            <Label Content="Connected"/>
+            <Label x:Name="lConnected"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="4">
+            <Button Content="Connect" Click="Connect"/>
+            <Button Content="Disconnect" Click="Disconnect"/>
+        </UniformGrid>
+    </Grid>
+</Window>

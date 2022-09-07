@@ -1,5 +1,5 @@
-﻿using ContainerStore.Connectors.Models;
-using ContainerStore.Data.Models;
+﻿using ContainerStore.Data.Models;
+using ContainerStore.Data.Models.Accounts;
 using System.Collections.Generic;
 
 namespace ContainerStore.Connectors;
@@ -20,6 +20,8 @@ public interface IConnector
     #endregion
     #region Instruments Requests
     Instrument? RequestInstrument(string fullname, string exchange);
+    void RequestOptionChain(Instrument instrument);
     void RequestMarketData(Instrument instrument);
+    
     #endregion
 }

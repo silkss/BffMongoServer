@@ -1,4 +1,4 @@
-﻿namespace ContainerStore.Connectors.Models;
+﻿namespace ContainerStore.Data.Models.Accounts;
 
 public class Account
 {

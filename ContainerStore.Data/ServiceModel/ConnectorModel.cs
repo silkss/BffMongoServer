@@ -1,7 +1,7 @@
-﻿using ContainerStore.Connectors.Models;
+﻿using ContainerStore.Data.Models.Accounts;
 using System.Collections.Generic;
 
-namespace ContainerStore.WebApi.Models;
+namespace ContainerStore.Data.ServiceModel;
 
 public class ConnectorModel
 {

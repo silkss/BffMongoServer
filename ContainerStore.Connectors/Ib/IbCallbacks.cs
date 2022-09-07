@@ -1,11 +1,14 @@
 ﻿using ContainerStore.Connectors.Converters.Ib;
 using ContainerStore.Connectors.Ib.Caches;
-using ContainerStore.Connectors.Models;
 using ContainerStore.Data.Models;
+using ContainerStore.Data.Models.Accounts;
+using ContainerStore.Data.Models.Instruments;
 using IBApi;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -13,7 +16,7 @@ internal class IbCallbacks : DefaultEWrapper
 {
 	private readonly ILogger<IbConnector> _logger;
 	private readonly RequestInstrumentCache _requestInstrument;
-
+	private readonly Dictionary<int, OptionChain> _optionChains;
 
 	private void onPriceChanged(PriceChangedEventArgs args)
 	{
@@ -23,18 +26,33 @@ internal class IbCallbacks : DefaultEWrapper
 			handler(this, args);
 		}
 	}
-	public event EventHandler<PriceChangedEventArgs> PriceChange;
+	public event EventHandler<PriceChangedEventArgs> PriceChange = delegate { };
 	public int NextOrderId { get; set; }
 
-    public IbCallbacks(ILogger<IbConnector> logger, RequestInstrumentCache requestInstrument)
+    public IbCallbacks(ILogger<IbConnector> logger, RequestInstrumentCache requestInstrument, Dictionary<int, OptionChain> optionChains)
 	{
 		_logger = logger;
 		_requestInstrument = requestInstrument;
+		_optionChains = optionChains;
 	}
     public List<Account> Accounts { get; } = new();
 	public override void contractDetails(int reqId, ContractDetails contractDetails)
 	{
 		_requestInstrument.Add(reqId, contractDetails.ToInstrument());
+	}
+	public override void securityDefinitionOptionParameter(int reqId, string exchange, int underlyingConId, string tradingClass, string multiplier, HashSet<string> expirations, HashSet<double> strikes)
+	{
+		foreach (var exp in expirations)
+		{
+			_optionChains[reqId].AddTradingClass(new OptionTradingClass(
+                underlyingConId, exchange, tradingClass, int.Parse(multiplier),
+                DateTime.ParseExact(exp, "yyyyMMdd", CultureInfo.CurrentCulture),
+                strikes.Select(s => Convert.ToDecimal(s)).ToList()));
+		}
+	}
+	public override void securityDefinitionOptionParameterEnd(int reqId)
+	{
+		_optionChains[reqId].RefreshRequestTime();
 	}
 	public override void tickPrice(int tickerId, int field, double price, TickAttrib attribs)
 	{

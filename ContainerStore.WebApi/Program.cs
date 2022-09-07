@@ -1,6 +1,7 @@
 using ContainerStore.Connectors;
 using ContainerStore.Connectors.Ib;
 using ContainerStore.Data.Settings;
+using ContainerStore.Traders.Base;
 using ContainerStore.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ builder.Services.Configure<ContainerStoreDatabaseSettings>(
     builder.Configuration.GetSection("ContainerStoreDatabase"));
 builder.Services.AddSingleton<ContainersService>();
 builder.Services.AddSingleton<IConnector, IbConnector>();
+builder.Services.AddSingleton<Trader>();
 
 var app = builder.Build();
 
