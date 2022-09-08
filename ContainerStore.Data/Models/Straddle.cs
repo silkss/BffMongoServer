@@ -11,4 +11,18 @@ public class Straddle
     public TradeLogic Logic { get; set; }
     public StraddleLeg? CallLeg {  get; set; }
     public StraddleLeg? PutLeg { get; set; }
+
+    public Straddle(Instrument call, Instrument put)
+    {
+        CallLeg = new StraddleLeg
+        {
+            Instrument = call,
+            Logic = TradeLogic.Open,
+        };
+        PutLeg = new StraddleLeg
+        {
+            Instrument = put,
+            Logic = TradeLogic.Open,
+        };
+    }
 }

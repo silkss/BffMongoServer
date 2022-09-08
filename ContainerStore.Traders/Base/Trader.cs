@@ -3,6 +3,10 @@ using ContainerStore.Connectors;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using ContainerStore.Common.Enums;
+using ContainerStore.Data.Models.TradeUnits;
+using Microsoft.Extensions.Logging;
+using ContainerStore.Data.Models.Transactions;
 
 namespace ContainerStore.Traders.Base;
 
@@ -11,27 +15,82 @@ public class Trader
 	private readonly object _lock = new();
     private readonly List<Container> _containers = new();
 	private readonly IConnector _connector;
+	private readonly ILogger<Trader> _logger;
+	private bool _strated = true;
+	private void sendOrder(Instrument instrument, Transaction transaction)
+	{
+		_connector.SendOrder(instrument, transaction);
+	}
+	private void openStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
+	{
+		if (!leg.IsDone()) return;
+		if (leg.Instrument == null) return;
+        var price = leg.Instrument.TradablePrice(leg.Direction);
+        if (price == 0)
+        {
+            _logger.LogError($"{leg.Instrument.FullName}. Tradable price is 0");
+			return;
+        }
+		leg.OpenOrder = new Transaction
+		{
+			Direction = leg.Direction,
+			Account = account,
+			Quantity = leg.TradableQuantity(),//Volume - Math.Abs(Position),
+			LimitPrice = price + orderPriceShift * leg.Instrument.MinTick,
+		};
+		sendOrder(leg.Instrument, leg.OpenOrder);
+	}
+	private void closeStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
+	{
+
+	}
+	private void straddleLegWork(StraddleLeg leg, string account, int orderPriceShift)
+	{
+		switch (leg.Logic)
+		{
+			case TradeLogic.Open when leg.OpenOrder == null:
+				openStraddleLeg(leg, account, orderPriceShift);
+				break;
+			case TradeLogic.Close when leg.OpenOrder == null:
+				closeStraddleLeg(leg, account, orderPriceShift);
+				break;
+			default: break;
+
+		}
+	}
 	private void work(Container container)
 	{
 		if (container.ParentInstrument == null) return;
-		container.TotalPnl = container.ParentInstrument.Last;
+		foreach (var straddle in container.Straddles)
+		{
+			if (straddle.CallLeg != null) 
+				straddleLegWork(straddle.CallLeg, container.Account, container.OrderPriceShift);
+			if (straddle.PutLeg != null)
+				straddleLegWork(straddle.PutLeg, container.Account, container.OrderPriceShift);
+		}
 	}
-	public Trader(IConnector connector)
+	public Trader(IConnector connector, ILogger<Trader> logger)
 	{
 		_connector = connector;
-
-		new Thread(() =>
-		{
-			while (true)
-			{
-				lock (_lock)
-				{
-					_containers.ForEach(c => work(c));
-				}
-			}
-		})
-		{ IsBackground = true }
-		.Start();
+		_logger = logger;
+		Start();
+    }
+	public void Start()
+	{
+		if (!_strated) _strated = true;
+        new Thread(() =>
+        {
+            while (_strated)
+            {
+                lock (_lock)
+                {
+                    _containers.ForEach(c => work(c));
+                }
+				Thread.Sleep(1000);
+            }
+        })
+        { IsBackground = true }
+        .Start();
     }
 	public (bool isAdded, string message) AddToTrade(Container container)
 	{
@@ -47,7 +106,9 @@ public class Trader
 			}
 
 			_containers.Add(container);
-			_connector.RequestMarketData(container.ParentInstrument);
+			_connector
+				.RequestMarketData(container.ParentInstrument)
+				.RequestOptionChain(container.ParentInstrument);
 			return (true, "Контейнер добавлен!");
 		}
 	}
@@ -56,5 +117,17 @@ public class Trader
 	{
 		return _containers.Remove(container);
 	}
-
+    public Container? GetContainer(string symbol, string account)
+	{
+		Container? container = null;
+		lock (_lock)
+		{
+			container = _containers.FirstOrDefault(c => c.ParentInstrument.FullName == symbol && c.Account == account);
+		}
+		return container;
+	}
+	public void Stop()
+	{
+		_strated = false;
+	}
 }

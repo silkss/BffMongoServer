@@ -1,5 +1,5 @@
 ﻿using ContainerStore.Common.Enums;
-using ContainerStore.Connectors.Helpers;
+using ContainerStore.Common.Helpers;
 using ContainerStore.Data.Models;
 using IBApi;
 using System;
@@ -28,7 +28,10 @@ internal static class ContractToInstrument
     public static Contract ToIbContract(this Instrument instrument) => new Contract
     {
         ConId = instrument.Id,
+        Symbol = instrument.Symbol,
+        TradingClass = instrument.TradeClass,
         LocalSymbol = instrument.FullName,
+        Multiplier = instrument.Multiplier.ToString(),
         Exchange = instrument.Exchange,
         Currency = instrument.Currency,
         SecType = instrument.Type == InstrumentType.Future ? "FUT" : "FOP",

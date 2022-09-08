@@ -1,4 +1,6 @@
-﻿using ContainerStore.Connectors.Converters.Ib;
+﻿using ContainerStore.Common.Enums;
+using ContainerStore.Connectors.Converters.Ib;
+using ContainerStore.Common.Helpers;
 using ContainerStore.Connectors.Ib.Caches;
 using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.Accounts;
@@ -47,7 +49,7 @@ internal class IbCallbacks : DefaultEWrapper
 			_optionChains[reqId].AddTradingClass(new OptionTradingClass(
                 underlyingConId, exchange, tradingClass, int.Parse(multiplier),
                 DateTime.ParseExact(exp, "yyyyMMdd", CultureInfo.CurrentCulture),
-                strikes.Select(s => Convert.ToDecimal(s)).ToList()));
+                strikes));
 		}
 	}
 	public override void securityDefinitionOptionParameterEnd(int reqId)
@@ -91,7 +93,24 @@ internal class IbCallbacks : DefaultEWrapper
                 break;
         }
 	}
-	public override void nextValidId(int orderId)
+	public override void tickOptionComputation(int tickerId, int field, int tickAttrib, double impliedVolatility, double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice)
+	{
+		if (field != TickType.MODEL_OPTION &&
+			field != TickType.DELAYED_MODEL_OPTION)
+			return;
+
+		if (optPrice != double.MaxValue)
+		{
+			var model = new PriceChangedEventArgs();
+
+			model.TickerId = tickerId;
+			model.Price = Convert.ToDecimal(optPrice);
+			model.Tick = Tick.TheorPrice;
+
+			onPriceChanged(model);
+        }
+	}
+    public override void nextValidId(int orderId)
 	{
 		NextOrderId = orderId;
 	}
@@ -111,13 +130,15 @@ internal class IbCallbacks : DefaultEWrapper
 	{
 		switch (errorCode)
 		{
+			case 110: // wrong order price.
+				break; 
             case 200: // что-то не то с запросом инструмента.
                 _requestInstrument.Add(id, null);
                 _requestInstrument.ReceivedSignal();
 				_logger.LogError($"Чтото не так с запросом инструмента.CODE:{errorCode}\nMESSAGE:{errorMsg}");
                 break;
 			default:
-                _logger.LogError($"ERROR_CODE:{errorCode} : MESSAGE:{errorMsg}");
+                _logger.LogError($"ID:{id} : ERROR_CODE:{errorCode} : MESSAGE:{errorMsg}");
 				break;
         }
 	}

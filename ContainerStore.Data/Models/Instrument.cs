@@ -1,6 +1,9 @@
 ﻿using ContainerStore.Common.Enums;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
+using System.Diagnostics.Metrics;
+using System.Diagnostics;
+using ContainerStore.Common.Helpers;
 
 namespace ContainerStore.Data.Models;
 
@@ -43,11 +46,27 @@ public class Instrument
                 Last = args.Price;
                 break;
             case (Tick.TheorPrice):
-                TheorPrice = args.Price;
+                TheorPrice = Helper.RoundUp(args.Price, MinTick) ;
                 break;
             default:
                 break;
 
         }
     }
+    public decimal TradablePrice(Directions direction) => direction switch
+    {
+        Directions.Sell => Type switch
+        {
+            InstrumentType.Future => Last,
+            InstrumentType.Option => TheorPrice < Bid ? Bid : TheorPrice,
+            _ => Last,
+        },
+        Directions.Buy => Type switch
+        {
+            InstrumentType.Future => Last,
+            InstrumentType.Option => TheorPrice > Ask ? TheorPrice : Ask,
+            _ => Last,
+        },
+        _ => Last,
+    };
 }

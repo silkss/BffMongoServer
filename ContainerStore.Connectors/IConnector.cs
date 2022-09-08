@@ -1,5 +1,9 @@
-﻿using ContainerStore.Data.Models;
+﻿using ContainerStore.Common.Enums;
+using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.Accounts;
+using ContainerStore.Data.Models.Instruments;
+using ContainerStore.Data.Models.Transactions;
+using System;
 using System.Collections.Generic;
 
 namespace ContainerStore.Connectors;
@@ -20,8 +24,15 @@ public interface IConnector
     #endregion
     #region Instruments Requests
     Instrument? RequestInstrument(string fullname, string exchange);
-    void RequestOptionChain(Instrument instrument);
-    void RequestMarketData(Instrument instrument);
-    
+    Instrument? RequestDependentInstrument(InstrumentType type, OptionType optionType, Instrument parent, double strike, DateTime expDate);
+    Instrument? RequestCall(Instrument parent, double strike, DateTime expirationDate);
+    Instrument? RequestPut(Instrument parent, double strike, DateTime expirationDate);
+    IConnector RequestOptionChain(Instrument instrument);
+    IConnector RequestMarketData(Instrument instrument);
+    OptionTradingClass? GetOptionTradingClass(int parentId, DateTime approximateDate);
+    #endregion
+
+    #region Transactions/ Orders
+    void SendOrder(Instrument instrument, Transaction order);
     #endregion
 }

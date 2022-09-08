@@ -7,6 +7,9 @@ using IBApi;
 using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.Accounts;
 using ContainerStore.Data.Models.Instruments;
+using System;
+using ContainerStore.Common.Enums;
+using ContainerStore.Data.Models.Transactions;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -79,6 +82,7 @@ public class IbConnector : IConnector
         _client.eDisconnect();
     }
     #endregion
+    #region Instruments and etc
     public Instrument? RequestInstrument(string fullname, string exchange)
     {
         var contract = new Contract
@@ -90,9 +94,38 @@ public class IbConnector : IConnector
         };
         return reqContract(contract);
     }
-    public void RequestOptionChain(Instrument instrument)
+    public Instrument? RequestDependentInstrument(InstrumentType type, OptionType optionType, Instrument parent, double strike, DateTime expDate)
     {
-        if (instrument.Type != Common.Enums.InstrumentType.Future) return;
+        var contract = new Contract
+        {
+            Strike = strike,
+            LastTradeDateOrContractMonth = expDate.ToString("yyyyMMdd"),
+            SecType = "FOP",
+            Symbol = parent.Symbol,
+            Exchange = parent.Exchange,
+            Currency = parent.Currency,
+            Right = optionType == OptionType.Call ? "C" : "P"
+
+        };
+        /* NG иммеет 2 одинаковый опционых серии.
+         * 1ая поставочная
+         * 2ая расчетная.
+         * нам нужна 1ая.
+         * Онаже LNE
+         */
+        if (contract.Symbol == "NG")
+        {
+            contract.TradingClass = "LNE";
+        }
+        return reqContract(contract);
+    }
+    public Instrument? RequestCall(Instrument parent, double strike, DateTime expirationDate) =>
+        RequestDependentInstrument(InstrumentType.Option, OptionType.Call, parent, strike, expirationDate);
+    public Instrument? RequestPut(Instrument parent, double strike, DateTime expirationDate) =>
+        RequestDependentInstrument(InstrumentType.Option, OptionType.Put, parent, strike, expirationDate);
+    public IConnector RequestOptionChain(Instrument instrument)
+    {
+        if (instrument.Type != InstrumentType.Future) return this;
         var oc = _optionChains.GetValueOrDefault(instrument.Id);
         if (oc is null)
         {
@@ -104,10 +137,30 @@ public class IbConnector : IConnector
             oc.ClearTradingClasses();
             _client.reqSecDefOptParams(instrument.Id, instrument.Symbol, instrument.Exchange, "FUT", instrument.Id);
         }
+        return this;
     }
-    public void RequestMarketData(Instrument instrument)
+    public IConnector RequestMarketData(Instrument instrument)
     {
+        if (instrument.LastTradeDate < DateTime.Now) return this;
         _callbacks.PriceChange += instrument.OnPriceChange;
         _client.reqMktData(instrument.Id, instrument.ToIbContract(), string.Empty, false, false, null);
+        return this;
     }
+    public OptionTradingClass? GetOptionTradingClass(int parentId, DateTime approximateDate)
+    {
+        if (_optionChains.GetValueOrDefault(parentId) is OptionChain chain)
+        {
+            return chain.GetTradingClass(approximateDate);
+        }
+        _logger.LogError($"Нет цепочки опционов для инструмента с ID = {parentId}");
+        return null;
+    }
+    #endregion
+    #region Transaction/Orders
+    public void SendOrder(Instrument instrument, Transaction order)
+    {
+        order.BrokerId = _callbacks.NextOrderId++;
+        _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
+    }
+    #endregion
 }

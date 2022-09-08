@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace ContainerStore.Data.Models;
 
 public class Container
 {
+    private readonly object _lock = new();
+
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
     public string? Id { get; set; }
@@ -41,5 +44,15 @@ public class Container
     public double ProcentPriceGapForSellClosure { get; set; } = 20;
 
     public int OrderPriceShift { get; set; } = 2;
-    public List<Straddle>? Straddles { get; } = new();
+    public List<Straddle> Straddles { get; private set; } = new();
+
+    public void AddStraddle(Straddle straddle)
+    {
+        lock (_lock)
+        {
+            if (Straddles == null) Straddles = new();
+            Straddles.Add(straddle);
+        }
+    }
+    public DateTime GetApproximateExpirationDate() => DateTime.Now.AddDays(StraddleExpirationDays);
 }

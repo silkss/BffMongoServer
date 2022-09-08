@@ -1,9 +1,9 @@
 ﻿using ContainerStore.Common.Enums;
 using System;
 
-namespace ContainerStore.Connectors.Helpers;
+namespace ContainerStore.Common.Helpers;
 
-internal static class Helper
+public static class Helper
 {
     public static InstrumentType IbSecTypeToBffEnum(string sectype) => sectype switch
     {
@@ -25,5 +25,15 @@ internal static class Helper
         }
 
         return newValue;
+    }
+    public static decimal RoundUp(decimal value, decimal step)
+    {
+        if (step == 0)
+        {
+            return 0;
+        }
+
+        var multiplicand = Math.Round(value / step);
+        return multiplicand * step;
     }
 }

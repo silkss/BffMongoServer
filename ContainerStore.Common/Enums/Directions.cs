@@ -1,7 +1,7 @@
 ﻿namespace ContainerStore.Common.Enums;
 
-public enum TradeLogic
+public enum Directions
 {
-    Open,
-    Close
+    Buy,
+    Sell,
 }

@@ -10,7 +10,7 @@ Content-Type: application/json
     "isConnected" : true
 }
 ###
-GET http://localhost:5001/api/instrument?localName=6eu2 HTTP/1.1
+GET http://localhost:5001/api/instrument?localName=6ez2 HTTP/1.1
 ###
 POST http://localhost:5001/api/instrument HTTP/1.1
 Content-Type: application/json
@@ -38,19 +38,23 @@ Content-Type: application/json
     "Account" :"DU2768344",
     "ParentInstrument" : 
     {
-        "id": 289230371,
-        "type": 1,
-        "fullName": "6EU2",
-        "symbol": "EUR",
-        "tradeClass": "6E",
-        "exchange": "GLOBEX",
-        "currency": "USD",
-        "minTick": 0.00005,
-        "marketRuleID": 0,
-        "lastTradeDate": "2022-09-19T00:00:00",
-        "strike": 0,
-        "optionType": 1,
-        "multiplier": 125000
+        "Id": 299701833,
+        "Type": 1,
+        "FullName": "6EZ2",
+        "Symbol": "EUR",
+        "TradeClass": "6E",
+        "Exchange": "GLOBEX",
+        "Currency": "USD",
+        "MinTick": 0.00005,
+        "MarketRuleID": 0,
+        "LastTradeDate": "2022-12-19T00:00:00",
+        "Strike": 0,
+        "OptionType": 1,
+        "Multiplier": 125000,
+        "Ask": 0,
+        "Bid": 0,
+        "Last": 0,
+        "TheorPrice": 0
     },
     "StraddleTargetPnl": 300.00,
     "StraddleLiveDays": 2,
@@ -97,5 +101,8 @@ GET http://localhost:5001/api/containers HTTP/1.1
 ###
 GET http://localhost:5001/api/trader HTTP/1.1
 ###
-POST http://localhost:5001/api/trader/631754456b28ccc5c50adae3 HTTP/1.1
+DELETE http://localhost:5001/api/containers/6318be4297427500fa90ef05 HTTP/1.1
 ###
+POST http://localhost:5001/api/trader/6319d78f7f5fd67df20e40b9 HTTP/1.1
+###
+GET http://localhost:5001/api/mcapi?symbol=6EZ2&price=1.00930&type=OPEN&account=DU2768344 HTTP/1.1
