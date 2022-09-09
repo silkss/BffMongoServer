@@ -1,9 +1,10 @@
 ﻿using ContainerStore.Connectors;
 using ContainerStore.Data.ServiceModel;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContainerStore.WebApi.Controllers;
-
+[EnableCors()]
 [Route("api/[controller]")]
 [ApiController]
 public class ConnectorController : ControllerBase

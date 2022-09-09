@@ -20,4 +20,13 @@ public partial class MainView : Window
         };
         connectorView.Show();
     }
+
+    private void showContainersView(object sender, RoutedEventArgs e)
+    {
+        var view = new ContainersView
+        {
+            Owner = this,
+        };
+        view.Show();
+    }
 }

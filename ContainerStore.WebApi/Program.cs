@@ -12,7 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
-
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(policy =>{
+        policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+    });
+});
 builder.Services.Configure<ContainerStoreDatabaseSettings>(
     builder.Configuration.GetSection("ContainerStoreDatabase"));
 builder.Services.AddSingleton<ContainersService>();
@@ -22,7 +26,7 @@ builder.Services.AddSingleton<Trader>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

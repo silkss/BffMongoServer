@@ -15,7 +15,8 @@ namespace ContainerStore.Connectors.Ib;
 
 public class IbConnector : IConnector
 {
-	private readonly RequestInstrumentCache _requestInstrument;
+    private readonly RequestInstrumentCache _requestInstrument = new();
+    private readonly OpenOrdersCache _openOrdersCache = new();
 	private readonly IbCallbacks _callbacks;
     private readonly EClientSocket _client;
     private readonly EReaderSignal _signalMonitor = new EReaderMonitorSignal();
@@ -37,8 +38,7 @@ public class IbConnector : IConnector
 	{
         _logger = logger;
 
-        _requestInstrument = new();
-		_callbacks = new IbCallbacks(_logger, _requestInstrument, _optionChains);
+		_callbacks = new IbCallbacks(_logger, _requestInstrument, _optionChains, _openOrdersCache);
         _client = new EClientSocket(_callbacks, _signalMonitor);
     }
     #region Connector props
@@ -160,6 +160,7 @@ public class IbConnector : IConnector
     public void SendOrder(Instrument instrument, Transaction order)
     {
         order.BrokerId = _callbacks.NextOrderId++;
+        _openOrdersCache.Add(order);
         _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
     }
     #endregion

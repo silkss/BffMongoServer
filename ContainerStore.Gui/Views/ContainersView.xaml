@@ -1,23 +1,19 @@
-﻿<Window x:Class="ContainerStore.Gui.Views.MainView"
+﻿<Window x:Class="ContainerStore.Gui.Views.ContainersView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ContainerStore.Gui"
         mc:Ignorable="d"
-        Title="Main" Height="200" Width="450">
+        Title="ContainersView" Height="450" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="48"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Button Content="Connector" Click="showConnectorView"/>
-        <Button Content="Containers" Click="showContainersView" Grid.Column="1"/>
+        <UniformGrid Rows="1">
+            <Button Name="btnLoadContainers" Content="Load" Click="loadContainers"/>
+        </UniformGrid>
+        <DataGrid Name="dgContainers" Grid.Row="1"/>
     </Grid>
 </Window>

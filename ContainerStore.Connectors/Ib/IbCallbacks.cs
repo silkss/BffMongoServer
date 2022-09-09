@@ -1,16 +1,16 @@
 ﻿using ContainerStore.Common.Enums;
-using ContainerStore.Connectors.Converters.Ib;
 using ContainerStore.Common.Helpers;
+using ContainerStore.Connectors.Converters.Ib;
 using ContainerStore.Connectors.Ib.Caches;
 using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.Accounts;
 using ContainerStore.Data.Models.Instruments;
+using ContainerStore.Data.Models.Transactions;
 using IBApi;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -19,6 +19,7 @@ internal class IbCallbacks : DefaultEWrapper
 	private readonly ILogger<IbConnector> _logger;
 	private readonly RequestInstrumentCache _requestInstrument;
 	private readonly Dictionary<int, OptionChain> _optionChains;
+	private readonly OpenOrdersCache _openOrdersCache;
 
 	private void onPriceChanged(PriceChangedEventArgs args)
 	{
@@ -31,11 +32,14 @@ internal class IbCallbacks : DefaultEWrapper
 	public event EventHandler<PriceChangedEventArgs> PriceChange = delegate { };
 	public int NextOrderId { get; set; }
 
-    public IbCallbacks(ILogger<IbConnector> logger, RequestInstrumentCache requestInstrument, Dictionary<int, OptionChain> optionChains)
+    public IbCallbacks(
+		ILogger<IbConnector> logger, RequestInstrumentCache requestInstrument, 
+		Dictionary<int, OptionChain> optionChains, OpenOrdersCache openOrdersCache)
 	{
 		_logger = logger;
 		_requestInstrument = requestInstrument;
 		_optionChains = optionChains;
+		_openOrdersCache = openOrdersCache;
 	}
     public List<Account> Accounts { get; } = new();
 	public override void contractDetails(int reqId, ContractDetails contractDetails)
@@ -122,6 +126,32 @@ internal class IbCallbacks : DefaultEWrapper
             Accounts.Add(new Account { Name = account });
 		}
 	}
+	public override void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
+	{
+		if (orderState.Commission == double.MaxValue) return;
+		if (_openOrdersCache.GetById(orderId) is Transaction openorder)
+		{
+			if (openorder.FilledQuantity == openorder.Quantity)
+			{
+				openorder.Commission = Helper.ConvertDoubleToDecimal(orderState.Commission);
+				openorder.Filled();
+				_openOrdersCache.Remove(openorder);
+			}
+		}
+    }
+	public override void orderStatus(int orderId, string status, decimal filled, decimal remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld, double mktCapPrice)
+	{
+        if (_openOrdersCache.GetById(orderId) is Transaction openorder)
+        {
+            openorder.AvgFilledPrice = Helper.ConvertDoubleToDecimal(avgFillPrice);
+            openorder.FilledQuantity = (int)filled;
+
+            if (openorder.Status == "Submitted")
+            {
+                openorder.Submitted();
+            }
+        }
+    }
 	public override void error(Exception e)
 	{
 		_logger.LogCritical(e.Message);
@@ -137,7 +167,16 @@ internal class IbCallbacks : DefaultEWrapper
                 _requestInstrument.ReceivedSignal();
 				_logger.LogError($"Чтото не так с запросом инструмента.CODE:{errorCode}\nMESSAGE:{errorMsg}");
                 break;
-			default:
+            case 201: //Ордер отклонен
+            case 202: // someone cancelled order
+            case 512:
+                if (_openOrdersCache.GetById(id) is Transaction canceledorder)
+                {
+                    _openOrdersCache.Remove(canceledorder);
+                    canceledorder.Canceled();
+                }
+                break;
+            default:
                 _logger.LogError($"ID:{id} : ERROR_CODE:{errorCode} : MESSAGE:{errorMsg}");
 				break;
         }

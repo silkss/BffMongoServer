@@ -7,6 +7,7 @@ using ContainerStore.Common.Enums;
 using ContainerStore.Data.Models.TradeUnits;
 using Microsoft.Extensions.Logging;
 using ContainerStore.Data.Models.Transactions;
+using System.Threading.Tasks;
 
 namespace ContainerStore.Traders.Base;
 
@@ -25,20 +26,13 @@ public class Trader
 	{
 		if (!leg.IsDone()) return;
 		if (leg.Instrument == null) return;
-        var price = leg.Instrument.TradablePrice(leg.Direction);
-        if (price == 0)
+        if (leg.Instrument.TradablePrice(leg.Direction) == 0)
         {
             _logger.LogError($"{leg.Instrument.FullName}. Tradable price is 0");
 			return;
         }
-		leg.OpenOrder = new Transaction
-		{
-			Direction = leg.Direction,
-			Account = account,
-			Quantity = leg.TradableQuantity(),//Volume - Math.Abs(Position),
-			LimitPrice = price + orderPriceShift * leg.Instrument.MinTick,
-		};
-		sendOrder(leg.Instrument, leg.OpenOrder);
+
+		sendOrder(leg.Instrument, leg.CreateOpeningOrder(account, orderPriceShift));
 	}
 	private void closeStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
 	{
@@ -86,7 +80,7 @@ public class Trader
                 {
                     _containers.ForEach(c => work(c));
                 }
-				Thread.Sleep(1000);
+				Task.Delay(1000);
             }
         })
         { IsBackground = true }
