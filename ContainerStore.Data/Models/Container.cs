@@ -55,4 +55,11 @@ public class Container
         }
     }
     public DateTime GetApproximateExpirationDate() => DateTime.Now.AddDays(StraddleExpirationDays);
+    public void Stop()
+    {
+        foreach (var straddle in Straddles)
+        {
+            straddle.Stop();
+        }
+    }
 }

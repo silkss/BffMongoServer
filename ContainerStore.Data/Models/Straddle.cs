@@ -9,8 +9,8 @@ public class Straddle
     public decimal Strike  { get; set; }
     public DateTime ExpirationDate { get; set; }
     public TradeLogic Logic { get; set; }
-    public StraddleLeg? CallLeg {  get; set; }
-    public StraddleLeg? PutLeg { get; set; }
+    public StraddleLeg CallLeg {  get; set; }
+    public StraddleLeg PutLeg { get; set; }
 
     public Straddle(Instrument call, Instrument put)
     {
@@ -24,5 +24,10 @@ public class Straddle
             Instrument = put,
             Logic = TradeLogic.Open,
         };
+    }
+    public void Stop()
+    {
+        CallLeg?.Stop();
+        PutLeg?.Stop();
     }
 }

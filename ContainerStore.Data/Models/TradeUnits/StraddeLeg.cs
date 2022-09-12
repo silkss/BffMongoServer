@@ -13,12 +13,6 @@ public class StraddleLeg : TradeUnit
         if (OpenOrder.Direction == Direction)
         {
             OpenPrice = OpenOrder.AvgFilledPrice;
-            //if (Closure != null)
-            //{
-            //    Closure.LimitPrice = OpenPrice;
-            //    Closure.SetLogic(TradeLogic.OpenPosition);
-            //    //тут надо как нибудь обновить в бд запись Closure
-            //}
         }
         OpenOrder = null;
     }

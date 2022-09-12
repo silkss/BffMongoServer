@@ -18,6 +18,7 @@ public abstract class TradeUnit : IOrderHolder
         get
         {
             int position = 0;
+            if (Transactions == null) return position;
             lock (_transactionLock)
             {
                 foreach (var order in Transactions)
@@ -33,7 +34,7 @@ public abstract class TradeUnit : IOrderHolder
     }
     public TradeLogic Logic { get; set; }
     public Transaction? OpenOrder { get; set; }
-    public List<Transaction> Transactions { get; } = new();
+    public List<Transaction>? Transactions { get; private set; }
     public Directions Direction { get; set; }
     public Directions CloseDirection() => Direction switch
     {
@@ -65,6 +66,10 @@ public abstract class TradeUnit : IOrderHolder
             Quantity = TradableQuantity(),
             LimitPrice = Instrument.TradablePrice(direction) + orderPriceShift * Instrument.MinTick,
         };
+        if (Transactions == null)
+        {
+            Transactions = new();
+        }
         lock (_transactionLock)
         {
             Transactions.Add(OpenOrder);
@@ -82,5 +87,9 @@ public abstract class TradeUnit : IOrderHolder
     {
         if (OpenOrder == null) return;
         if (OpenOrder.BrokerId != brokerId) return;
+    }
+    public void Stop()
+    {
+        OpenOrder = null;
     }
 }
