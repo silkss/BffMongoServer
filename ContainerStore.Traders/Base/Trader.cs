@@ -3,13 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using ContainerStore.Connectors;
 using ContainerStore.Common.Enums;
 using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.TradeUnits;
 using ContainerStore.Data.Models.Transactions;
 using ContainerStore.WebApi.Services;
-using Microsoft.Extensions.Hosting;
 using System;
 
 namespace ContainerStore.Traders.Base;
@@ -41,8 +41,15 @@ public class Trader
 	}
 	private void closeStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
 	{
-
-	}
+		if (!leg.IsDone()) return;
+		if (leg.Instrument == null) return;
+		if (leg.Instrument.TradablePrice(leg.Direction) == 0)
+		{
+            _logger.LogError($"{leg.Instrument.FullName}. Tradable price is 0");
+            return;
+        }
+        sendOrder(leg.Instrument, leg.CreateOpeningOrder(account, orderPriceShift));
+    }
 	private void straddleLegWork(StraddleLeg leg, string account, int orderPriceShift)
 	{
 		switch (leg.Logic)
@@ -52,6 +59,16 @@ public class Trader
 				break;
 			case TradeLogic.Close when leg.OpenOrder == null:
 				closeStraddleLeg(leg, account, orderPriceShift);
+				break;
+			case TradeLogic.Close when leg.OpenOrder != null:
+			case TradeLogic.Open when leg.OpenOrder != null:
+				var up_border = leg.Instrument.TradablePrice(leg.CurrentDirection()) + leg.Instrument.MinTick * 2 * orderPriceShift;
+				var down_border = leg.Instrument.TradablePrice(leg.CurrentDirection()) - leg.Instrument.MinTick * 2 * orderPriceShift;
+
+				if (leg.OpenOrder.LimitPrice > up_border || leg.OpenOrder.LimitPrice < down_border)
+				{
+					_connector.CancelOrder(leg.OpenOrder);
+				}
 				break;
 			default: break;
 
@@ -99,7 +116,7 @@ public class Trader
                 {
                     _containers.ForEach(c => work(c));
                 }
-				Task.Delay(1000);
+				Thread.Sleep(1000);
             }
         })
         { IsBackground = true }

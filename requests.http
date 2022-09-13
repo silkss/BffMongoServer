@@ -10,7 +10,7 @@ Content-Type: application/json
     "isConnected" : true
 }
 ###
-GET http://localhost:5001/api/instrument?localName=6ez2 HTTP/1.1
+GET http://localhost:5001/api/instrument?localName=6bz2 HTTP/1.1
 ###
 POST http://localhost:5001/api/instrument HTTP/1.1
 Content-Type: application/json
@@ -38,19 +38,19 @@ Content-Type: application/json
     "Account" :"DU2768344",
     "ParentInstrument" : 
     {
-        "Id": 299701833,
+        "Id": 299701782,
         "Type": 1,
-        "FullName": "6EZ2",
-        "Symbol": "EUR",
-        "TradeClass": "6E",
+        "FullName": "6BZ2",
+        "Symbol": "GBP",
+        "TradeClass": "6B",
         "Exchange": "GLOBEX",
         "Currency": "USD",
-        "MinTick": 0.00005,
+        "MinTick": 0.0001,
         "MarketRuleID": 0,
         "LastTradeDate": "2022-12-19T00:00:00",
         "Strike": 0,
         "OptionType": 1,
-        "Multiplier": 125000,
+        "Multiplier": 62500,
         "Ask": 0,
         "Bid": 0,
         "Last": 0,
@@ -64,48 +64,47 @@ Content-Type: application/json
     "OrderPriceShift": 2
 }
 ###
-PUT  http://localhost:5001/api/containers/6319d78f7f5fd67df20e40b9 HTTP/1.1
+PUT  http://localhost:5001/api/containers/632060d0795b38b3f6786cc0 HTTP/1.1
 Content-Type: application/json
 
 {
     "Id": "6319d78f7f5fd67df20e40b9",
-    "Account": "DU2768344",
-    "ParentInstrument": {
-      "Id": 299701833,
-      "Type": 1,
-      "FullName": "6EZ2",
-      "Symbol": "EUR",
-      "TradeClass": "6E",
-      "Exchange": "GLOBEX",
-      "Currency": "USD",
-      "MinTick": 0.00005,
-      "MarketRuleID": 0,
-      "LastTradeDate": "2022-12-19T06:00:00Z",
-      "Strike": 0,
-      "OptionType": 1,
-      "Multiplier": 125000,
-      "Ask": 0,
-      "Bid": 0,
-      "Last": 0,
-      "TheorPrice": 0
+    "Account" :"DU2768344",
+    "ParentInstrument" : 
+    {
+        "Id": 139213989,
+        "Type": 1,
+        "FullName": "NGZ2",
+        "Symbol": "NG",
+        "TradeClass": "NG",
+        "Exchange": "NYMEX",
+        "Currency": "USD",
+        "MinTick": 0.001,
+        "MarketRuleID": 0,
+        "LastTradeDate": "2022-11-28T00:00:00",
+        "Strike": 0,
+        "OptionType": 1,
+        "Multiplier": 10000,
+        "Ask": 0,
+        "Bid": 0,
+        "Last": 0,
+        "TheorPrice": 0
     },
-    "TotalPnl": 0,
     "StraddleTargetPnl": 300.00,
     "StraddleLiveDays": 2,
-    "StraddleExpirationDays": 27,
-    "ClosureStrikeStep": 2,
+    "StraddleExpirationDays": 10,
+    "ClosureStrikeStep":2,
     "ProcentPriceGapForSellClosure": 20,
-    "OrderPriceShift": 2,
-    "Straddles": []
-  }
+    "OrderPriceShift": 2
+}
 
 ###
 GET http://localhost:5001/api/containers HTTP/1.1
 ###
 GET http://localhost:5001/api/trader HTTP/1.1
 ###
-DELETE http://localhost:5001/api/containers/6318be4297427500fa90ef05 HTTP/1.1
+DELETE http://localhost:5001/api/containers/6320698de64542bae66a2c58 HTTP/1.1
 ###
-POST http://localhost:5001/api/trader/6319d78f7f5fd67df20e40b9 HTTP/1.1
+POST http://localhost:5001/api/trader/631f369af86cac15dedc6ab6 HTTP/1.1
 ###
 GET http://localhost:5001/api/mcapi?symbol=6EZ2&price=1.00930&type=OPEN&account=DU2768344 HTTP/1.1

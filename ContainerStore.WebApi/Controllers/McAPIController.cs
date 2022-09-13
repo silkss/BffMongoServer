@@ -20,6 +20,46 @@ public class McAPIController : ControllerBase
 	private readonly ContainersService _containersService;
 	private readonly Trader _trader;
 
+	private string getOpenSignal(Container container, double price)
+	{
+		var optionclass = _connector
+			.GetOptionTradingClass(container.ParentInstrument.Id, container.GetApproximateExpirationDate());
+		if (optionclass == null)
+		{
+			return "Нет подходящего опционного класса.";
+		}
+		var basestrike = optionclass.Strikes.MinBy(s => Math.Abs(s - price));
+		var basestrikeIdx = optionclass.Strikes.FindIndex(s => s == basestrike);
+		var closureCallStike = optionclass.Strikes[basestrikeIdx + container.ClosureStrikeStep];
+		var closurePutStrike = optionclass.Strikes[basestrikeIdx - container.ClosureStrikeStep];
+
+		var baseCall = _connector
+			.RequestCall(container.ParentInstrument, basestrike, optionclass.ExpirationDate);
+		var basePut = _connector
+			.RequestPut(container.ParentInstrument, basestrike, optionclass.ExpirationDate);
+		if (baseCall is null)
+		{
+			return $"не удалось запросить Call для иснтумента:\n" +
+				$"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
+			 
+		}
+		if (basePut is null)
+		{
+			return $"не удалось запросить Put для иснтумента:\n" +
+				$"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
+		}
+
+		_connector
+			.RequestMarketData(baseCall)
+			.RequestMarketData(basePut);
+
+		container.AddStraddle(new Straddle(baseCall, basePut));
+		return "Straddle добавлен.";
+	}
+	private string getCloseSignal(Container container)
+	{
+		return "Ok";
+	}
 	public McAPIController(ILogger<McAPIController> logger, IConnector connector, ContainersService containersService, Trader trader)
 	{
 		_logger = logger;
@@ -36,41 +76,12 @@ public class McAPIController : ControllerBase
 		type = type.Trim().ToUpper();
 		if (type == "OPEN")
 		{
-			var optionclass = _connector
-				.GetOptionTradingClass(container.ParentInstrument.Id, container.GetApproximateExpirationDate());
-			if (optionclass == null)
-			{
-				return Ok();
-			}
-			var basestrike = optionclass.Strikes.MinBy(s => Math.Abs(s - price));
-			var basestrikeIdx = optionclass.Strikes.FindIndex(s => s == basestrike);
-			var closureCallStike = optionclass.Strikes[basestrikeIdx + container.ClosureStrikeStep];
-			var closurePutStrike = optionclass.Strikes[basestrikeIdx - container.ClosureStrikeStep];
-
-			var baseCall = _connector
-				.RequestCall(container.ParentInstrument, basestrike, optionclass.ExpirationDate);
-			var basePut = _connector
-				.RequestPut(container.ParentInstrument, basestrike, optionclass.ExpirationDate);
-			if (baseCall is null)
-			{
-				_logger.LogError($"не удалось запросить Call для иснтумента:\n" +
-					$"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.");
-				return Ok();
-			}
-			if (basePut is null)
-            {
-                _logger.LogError($"не удалось запросить Put для иснтумента:\n" +
-                    $"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.");
-                return Ok();
-            }
-
-			_connector
-				.RequestMarketData(baseCall)
-				.RequestMarketData(basePut);
-
-			container.AddStraddle(new Straddle(baseCall, basePut));
-            var puLegInsturment = _connector.RequestPut(container.ParentInstrument, basestrike, optionclass.ExpirationDate);
+			_logger.LogInformation(getOpenSignal(container, price));
         }
+		else 
+		{
+			_logger.LogInformation(getCloseSignal(container));
+		}
 
 		return Ok();
 	}

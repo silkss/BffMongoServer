@@ -167,6 +167,7 @@ internal class IbCallbacks : DefaultEWrapper
                 _requestInstrument.ReceivedSignal();
 				_logger.LogError($"Чтото не так с запросом инструмента.CODE:{errorCode}\nMESSAGE:{errorMsg}");
                 break;
+			case 10147: //не найден ордер для отмены. Будем все равно имитировать что его отменили. Хотя, скорей всего, он исполнился.
             case 201: //Ордер отклонен
             case 202: // someone cancelled order
             case 512:

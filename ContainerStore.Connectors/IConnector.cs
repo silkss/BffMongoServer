@@ -34,5 +34,6 @@ public interface IConnector
 
     #region Transactions/ Orders
     void SendOrder(Instrument instrument, Transaction order);
+    void CancelOrder(Transaction transaction);
     #endregion
 }

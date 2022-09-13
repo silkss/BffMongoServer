@@ -11,7 +11,7 @@ public class Straddle
     public TradeLogic Logic { get; set; }
     public StraddleLeg CallLeg {  get; set; }
     public StraddleLeg PutLeg { get; set; }
-
+    public DateTime CreatedTime { get; set; }
     public Straddle(Instrument call, Instrument put)
     {
         CallLeg = new StraddleLeg
@@ -24,6 +24,10 @@ public class Straddle
             Instrument = put,
             Logic = TradeLogic.Open,
         };
+
+        ExpirationDate = call.LastTradeDate;
+        CreatedTime = DateTime.UtcNow;
+        Strike = call.Strike;
     }
     public void Stop()
     {

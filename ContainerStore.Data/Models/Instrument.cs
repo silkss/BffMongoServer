@@ -64,7 +64,7 @@ public class Instrument
         Directions.Buy => Type switch
         {
             InstrumentType.Future => Last,
-            InstrumentType.Option => TheorPrice > Ask ? TheorPrice : Ask,
+            InstrumentType.Option => TheorPrice > Ask ?  Ask : TheorPrice,
             _ => Last,
         },
         _ => Last,

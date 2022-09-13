@@ -163,5 +163,9 @@ public class IbConnector : IConnector
         _openOrdersCache.Add(order);
         _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
     }
+    public void CancelOrder(Transaction transaction)
+    {
+        _client.cancelOrder(transaction.BrokerId, "");
+    }
     #endregion
 }

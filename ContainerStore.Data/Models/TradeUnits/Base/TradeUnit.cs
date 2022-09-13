@@ -1,9 +1,9 @@
 ﻿using ContainerStore.Common;
 using ContainerStore.Common.Enums;
 using ContainerStore.Data.Models.Transactions;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
-
 
 namespace ContainerStore.Data.Models.TradeUnits.Base;
 
@@ -33,14 +33,18 @@ public abstract class TradeUnit : IOrderHolder
         }
     }
     public TradeLogic Logic { get; set; }
+    [BsonIgnore]
     public Transaction? OpenOrder { get; set; }
     public List<Transaction>? Transactions { get; private set; }
     public Directions Direction { get; set; }
-    public Directions CloseDirection() => Direction switch
+    public Directions CurrentDirection() => Logic switch 
     {
-        Directions.Buy => Directions.Sell,
-        _ => Directions.Buy
+        TradeLogic.Open => Direction,
+        TradeLogic.Close => CloseDirection(),
+        _ => Direction
     };
+
+    public Directions CloseDirection() => Direction == Directions.Buy ? Directions.Sell : Directions.Buy;
     public int TradableQuantity() => Logic switch
     {
         TradeLogic.Open => Volume - Math.Abs(Position),
