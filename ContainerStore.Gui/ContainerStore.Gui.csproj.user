@@ -8,12 +8,18 @@
     <Compile Update="Views\ConnectorView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\CreateContainerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\ContainersView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\ConnectorView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CreateContainerView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

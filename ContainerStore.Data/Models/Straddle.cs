@@ -1,6 +1,7 @@
 using ContainerStore.Common.Enums;
 using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.TradeUnits;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 
 namespace ContainerStore.Data.Models;
@@ -12,7 +13,7 @@ public class Straddle
         Instrument = instrument,
         Logic  = TradeLogic.Open
     };
-    
+    public Straddle() { }
     public Straddle(Instrument call, Instrument put)
     {
         CallLeg = createLeg(call);
@@ -29,6 +30,8 @@ public class Straddle
         CreatedTime = DateTime.UtcNow;
         Strike = call.Strike;
     }
+    [BsonIgnore]
+    public decimal Pnl => CallLeg.Pnl + PutLeg.Pnl;
     public decimal Strike  { get; set; }
     public DateTime ExpirationDate { get; set; }
     public TradeLogic Logic { get; set; }

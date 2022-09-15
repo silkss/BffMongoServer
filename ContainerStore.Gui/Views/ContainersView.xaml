@@ -4,16 +4,36 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ContainerStore.Gui"
+        xmlns:vm="clr-namespace:ContainerStore.Gui.ViewModels"
+        xmlns:cmd="clr-namespace:ContainerStore.Gui.Commands"
         mc:Ignorable="d"
-        Title="ContainersView" Height="450" Width="800">
+        Title="ContainersView" MinHeight="450" MinWidth="450">
+    <Window.DataContext>
+        <vm:ContainersViewModel/>
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <UniformGrid Rows="1">
-            <Button Name="btnLoadContainers" Content="Load" Click="loadContainers"/>
+            <Button Content="Refresh"/>
+            <Button Content="Create" CommandParameter="">
+                <Button.Command>
+                    <cmd:CreateContainerViewCommand/>
+                </Button.Command>
+            </Button>
+            <Button Content="Modify"/>
+            <Button Content="Delete"/>
         </UniformGrid>
-        <DataGrid Name="dgContainers" Grid.Row="1"/>
+        <DataGrid ItemsSource="{Binding Containers}" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
+                <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>
+                <DataGridTextColumn Header="OpenStrike"/>
+                <DataGridTextColumn Header="OpenPnl"/>
+                <DataGridTextColumn Header="ToalPnl" Binding="{Binding TotalPnl}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

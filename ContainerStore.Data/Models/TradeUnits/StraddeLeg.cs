@@ -1,15 +1,13 @@
 using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.TradeUnits.Base;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ContainerStore.Data.Models.TradeUnits;
 
 public class StraddleLeg : TradeUnit
 {
-    public StraddleLeg AddClosure(Instrument instrument)
-    {
-        Closure = new Closure(instrument);
-        return this;
-    }
+    [BsonIgnore]
+    public override decimal Pnl => base.Pnl + (Closure?.Pnl ?? 0);
     public Closure Closure { get; set; }
     public decimal OpenPrice { get; set; }
     public override void OnOrderFilled(int orderId)
@@ -25,5 +23,10 @@ public class StraddleLeg : TradeUnit
             }
         }
         OpenOrder = null;
+    }
+    public StraddleLeg AddClosure(Instrument instrument)
+    {
+        Closure = new Closure(instrument);
+        return this;
     }
 }

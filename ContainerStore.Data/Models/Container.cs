@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ContainerStore.Data.Models.Instruments;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -44,6 +45,8 @@ public class Container
     /// </summary>
     public int ClosurePriceGapProcent { get; set; } = 110;
 
+    [BsonIgnore]
+    public decimal Pnl => Straddles.Sum(s => s.Pnl);
     public int OrderPriceShift { get; set; } = 2;
     public List<Straddle> Straddles { get; private set; } = new();
 

@@ -1,20 +1,25 @@
 ﻿using ContainerStore.Common;
 using ContainerStore.Common.Enums;
-using ContainerStore.Common.Helpers;
 using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.Transactions;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ContainerStore.Data.Models.TradeUnits.Base;
 
 public abstract class TradeUnit : IOrderHolder
 {
     private readonly object _transactionLock = new();
-
+    public TradeUnit()
+    {
+        _transactionLock = new object();
+    }
+    public TradeLogic Logic { get; set; }
     public Instrument Instrument { get; set; }
     public int Volume { get; set; } = 1;
+    [BsonIgnore]
     public int Position
     {
         get
@@ -34,11 +39,27 @@ public abstract class TradeUnit : IOrderHolder
             return Direction == Directions.Sell ? -position : position;
         }
     }
-    public TradeUnit()
+    [BsonIgnore]
+    public virtual decimal Pnl
     {
-        _transactionLock = new object();
+        get
+        {
+            var pos = Position;
+            decimal pnl = 0m;
+            if (Transactions == null) return pnl;
+            
+            lock (_transactionLock)
+            {
+                pnl = Transactions.Sum(o => o.Direction == Directions.Buy 
+                    ? -o.FilledQuantity * o.AvgFilledPrice 
+                    : o.FilledQuantity * o.AvgFilledPrice) + (Instrument != null 
+                        ? Instrument.TradablePrice(CloseDirection()) * pos 
+                        : 0);
+            }
+            return pnl;
+        }
     }
-    public TradeLogic Logic { get; set; }
+
     [BsonIgnore]
     public Transaction? OpenOrder { get; set; }
     public List<Transaction>? Transactions { get; private set; }
