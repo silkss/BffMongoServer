@@ -2,9 +2,10 @@
 using ContainerStore.Common.Helpers;
 using ContainerStore.Connectors.Converters.Ib;
 using ContainerStore.Connectors.Ib.Caches;
-using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.Accounts;
+using ContainerStore.Data.Models.Events;
 using ContainerStore.Data.Models.Instruments;
+using ContainerStore.Data.Models.Instruments.PriceRules;
 using ContainerStore.Data.Models.Transactions;
 using IBApi;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,7 @@ internal class IbCallbacks : DefaultEWrapper
 	private readonly RequestInstrumentCache _requestInstrument;
 	private readonly Dictionary<int, OptionChain> _optionChains;
 	private readonly OpenOrdersCache _openOrdersCache;
+	private readonly Dictionary<int, List<PriceBorder>> _marketRules;
 
 	private void onPriceChanged(PriceChangedEventArgs args)
 	{
@@ -34,17 +36,41 @@ internal class IbCallbacks : DefaultEWrapper
 
     public IbCallbacks(
 		ILogger<IbConnector> logger, RequestInstrumentCache requestInstrument, 
-		Dictionary<int, OptionChain> optionChains, OpenOrdersCache openOrdersCache)
+		Dictionary<int, OptionChain> optionChains, OpenOrdersCache openOrdersCache,
+		Dictionary<int, List<PriceBorder>> marketRules)
 	{
 		_logger = logger;
 		_requestInstrument = requestInstrument;
 		_optionChains = optionChains;
 		_openOrdersCache = openOrdersCache;
+		_marketRules = marketRules;
 	}
     public List<Account> Accounts { get; } = new();
 	public override void contractDetails(int reqId, ContractDetails contractDetails)
 	{
+		Console.WriteLine(contractDetails.MarketRuleIds);
 		_requestInstrument.Add(reqId, contractDetails.ToInstrument());
+	}
+	public override void marketRule(int marketRuleId, PriceIncrement[] priceIncrements)
+	{
+		if (_marketRules.ContainsKey(marketRuleId))
+		{
+			_marketRules[marketRuleId].Clear();
+		}
+		else
+		{
+			_marketRules[marketRuleId] = new List<PriceBorder>();
+		}
+
+		foreach (var inc in priceIncrements)
+		{
+			var price_border = new PriceBorder
+			{
+				LowEdge = Helper.ConvertDoubleToDecimal(inc.LowEdge),
+				Incriment = Helper.ConvertDoubleToDecimal(inc.Increment)
+			};
+			_marketRules[marketRuleId].Add(price_border);
+		}
 	}
 	public override void securityDefinitionOptionParameter(int reqId, string exchange, int underlyingConId, string tradingClass, string multiplier, HashSet<string> expirations, HashSet<double> strikes)
 	{
@@ -72,7 +98,7 @@ internal class IbCallbacks : DefaultEWrapper
                 var ask = new PriceChangedEventArgs();
                 ask.TickerId = tickerId;
                 ask.Price = Convert.ToDecimal(price);
-                ask.Tick = Common.Enums.Tick.Ask;
+                ask.Tick = Tick.Ask;
                 onPriceChanged(ask);
                 break;
             case TickType.BID:
@@ -82,7 +108,7 @@ internal class IbCallbacks : DefaultEWrapper
                 var bid = new PriceChangedEventArgs();
                 bid.TickerId = tickerId;
                 bid.Price = Convert.ToDecimal(price);
-                bid.Tick = Common.Enums.Tick.Bid;
+                bid.Tick = Tick.Bid;
                 onPriceChanged(bid);
                 break;
             case TickType.LAST:
@@ -92,7 +118,7 @@ internal class IbCallbacks : DefaultEWrapper
                 var last = new PriceChangedEventArgs();
                 last.TickerId = tickerId;
                 last.Price = Convert.ToDecimal(price);
-                last.Tick = Common.Enums.Tick.Last;
+                last.Tick = Tick.Last;
                 onPriceChanged(last);
                 break;
         }
@@ -160,20 +186,21 @@ internal class IbCallbacks : DefaultEWrapper
 	{
 		switch (errorCode)
 		{
-			case 110: // wrong order price.
-				break; 
             case 200: // что-то не то с запросом инструмента.
                 _requestInstrument.Add(id, null);
                 _requestInstrument.ReceivedSignal();
 				_logger.LogError($"Чтото не так с запросом инструмента.CODE:{errorCode}\nMESSAGE:{errorMsg}");
                 break;
+			case 110: // wrong order price.
 			case 10147: //не найден ордер для отмены. Будем все равно имитировать что его отменили. Хотя, скорей всего, он исполнился.
             case 201: //Ордер отклонен
             case 202: // someone cancelled order
             case 512:
                 if (_openOrdersCache.GetById(id) is Transaction canceledorder)
                 {
-                    _openOrdersCache.Remove(canceledorder);
+					_logger.LogError($"Something wrong with order: {errorMsg}");
+
+					_openOrdersCache.Remove(canceledorder);
                     canceledorder.Canceled();
                 }
                 break;

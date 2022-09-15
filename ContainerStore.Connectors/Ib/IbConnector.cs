@@ -4,12 +4,14 @@ using ContainerStore.Connectors.Converters.Ib;
 using System.Threading;
 using System.Collections.Generic;
 using IBApi;
-using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.Accounts;
 using ContainerStore.Data.Models.Instruments;
 using System;
 using ContainerStore.Common.Enums;
 using ContainerStore.Data.Models.Transactions;
+using ContainerStore.Data.Models.Instruments.PriceRules;
+using System.Linq;
+using ContainerStore.Common.Helpers;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -22,6 +24,7 @@ public class IbConnector : IConnector
     private readonly EReaderSignal _signalMonitor = new EReaderMonitorSignal();
     private readonly ILogger<IbConnector> _logger;
     private readonly Dictionary<int, OptionChain> _optionChains = new();
+    private readonly Dictionary<int, List<PriceBorder>> _marketRules = new();
     private Instrument? reqContract(Contract contract)
     {
         var reqid = _callbacks.NextOrderId++;
@@ -31,14 +34,19 @@ public class IbConnector : IConnector
         {
             _requestInstrument.WaitForResponce();
         }
-        return _requestInstrument.GetByKey(reqid);
+        var responseContract = _requestInstrument.GetByKey(reqid);
+        if (responseContract is not null )
+        {
+            ReqMarketRule(responseContract.MarketRuleId);
+        }
+        return responseContract;
     }
 
     public IbConnector(ILogger<IbConnector> logger)
 	{
         _logger = logger;
 
-		_callbacks = new IbCallbacks(_logger, _requestInstrument, _optionChains, _openOrdersCache);
+		_callbacks = new IbCallbacks(_logger, _requestInstrument, _optionChains, _openOrdersCache, _marketRules);
         _client = new EClientSocket(_callbacks, _signalMonitor);
     }
     #region Connector props
@@ -142,6 +150,7 @@ public class IbConnector : IConnector
     public IConnector RequestMarketData(Instrument instrument)
     {
         if (instrument.LastTradeDate < DateTime.Now) return this;
+        ReqMarketRule(instrument.MarketRuleId);
         _callbacks.PriceChange += instrument.OnPriceChange;
         _client.reqMktData(instrument.Id, instrument.ToIbContract(), string.Empty, false, false, null);
         return this;
@@ -155,12 +164,33 @@ public class IbConnector : IConnector
         _logger.LogError($"Нет цепочки опционов для инструмента с ID = {parentId}");
         return null;
     }
+    public void ReqMarketRule(int id)
+    {
+        _client.reqMarketRule(id);
+    }
     #endregion
     #region Transaction/Orders
-    public void SendOrder(Instrument instrument, Transaction order)
+    public void SendOrder(Instrument instrument, Transaction order, decimal price, int priceShift = 0)
     {
         order.BrokerId = _callbacks.NextOrderId++;
         _openOrdersCache.Add(order);
+        var min_tick = instrument.MinTick;
+
+        if (_marketRules.GetValueOrDefault(instrument.MarketRuleId) is List<PriceBorder> borders)
+        {
+            min_tick = borders.OrderBy(b => b.LowEdge).First(b => price > b.Incriment).Incriment;
+        }
+
+        price = Helper.RoundUp(price, min_tick);
+        if (order.Direction == Directions.Buy)
+        {
+            price += (min_tick * priceShift);
+        }
+        else
+        {
+            price -= (min_tick * priceShift);
+        }
+        order.LimitPrice = price;
         _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
     }
     public void CancelOrder(Transaction transaction)

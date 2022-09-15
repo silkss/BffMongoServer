@@ -1,9 +1,11 @@
 ﻿using ContainerStore.Common.Enums;
 using ContainerStore.Common.Helpers;
-using ContainerStore.Data.Models;
+using ContainerStore.Data.Models.Instruments;
+using ContainerStore.Data.Models.Instruments.PriceRules;
 using IBApi;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace ContainerStore.Connectors.Converters.Ib;
 
@@ -20,6 +22,7 @@ internal static class ContractToInstrument
         Currency = contract.Contract.Currency,
         TradeClass = contract.Contract.TradingClass,
         Multiplier = int.Parse(contract.Contract.Multiplier),
+        MarketRuleId = int.Parse(contract.MarketRuleIds.Split(',').First()),
         LastTradeDate = DateTime
             .ParseExact(contract.Contract.LastTradeDateOrContractMonth, "yyyyMMdd", CultureInfo.CurrentCulture),
         Strike = Helper.ConvertDoubleToDecimal(contract.Contract.Strike),

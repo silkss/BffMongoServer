@@ -11,6 +11,7 @@ using ContainerStore.Data.Models.TradeUnits;
 using ContainerStore.Data.Models.Transactions;
 using ContainerStore.WebApi.Services;
 using System;
+using ContainerStore.Data.Models.Instruments;
 
 namespace ContainerStore.Traders.Base;
 
@@ -23,13 +24,30 @@ public class Trader
 	private readonly ContainersService _containersService;
 	private readonly IHostApplicationLifetime _lifetime;
 	private bool _strated = true;
-	private void sendOrder(Instrument instrument, Transaction transaction)
+	private void sendOrder(Instrument instrument, Transaction transaction, decimal price, int priceShift = 0)
 	{
-		_connector.SendOrder(instrument, transaction);
+		_connector.SendOrder(instrument, transaction, price, priceShift);
 	}
-	private void openStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
+    private void openClosure( string account, Closure? closure, decimal limitPrice)
+    {
+        if (closure == null) return;
+		if (limitPrice == 0m) return;
+		if (closure.Logic == TradeLogic.Close)
+		{
+			closure.Logic = TradeLogic.Open;
+		}
+		if (closure.OpenOrder == null)
+		{
+			sendOrder(closure.Instrument, closure.CreateOrder(account, closure.Direction), limitPrice);
+		}
+    }
+    private void openStraddleLeg(StraddleLeg leg, string account, int orderPriceShift, int closureGapProcent)
 	{
-		if (!leg.IsDone()) return;
+		if (leg.IsDone())
+		{
+			openClosure(account, leg.Closure, leg.OpenPrice * (closureGapProcent / 100m));
+			return;
+		}
 		if (leg.Instrument == null) return;
         if (leg.Instrument.TradablePrice(leg.Direction) == 0)
         {
@@ -37,8 +55,9 @@ public class Trader
 			return;
         }
 
-		sendOrder(leg.Instrument, leg.CreateOpeningOrder(account, orderPriceShift));
+		sendOrder(leg.Instrument, leg.CreateOpeningOrder(account), leg.Instrument.TradablePrice(leg.Direction), orderPriceShift);
 	}
+	
 	private void closeStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
 	{
 		if (!leg.IsDone()) return;
@@ -48,17 +67,21 @@ public class Trader
             _logger.LogError($"{leg.Instrument.FullName}. Tradable price is 0");
             return;
         }
-        sendOrder(leg.Instrument, leg.CreateOpeningOrder(account, orderPriceShift));
+        sendOrder(leg.Instrument, 
+			leg.CreateClosingOrder(account), 
+			leg.Instrument.TradablePrice(leg.CloseDirection()), 
+			orderPriceShift);
     }
-	private void straddleLegWork(StraddleLeg leg, string account, int orderPriceShift)
+	private void straddleLegWork(StraddleLeg leg, string account, int orderPriceShift, int closurePriceProcent)
 	{
 		switch (leg.Logic)
 		{
 			case TradeLogic.Open when leg.OpenOrder == null:
-				openStraddleLeg(leg, account, orderPriceShift);
+				openStraddleLeg(leg, account, orderPriceShift, closurePriceProcent);
 				break;
 			case TradeLogic.Close when leg.OpenOrder == null:
 				closeStraddleLeg(leg, account, orderPriceShift);
+				
 				break;
 			case TradeLogic.Close when leg.OpenOrder != null:
 			case TradeLogic.Open when leg.OpenOrder != null:
@@ -80,9 +103,9 @@ public class Trader
 		foreach (var straddle in container.Straddles)
 		{
 			if (straddle.CallLeg != null) 
-				straddleLegWork(straddle.CallLeg, container.Account, container.OrderPriceShift);
+				straddleLegWork(straddle.CallLeg, container.Account, container.OrderPriceShift, container.ClosurePriceGapProcent);
 			if (straddle.PutLeg != null)
-				straddleLegWork(straddle.PutLeg, container.Account, container.OrderPriceShift);
+				straddleLegWork(straddle.PutLeg, container.Account, container.OrderPriceShift, container.ClosurePriceGapProcent);
 		}
 	}
 	public Trader(IConnector connector, ILogger<Trader> logger, ContainersService containersService, IHostApplicationLifetime lifetime)
@@ -139,16 +162,25 @@ public class Trader
 			_connector
 				.RequestMarketData(container.ParentInstrument)
 				.RequestOptionChain(container.ParentInstrument);
+
 			foreach (var straddle in container.Straddles)
 			{
 				if (straddle.CallLeg is StraddleLeg callLeg)
 				{
 					_connector.RequestMarketData(callLeg.Instrument);
+					if (callLeg.Closure is not null)
+					{
+						_connector.RequestMarketData(callLeg.Closure.Instrument);
+					}
 				}
 				if (straddle.PutLeg is StraddleLeg putLeg)
 				{
 					_connector.RequestMarketData(putLeg.Instrument);
-				}
+                    if (putLeg.Closure is not null)
+                    {
+                        _connector.RequestMarketData(putLeg.Closure.Instrument);
+                    }
+                }
 			}
 			return (true, "Контейнер добавлен!");
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ContainerStore.Data.Models.Instruments;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace ContainerStore.Data.Models;
@@ -41,7 +42,7 @@ public class Container
     /// ProcentPriceGapForSellClosure - берет процент от цены покупки основного опциона, 
     /// и на основе его высчитывает цену продажи замыкающего опциона.
     /// </summary>
-    public double ProcentPriceGapForSellClosure { get; set; } = 20;
+    public int ClosurePriceGapProcent { get; set; } = 110;
 
     public int OrderPriceShift { get; set; } = 2;
     public List<Straddle> Straddles { get; private set; } = new();

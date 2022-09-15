@@ -1,5 +1,4 @@
 ﻿using ContainerStore.Common.Enums;
-using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.Accounts;
 using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.Transactions;
@@ -30,10 +29,11 @@ public interface IConnector
     IConnector RequestOptionChain(Instrument instrument);
     IConnector RequestMarketData(Instrument instrument);
     OptionTradingClass? GetOptionTradingClass(int parentId, DateTime approximateDate);
+    void ReqMarketRule(int id);
     #endregion
 
     #region Transactions/ Orders
-    void SendOrder(Instrument instrument, Transaction order);
+    void SendOrder(Instrument instrument, Transaction order, decimal price, int priceShift);
     void CancelOrder(Transaction transaction);
     #endregion
 }

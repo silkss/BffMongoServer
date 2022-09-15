@@ -1,7 +1,7 @@
 using System;
 using ContainerStore.Common.Enums;
 
-namespace ContainerStore.Data.Models;
+namespace ContainerStore.Data.Models.Events;
 
 public class PriceChangedEventArgs : EventArgs
 {

@@ -35,25 +35,43 @@ public class McAPIController : ControllerBase
 
 		var baseCall = _connector
 			.RequestCall(container.ParentInstrument, basestrike, optionclass.ExpirationDate);
+		var closureCall = _connector
+			.RequestCall(container.ParentInstrument, closureCallStike, optionclass.ExpirationDate);
+
 		var basePut = _connector
 			.RequestPut(container.ParentInstrument, basestrike, optionclass.ExpirationDate);
+		var closurePut = _connector
+			.RequestPut(container.ParentInstrument, closurePutStrike, optionclass.ExpirationDate);
+
 		if (baseCall is null)
 		{
-			return $"не удалось запросить Call для иснтумента:\n" +
+			return $"не удалось запросить Call для ноги стредла:\n" +
 				$"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
 			 
 		}
+		if (closureCall is null)
+		{
+			return $"не удалось запросить Call для замыкания:\n" +
+				$"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
+		}
 		if (basePut is null)
 		{
-			return $"не удалось запросить Put для иснтумента:\n" +
+			return $"не удалось запросить Put для ноги стредла:\n" +
+				$"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
+		}
+		if (closurePut is null) 
+		{
+			return $"не удалось запросить Put для замыкания:\n" +
 				$"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
 		}
 
 		_connector
 			.RequestMarketData(baseCall)
-			.RequestMarketData(basePut);
+			.RequestMarketData(basePut)
+			.RequestMarketData(closureCall)
+			.RequestMarketData(closurePut);
 
-		container.AddStraddle(new Straddle(baseCall, basePut));
+		container.AddStraddle(new Straddle(baseCall, closureCall, basePut, closurePut));
 		return "Straddle добавлен.";
 	}
 	private string getCloseSignal(Container container)

@@ -1,5 +1,7 @@
 ﻿using ContainerStore.Common;
 using ContainerStore.Common.Enums;
+using ContainerStore.Common.Helpers;
+using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.Transactions;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
@@ -32,6 +34,10 @@ public abstract class TradeUnit : IOrderHolder
             return Direction == Directions.Sell ? -position : position;
         }
     }
+    public TradeUnit()
+    {
+        _transactionLock = new object();
+    }
     public TradeLogic Logic { get; set; }
     [BsonIgnore]
     public Transaction? OpenOrder { get; set; }
@@ -53,22 +59,19 @@ public abstract class TradeUnit : IOrderHolder
     };
     public bool IsDone() => Logic switch
     {
-        TradeLogic.Open => Volume > Math.Abs(Position),
+        TradeLogic.Open => Volume == Math.Abs(Position),
         TradeLogic.Close => Position == 0,
         _ => throw new ArgumentOutOfRangeException(nameof(Logic), $"Not expected direction value: {Logic}")
     };
-    public Transaction CreateOpeningOrder(string account, int orderPriceShift)
-    {
-        return CreateOrder(account, Direction, orderPriceShift);
-    }
-    public Transaction CreateOrder(string account, Directions direction, int orderPriceShift)
+    public Transaction CreateClosingOrder(string account) => CreateOrder(account, CloseDirection());
+    public Transaction CreateOpeningOrder(string account) => CreateOrder(account, Direction);
+    public Transaction CreateOrder(string account, Directions direction)
     {
         OpenOrder = new Transaction(this)
         {
             Direction = direction,
             Account = account,
             Quantity = TradableQuantity(),
-            LimitPrice = Instrument.TradablePrice(direction) + orderPriceShift * Instrument.MinTick,
         };
         if (Transactions == null)
         {

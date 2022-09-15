@@ -1,5 +1,5 @@
 ﻿using ContainerStore.Connectors;
-using ContainerStore.Data.Models;
+using ContainerStore.Data.Models.Instruments;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContainerStore.WebApi.Controllers;
