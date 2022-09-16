@@ -28,5 +28,26 @@
     <Page Update="Views\MainUC\TraderUserControl.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Styles\Button.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Styles\CheckBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Styles\DataGrid.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Styles\Label.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Styles\TabControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Styles\TextBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Styles\Variables.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

@@ -4,6 +4,17 @@
              xmlns:local="clr-namespace:ContainerStore.Gui"
              StartupUri="Views/MainView.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Styles/Variables.xaml"/>
+                <ResourceDictionary Source="/Views/Styles/Button.xaml"/>
+                <ResourceDictionary Source="/Views/Styles/CheckBox.xaml"/>
+                <ResourceDictionary Source="/Views/Styles/DataGrid.xaml"/>
+                <ResourceDictionary Source="/Views/Styles/Label.xaml"/>
+                <ResourceDictionary Source="/Views/Styles/TabControl.xaml"/>
+                <ResourceDictionary Source="/Views/Styles/TextBox.xaml"/>
+                
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

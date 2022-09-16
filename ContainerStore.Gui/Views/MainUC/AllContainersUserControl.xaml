@@ -33,7 +33,7 @@
                     CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
         </UniformGrid>
         <DataGrid x:Name="dgContainers" Grid.Row="1" CanUserAddRows="False" AutoGenerateColumns="False"
-                  ItemsSource="{Binding Containers}">
+                  ItemsSource="{Binding Containers}" Style="{StaticResource dgStyle}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
                 <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>
