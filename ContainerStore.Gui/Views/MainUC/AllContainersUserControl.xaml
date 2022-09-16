@@ -18,19 +18,26 @@
         </Grid.RowDefinitions>
         
         <UniformGrid Rows="1">
-            <Button Content="Add To Trade"/>
-            <Button Content="Refresh"/>
-            <Button Content="Create" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+            <Button Content="Add To Trade" Command="{Binding AddToTrade}"
+                    CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
+            <Button Content="Refresh" Command="{Binding Refresh}"/>
+            <Button Content="Create" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
                 <Button.Command>
                     <cmd:CreateContainerViewCommand/>
                 </Button.Command>
             </Button>
-            <Button Content="Modify"/>
-            <Button Content="Delete"/>
+            <Button Content="Modify" Command="{Binding Modify}" 
+                    CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
+            <Button Content="Delete" Command="{Binding Delete}" 
+                    CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
         </UniformGrid>
-        <DataGrid Grid.Row="1" CanUserAddRows="False" AutoGenerateColumns="False"
-                  ItemStringFormat="{Binding Containers}">
-            
+        <DataGrid x:Name="dgContainers" Grid.Row="1" CanUserAddRows="False" AutoGenerateColumns="False"
+                  ItemsSource="{Binding Containers}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
+                <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>
+            </DataGrid.Columns>
         </DataGrid>
     </Grid>
 </UserControl>

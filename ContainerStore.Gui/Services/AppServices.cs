@@ -6,6 +6,11 @@ namespace ContainerStore.Gui.Services;
 
 internal static class AppServices
 {
+    public const string TRADER_ENDPOINT = "/api/trader/";
+    public const string CONTAINER_ENDPOINT = "/api/containers/";
+    public const string CONNECTOR_ENDPOINT = "/api/connector/";
+    public const string INSTRUMENT_ENDPOINT = "api/instrument/";
+
     public readonly static HttpClient Client;
 	static AppServices()
 	{

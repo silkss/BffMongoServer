@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ContainerStore.Gui"
         xmlns:vm="clr-namespace:ContainerStore.Gui.ViewModels"
         xmlns:uc="clr-namespace:ContainerStore.Gui.Views.MainUC"
         Title="Main" MinHeight="500" MinWidth="450">
@@ -22,10 +21,10 @@
             <CheckBox IsChecked="{Binding IsConnected}" Command="{Binding Connect}"/>
         </UniformGrid>
         <TabControl Grid.Row="1">
-            <TabItem Header="TradingContainers">
+            <TabItem Header="Trading Containers">
                 <uc:TraderUserControl/>
             </TabItem>
-            <TabItem Header="All">
+            <TabItem Header="All Containers">
                 <uc:AllContainersUserControl/>
             </TabItem>
         </TabControl>

@@ -16,12 +16,17 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <UniformGrid Rows="1">
-            <Button Content="Stop"/>
+            <Button Content="Stop" Command="{Binding Stop}"
+                    CommandParameter="{Binding ElementName=dgContainersInTrade,Path=SelectedItem}"/>
             <Button Content="Details"/>
-            <Button Content="Refresh"/>
+            <Button Content="Refresh" Command="{Binding Refresh}"/>
         </UniformGrid>
-        <DataGrid Grid.Row="1">
-            
+        <DataGrid Grid.Row="1" x:Name="dgContainersInTrade"
+                  ItemsSource="{Binding ContainersInTrade}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
+                <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>
+            </DataGrid.Columns>
         </DataGrid>
     </Grid>
 </UserControl>

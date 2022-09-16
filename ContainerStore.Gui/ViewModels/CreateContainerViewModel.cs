@@ -12,14 +12,14 @@ namespace ContainerStore.Gui.ViewModels;
 
 internal class CreateContainerViewModel : ViewModel
 {
-    private const string INSTRUMENT_PATH = "api/instrument";
-    private const string CONNECTOR_PATH = "api/connector";
-    private const string CONTAINER_PATH = "api/containers";
+    private readonly string _instrumentEndpoint;// INSTRUMENT_PATH = "api/instrument";
+    private readonly string _connectorEndpoint;// CONNECTOR_PATH = "api/connector";
+    private readonly string _containerEndpoint;// CONTAINER_PATH = "api/containers";
 
     private readonly HttpClient _client;
     private async void reqAccounts()
     {
-        HttpResponseMessage response = _client.GetAsync(CONNECTOR_PATH).Result;
+        var  response = await  _client.GetAsync(_connectorEndpoint);
         if (response.IsSuccessStatusCode)
         {
             if (await response.Content.ReadAsAsync<ConnectorModel>() is ConnectorModel connector)
@@ -37,6 +37,10 @@ internal class CreateContainerViewModel : ViewModel
     }
     public CreateContainerViewModel()
     {
+        _instrumentEndpoint = AppServices.INSTRUMENT_ENDPOINT;
+        _connectorEndpoint = AppServices.CONNECTOR_ENDPOINT;
+        _containerEndpoint = AppServices.CONTAINER_ENDPOINT;
+
         _client = AppServices.Client;
 
         ReqInstrument = new LambdaCommand(onReqInstrument, canRequest);
@@ -49,7 +53,7 @@ internal class CreateContainerViewModel : ViewModel
     private void onReqInstrument(object? obj)
     {
         HttpResponseMessage response = _client
-            .GetAsync(INSTRUMENT_PATH + $"?localname={InstrumentName}&exchange={Exchange}").Result;
+            .GetAsync(_instrumentEndpoint + $"?localname={InstrumentName}&exchange={Exchange}").Result;
         if (response.IsSuccessStatusCode)
         {
             Container.ParentInstrument = response.Content.ReadAsAsync<Instrument>().Result;
@@ -60,7 +64,7 @@ internal class CreateContainerViewModel : ViewModel
     public LambdaCommand Create { get; }
     private async void onCreatedAsync(object? obj)
     {
-        var res = await _client.PostAsJsonAsync(CONTAINER_PATH, Container);
+        var res = await _client.PostAsJsonAsync(_containerEndpoint, Container);
 
         if (res.IsSuccessStatusCode)
         {

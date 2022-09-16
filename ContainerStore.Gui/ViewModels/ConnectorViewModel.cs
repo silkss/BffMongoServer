@@ -8,12 +8,12 @@ namespace ContainerStore.Gui.ViewModels;
 
 internal class ConnectorViewModel : ViewModel
 {
-    private const string PATH = "api/connector";
+	private readonly string _connectorEndpoint;
 	private readonly HttpClient _client;
 
 	private async void reqAccountInfo()
 	{
-        HttpResponseMessage response = _client.GetAsync(PATH).Result;
+        HttpResponseMessage response = await _client.GetAsync(_connectorEndpoint);
         if (response.IsSuccessStatusCode)
         {
             setProperties(await response.Content.ReadAsAsync<ConnectorModel>());
@@ -33,6 +33,7 @@ internal class ConnectorViewModel : ViewModel
     }
 	public ConnectorViewModel()
 	{
+		_connectorEndpoint = AppServices.CONNECTOR_ENDPOINT;
         _client = AppServices.Client;
 		Connect = new LambdaCommand(onConnect, canConnect);
 
@@ -86,7 +87,7 @@ internal class ConnectorViewModel : ViewModel
 			: new ConnectorModel { Host = Host, Port = Port, 
 				ClientId = ClientId, IsConnected = true };
 
-        var res = await _client.PostAsJsonAsync(PATH, model);
+        var res = await _client.PostAsJsonAsync(_connectorEndpoint, model);
 
         if (res.IsSuccessStatusCode)
         {
