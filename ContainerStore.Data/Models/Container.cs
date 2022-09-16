@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using ContainerStore.Data.Models.Instruments;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace ContainerStore.Data.Models;
 
-public class Container
+public class Container : INotifyPropertyChanged
 {
     private readonly object _lock = new();
 
@@ -14,7 +16,13 @@ public class Container
     [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
     public string? Id { get; set; }
     public string Account { get; set; }
-    public Instrument ParentInstrument { get; set; }
+
+    private Instrument _parentInstrument;
+    public Instrument ParentInstrument
+    {
+        get => _parentInstrument;
+        set => Set(ref _parentInstrument, value);
+    }
 
     public decimal TotalPnl { get; set; }
     public decimal StraddleTargetPnl { get; set; } = 300.00m;
@@ -50,6 +58,8 @@ public class Container
     public int OrderPriceShift { get; set; } = 2;
     public List<Straddle> Straddles { get; private set; } = new();
 
+    
+
     public void AddStraddle(Straddle straddle)
     {
         lock (_lock)
@@ -65,5 +75,22 @@ public class Container
         {
             straddle.Stop();
         }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    protected virtual bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (propertyName == null)
+        {
+            throw new ArgumentNullException(nameof(propertyName));
+        }
+        if (Equals(field, value)) return false;
+        field = value;
+        NotifyPropertyChanged(propertyName);
+        return true;
     }
 }

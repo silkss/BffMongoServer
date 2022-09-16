@@ -5,10 +5,13 @@
     <Compile Update="Views\ContainersView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\ConnectorView.xaml.cs">
+    <Compile Update="Views\CreateContainerView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\CreateContainerView.xaml.cs">
+    <Compile Update="Views\MainUC\AllContainersUserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\MainUC\TraderUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -16,10 +19,13 @@
     <Page Update="Views\ContainersView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\ConnectorView.xaml">
+    <Page Update="Views\CreateContainerView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\CreateContainerView.xaml">
+    <Page Update="Views\MainUC\AllContainersUserControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MainUC\TraderUserControl.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

@@ -11,6 +11,14 @@ internal class ConnectorViewModel : ViewModel
     private const string PATH = "api/connector";
 	private readonly HttpClient _client;
 
+	private async void reqAccountInfo()
+	{
+        HttpResponseMessage response = _client.GetAsync(PATH).Result;
+        if (response.IsSuccessStatusCode)
+        {
+            setProperties(await response.Content.ReadAsAsync<ConnectorModel>());
+        }
+    }
 	private void setProperties(ConnectorModel? model)
 	{
 		if (model == null)
@@ -25,15 +33,10 @@ internal class ConnectorViewModel : ViewModel
     }
 	public ConnectorViewModel()
 	{
-        _client = AppContext.Client;
-		HttpResponseMessage response = _client.GetAsync(PATH).Result;
-		if (response.IsSuccessStatusCode)
-		{
-			setProperties(response.Content.ReadAsAsync<ConnectorModel>().Result);
-		}
+        _client = AppServices.Client;
+		Connect = new LambdaCommand(onConnect, canConnect);
 
-		Connect = new LambdaCommand(onConnect);
-		Disconnect = new LambdaCommand(onDisconnect);
+		reqAccountInfo();
 	}
     #region Props
 
@@ -62,40 +65,26 @@ internal class ConnectorViewModel : ViewModel
 	public bool IsConnected
 	{
 		get => _isConnected;
-		set => Set(ref _isConnected, value);
+		set
+		{
+			if (Set(ref _isConnected, value))
+				NotifyPropertyChanged(nameof(CanConnect));
+		}
+	}
+	public bool CanConnect
+	{
+		get => !_isConnected;
 	}
     #endregion
     #region Commands
 	public LambdaCommand Connect { get; }
 	private async void onConnect(object? obj)
 	{
-        var model = new ConnectorModel
-        {
-            Host = Host,
-            Port = Port,
-            ClientId = ClientId,
-            IsConnected = true,
-        };
-
-        var client = AppContext.Client;
-        var res = await client.PostAsJsonAsync(PATH, model);
-
-        if (res.IsSuccessStatusCode)
-        {
-            model = await res.Content.ReadAsAsync<ConnectorModel>();
-            setProperties(model);
-        }
-    }
-	public LambdaCommand Disconnect { get; }
-	private async void onDisconnect(object? obj)
-	{
-        var model = new ConnectorModel
-        {
-            Host = Host,
-            Port = Port,
-            ClientId = ClientId,
-            IsConnected = false,
-        };
+		var model = IsConnected
+			? new ConnectorModel { Host = Host, Port = Port, 
+				ClientId = ClientId, IsConnected = false }
+			: new ConnectorModel { Host = Host, Port = Port, 
+				ClientId = ClientId, IsConnected = true };
 
         var res = await _client.PostAsJsonAsync(PATH, model);
 
@@ -105,5 +94,6 @@ internal class ConnectorViewModel : ViewModel
             setProperties(model);
         }
     }
+	private bool canConnect(object? obj) => !string.IsNullOrEmpty(Host);
     #endregion
 }

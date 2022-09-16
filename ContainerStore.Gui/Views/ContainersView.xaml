@@ -7,7 +7,8 @@
         xmlns:vm="clr-namespace:ContainerStore.Gui.ViewModels"
         xmlns:cmd="clr-namespace:ContainerStore.Gui.Commands"
         mc:Ignorable="d"
-        Title="ContainersView" MinHeight="450" MinWidth="450">
+        Title="ContainersView" MinHeight="450" MinWidth="450"
+        x:Name="wContainersView">
     <Window.DataContext>
         <vm:ContainersViewModel/>
     </Window.DataContext>
@@ -18,7 +19,7 @@
         </Grid.RowDefinitions>
         <UniformGrid Rows="1">
             <Button Content="Refresh"/>
-            <Button Content="Create" CommandParameter="">
+            <Button Content="Create" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
                 <Button.Command>
                     <cmd:CreateContainerViewCommand/>
                 </Button.Command>

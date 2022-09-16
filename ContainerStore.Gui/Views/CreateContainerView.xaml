@@ -4,9 +4,66 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ContainerStore.Gui.Views"
+        xmlns:vm="clr-namespace:ContainerStore.Gui.ViewModels"
         mc:Ignorable="d"
-        Title="CreateContainerView" Height="450" Width="800">
+        Title="CreateContainerView" MinHeight="450" MinWidth="400"
+        Height="450" Width="400">
+    <Window.DataContext>
+        <vm:CreateContainerViewModel/>
+    </Window.DataContext>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <UniformGrid Rows="1" Grid.Row="0">
+            <Label Content="Account" />
+            <ComboBox ItemsSource="{Binding Accounts}" SelectedItem="{Binding Container.Account}"/>
+            <!--<TextBox Text="{Binding Container.Account}"/>-->
+        </UniformGrid>
+        <UniformGrid Rows="2" Grid.Row="1">
+            <Label Content="Instrument"/>
+            <TextBox Text="{Binding InstrumentName}"/>
+            <TextBox Text="{Binding Exchange}"/>
+            <Button Content="Request" Command="{Binding ReqInstrument}"/>
+
+            <Label Content="{Binding Container.ParentInstrument.Symbol}"/>
+            <Label Content="{Binding Container.ParentInstrument.FullName}"/>
+            <Label Content="{Binding Container.ParentInstrument.Exchange}"/>
+            <Label Content="{Binding Container.ParentInstrument.LastTradeDate, StringFormat='MM.dd.yyyy'}"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="2">
+            <Label Content="StraddleTargetPnl"/>
+            <TextBox Text="{Binding Container.StraddleTargetPnl}"/>
+        </UniformGrid>
         
+        <UniformGrid Rows="1" Grid.Row="3">
+            <Label Content="StraddleLiveDays"/>
+            <TextBox Text="{Binding Container.StraddleLiveDays}"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="4">
+            <Label Content="StraddleExpirationDays"/>
+            <TextBox Text="{Binding Container.StraddleExpirationDays}"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="5">
+            <Label Content="ClosureStrikeStep"/>
+            <TextBox Text="{Binding Container.ClosureStrikeStep}"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="6">
+            <Label Content="ClosurePriceGapProcent"/>
+            <TextBox Text="{Binding Container.ClosurePriceGapProcent}"/>
+        </UniformGrid>
+        <UniformGrid Rows="1" Grid.Row="7">
+            <Label Content="OrderPriceShift"/>
+            <TextBox Text="{Binding Container.OrderPriceShift}"/>
+        </UniformGrid>
+        <Button Content="Create" Grid.Row="8" Command="{Binding Create}"/>
     </Grid>
 </Window>

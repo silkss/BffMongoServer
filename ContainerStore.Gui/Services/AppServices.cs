@@ -4,10 +4,10 @@ using System.Net.Http.Headers;
 
 namespace ContainerStore.Gui.Services;
 
-internal static class AppContext
+internal static class AppServices
 {
     public readonly static HttpClient Client;
-	static AppContext()
+	static AppServices()
 	{
 		Client = new HttpClient();
 		Client.BaseAddress = new Uri("http://localhost:5001");

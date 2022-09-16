@@ -15,7 +15,7 @@ internal class ContainersViewModel : ViewModel
     private readonly HttpClient _client;
 	public ContainersViewModel()
 	{
-		_client = AppContext.Client;
+		_client = AppServices.Client;
 
 		var res = _client.GetAsync(PATH).Result;
 		{

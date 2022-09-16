@@ -11,22 +11,4 @@ public partial class MainView : Window
     {
         InitializeComponent();
     }
-
-    private void showConnectorView(object sender, RoutedEventArgs e)
-    {
-        var connectorView = new ConnectorView
-        {
-            Owner = this,
-        };
-        connectorView.Show();
-    }
-
-    private void showContainersView(object sender, RoutedEventArgs e)
-    {
-        var view = new ContainersView
-        {
-            Owner = this,
-        };
-        view.Show();
-    }
 }
