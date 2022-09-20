@@ -27,8 +27,11 @@
                     <cmd:CreateContainerViewCommand/>
                 </Button.Command>
             </Button>
-            <Button Content="Modify" Command="{Binding Modify}" 
-                    CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
+            <Button Content="Modify" CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}">
+                <Button.Command>
+                    <cmd:ShowContainerView/>
+                </Button.Command>
+            </Button>
             <Button Content="Delete" Command="{Binding Delete}" 
                     CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
         </UniformGrid>

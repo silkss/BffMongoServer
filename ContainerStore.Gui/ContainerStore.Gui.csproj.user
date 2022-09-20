@@ -2,7 +2,10 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <Compile Update="Views\ContainersView.xaml.cs">
+    <Compile Update="Views\ContainerDetailsUserControls\BaseProperties.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\ContainerView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\CreateContainerView.xaml.cs">
@@ -16,7 +19,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\ContainersView.xaml">
+    <Page Update="Views\ContainerDetailsUserControls\BaseProperties.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\ContainerView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\CreateContainerView.xaml">
