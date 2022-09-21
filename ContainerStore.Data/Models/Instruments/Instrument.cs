@@ -59,13 +59,13 @@ public class Instrument
         Directions.Sell => Type switch
         {
             InstrumentType.Future => Last,
-            InstrumentType.Option => TheorPrice < Bid ? Bid : TheorPrice,
+            InstrumentType.Option => TheorPrice < Bid ? Bid : Helper.RoundUp(TheorPrice, MinTick),
             _ => Last,
         },
         Directions.Buy => Type switch
         {
             InstrumentType.Future => Last,
-            InstrumentType.Option => TheorPrice > Ask ? Ask : TheorPrice,
+            InstrumentType.Option => TheorPrice > Ask ? Ask : Helper.RoundUp(TheorPrice, MinTick),
             _ => Last,
         },
         _ => Last,

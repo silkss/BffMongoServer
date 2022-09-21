@@ -13,11 +13,18 @@ internal class ConnectorViewModel : ViewModel
 
 	private async void reqAccountInfo()
 	{
-        HttpResponseMessage response = await _client.GetAsync(_connectorEndpoint);
-        if (response.IsSuccessStatusCode)
-        {
-            setProperties(await response.Content.ReadAsAsync<ConnectorModel>());
-        }
+		try
+		{
+			HttpResponseMessage response = await _client.GetAsync(_connectorEndpoint);
+			if (response.IsSuccessStatusCode)
+			{
+				setProperties(await response.Content.ReadAsAsync<ConnectorModel>());
+			}
+		}
+		catch (HttpRequestException)
+		{
+			Host = "сервер не отвечает";
+		}
     }
 	private void setProperties(ConnectorModel? model)
 	{
@@ -81,13 +88,8 @@ internal class ConnectorViewModel : ViewModel
 	public LambdaCommand Connect { get; }
 	private async void onConnect(object? obj)
 	{
-		var model = new ConnectorModel 
-		{ 
-			Host = Host, 
-			Port = Port,
-			ClientId = ClientId, 
-			IsConnected = IsConnected 
-		};
+		var model = new ConnectorModel(Host, Port, ClientId);
+		model.IsConnected = IsConnected;
 
         var res = await _client.PostAsJsonAsync(_connectorEndpoint, model);
 

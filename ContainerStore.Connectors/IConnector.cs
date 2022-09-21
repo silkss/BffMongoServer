@@ -2,6 +2,7 @@
 using ContainerStore.Data.Models.Accounts;
 using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.Transactions;
+using ContainerStore.Data.ServiceModel;
 using System;
 using System.Collections.Generic;
 
@@ -10,16 +11,14 @@ namespace ContainerStore.Connectors;
 public interface IConnector
 {
     #region Connector Props
-    string Host { get; }
-    int Port { get; }
-    int ClientId { get; }
-    bool IsConnected { get; }
+    ConnectorModel GetConnectionInfo();
     IEnumerable<Account> GetAccounts();
     #endregion
     #region Connect/Disconnect
     void Connect();
     void Connect(string host, int port, int clientId);
     void Disconnect();
+    void AddConnectionChangedCallback(Action<bool> callback);
     #endregion
     #region Instruments Requests
     Instrument? RequestInstrument(string fullname, string exchange);
@@ -27,7 +26,7 @@ public interface IConnector
     Instrument? RequestCall(Instrument parent, double strike, DateTime expirationDate);
     Instrument? RequestPut(Instrument parent, double strike, DateTime expirationDate);
     IConnector RequestOptionChain(Instrument instrument);
-    IConnector RequestMarketData(Instrument instrument);
+    IConnector RequestMarketData(Instrument? instrument);
     OptionTradingClass? GetOptionTradingClass(int parentId, DateTime approximateDate);
     void ReqMarketRule(int id);
     #endregion

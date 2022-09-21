@@ -6,8 +6,7 @@ namespace ContainerStore.Data.Models.TradeUnits;
 
 public class StraddleLeg : TradeUnit
 {
-    [BsonIgnore]
-    public override decimal Pnl => base.Pnl + (Closure?.Pnl ?? 0);
+    
     public Closure Closure { get; set; }
     public decimal OpenPrice { get; set; }
     public override void OnOrderFilled(int orderId)
@@ -29,4 +28,7 @@ public class StraddleLeg : TradeUnit
         Closure = new Closure(instrument);
         return this;
     }
+    public override decimal GetPnl() => base.GetPnl() + (Closure?.GetPnl() ?? 0);
+    [BsonIgnore]
+    public override decimal CurrencyPnl => base.CurrencyPnl + (Closure?.CurrencyPnl ?? 0);
 }

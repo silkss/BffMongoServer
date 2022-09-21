@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ContainerStore.Common.Enums;
 using ContainerStore.Data.Models.Instruments;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -54,11 +55,16 @@ public class Container : INotifyPropertyChanged
     public int ClosurePriceGapProcent { get; set; } = 110;
 
     [BsonIgnore]
-    public decimal Pnl => Straddles.Sum(s => s.Pnl);
+    public decimal CurrencyPnl => Straddles.Sum(s => s.CurrencyPnl);
+    [BsonIgnore]
+    public decimal CurrencyOpenPnl => Straddles
+        .FirstOrDefault(s => s.Logic == TradeLogic.Open) is Straddle straddle
+            ? straddle.CurrencyPnl
+            : 0m;
     public int OrderPriceShift { get; set; } = 2;
     public List<Straddle> Straddles { get; private set; } = new();
+    public decimal Pnl => Straddles.Sum(s => s.GetPnl());
 
-    
 
     public void AddStraddle(Straddle straddle)
     {

@@ -19,7 +19,6 @@ public abstract class TradeUnit : IOrderHolder
     public TradeLogic Logic { get; set; }
     public Instrument Instrument { get; set; }
     public int Volume { get; set; } = 1;
-    [BsonIgnore]
     public int Position
     {
         get
@@ -39,30 +38,27 @@ public abstract class TradeUnit : IOrderHolder
             return Direction == Directions.Sell ? -position : position;
         }
     }
-    [BsonIgnore]
-    public virtual decimal Pnl
+    public virtual decimal CurrencyPnl => GetPnl() * Instrument.Multiplier;
+    public virtual decimal GetPnl() 
     {
-        get
+        var pos = Position;
+        decimal pnl = 0m;
+        if (Transactions == null) return pnl;
+
+        lock (_transactionLock)
         {
-            var pos = Position;
-            decimal pnl = 0m;
-            if (Transactions == null) return pnl;
-            
-            lock (_transactionLock)
-            {
-                pnl = Transactions.Sum(o => o.Direction == Directions.Buy 
-                    ? -o.FilledQuantity * o.AvgFilledPrice 
-                    : o.FilledQuantity * o.AvgFilledPrice) + (Instrument != null 
-                        ? Instrument.TradablePrice(CloseDirection()) * pos 
-                        : 0);
-            }
-            return pnl;
+            pnl = Transactions.Sum(o => o.Direction == Directions.Buy
+                ? -o.FilledQuantity * o.AvgFilledPrice
+                : o.FilledQuantity * o.AvgFilledPrice) + (Instrument != null
+                    ? Instrument.TradablePrice(CloseDirection()) * pos
+                    : 0);
         }
+        return pnl;
     }
 
     [BsonIgnore]
     public Transaction? OpenOrder { get; set; }
-    public List<Transaction>? Transactions { get; private set; }
+    public List<Transaction>? Transactions { get; set; }
     public Directions Direction { get; set; }
     public Directions CurrentDirection() => Logic switch 
     {

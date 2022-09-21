@@ -30,8 +30,6 @@ public class Straddle
         CreatedTime = DateTime.UtcNow;
         Strike = call.Strike;
     }
-    [BsonIgnore]
-    public decimal Pnl => CallLeg.Pnl + PutLeg.Pnl;
     public decimal Strike  { get; set; }
     public DateTime ExpirationDate { get; set; }
     public TradeLogic Logic { get; set; }
@@ -43,4 +41,7 @@ public class Straddle
         CallLeg?.Stop();
         PutLeg?.Stop();
     }
+    [BsonIgnore]
+    public decimal CurrencyPnl => CallLeg.CurrencyPnl + PutLeg.CurrencyPnl;
+    public decimal GetPnl() => CallLeg.GetPnl() + PutLeg.GetPnl();
 }

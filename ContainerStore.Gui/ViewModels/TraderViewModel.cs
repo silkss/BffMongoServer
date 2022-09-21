@@ -15,20 +15,32 @@ internal class TraderViewModel : ViewModel
 
 	private async void requestTradeContainers()
 	{
-		var res = await _client.GetAsync(_traderEndpoint);
-
-		if (!res.IsSuccessStatusCode) return;
-		if (await res.Content.ReadAsAsync<List<Container>>() is List<Container> containers)
+		try
 		{
-            App.Current.Dispatcher.Invoke(() =>
-            {
-                if (ContainersInTrade.Count > 0)
-                    ContainersInTrade.Clear();
-                foreach (var container in containers)
-                {
-                    ContainersInTrade.Add(container);
-                }
-            });
+			
+			var res = await _client.GetAsync(_traderEndpoint);
+
+			if (!res.IsSuccessStatusCode) return;
+			if (await res.Content.ReadAsAsync<List<Container>>() is List<Container> containers)
+			{
+				App.Current.Dispatcher.Invoke(() =>
+				{
+					if (ContainersInTrade.Count > 0)
+						ContainersInTrade.Clear();
+					foreach (var container in containers)
+					{
+						ContainersInTrade.Add(container);
+					}
+				});
+			}
+		}
+		catch (HttpRequestException)
+		{
+			ErrorMessage = "Не получилось устновить соединение с сервером!";
+		}
+		finally
+		{
+			ErrorMessage = "OK";
         }
 	}
 	public TraderViewModel()
@@ -42,6 +54,13 @@ internal class TraderViewModel : ViewModel
 		requestTradeContainers();
 	}
 	#region Prop
+	private string _errorMessage = "all is ok";
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		set => Set(ref _errorMessage, value);
+	}
+
 	public ObservableCollection<Container> ContainersInTrade { get; } = new();
     #endregion
     #region Command

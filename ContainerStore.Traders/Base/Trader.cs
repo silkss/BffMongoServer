@@ -12,18 +12,46 @@ using ContainerStore.Data.Models.Transactions;
 using ContainerStore.WebApi.Services;
 using System;
 using ContainerStore.Data.Models.Instruments;
+using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.IO;
 
 namespace ContainerStore.Traders.Base;
 
 public class Trader
 {
-	private readonly object _lock = new();
+	private readonly object _containersLock = new();
     private readonly List<Container> _containers = new();
 	private readonly IConnector _connector;
 	private readonly ILogger<Trader> _logger;
 	private readonly ContainersService _containersService;
 	private readonly IHostApplicationLifetime _lifetime;
 	private bool _strated = true;
+	private void onConnectionChanged(bool isConnected)
+	{
+		if (isConnected)
+		{
+			lock (_containersLock)
+			{
+				foreach (var container in _containers)
+				{
+					_connector
+						.RequestMarketData(container.ParentInstrument);
+					foreach (var straddle in container.Straddles)
+					{
+						_connector
+							.RequestMarketData(straddle.CallLeg.Instrument)
+							.RequestMarketData(straddle.CallLeg.Closure?.Instrument)
+							.RequestMarketData(straddle.PutLeg.Instrument)
+							.RequestMarketData(straddle.PutLeg.Closure?.Instrument);
+					}
+				}
+			}
+		}
+		else
+		{
+			// не знаю пока.
+		}
+	}
 	private void sendOrder(Instrument instrument, Transaction transaction, decimal price, int priceShift = 0)
 	{
 		_connector.SendOrder(instrument, transaction, price, priceShift);
@@ -90,6 +118,7 @@ public class Trader
 
 				if (leg.OpenOrder.LimitPrice > up_border || leg.OpenOrder.LimitPrice < down_border)
 				{
+					_logger.LogInformation($"order LMT price {leg.OpenOrder.LimitPrice} is out of borders: up {up_border}, down {down_border}");
 					_connector.CancelOrder(leg.OpenOrder);
 				}
 				break;
@@ -115,6 +144,8 @@ public class Trader
 		_containersService = containersService;
 		_lifetime = lifetime;
 
+		_connector.AddConnectionChangedCallback(onConnectionChanged);
+
 		_lifetime.ApplicationStopping.Register(() =>
 		{
 			_logger.LogInformation($"{DateTime.Now}::Останаваливаю торговлю!");
@@ -135,7 +166,7 @@ public class Trader
         {
             while (_strated)
             {
-                lock (_lock)
+                lock (_containersLock)
                 {
                     _containers.ForEach(c => work(c));
                 }
@@ -147,7 +178,8 @@ public class Trader
     }
 	public (bool isAdded, string message) AddToTrade(Container container)
 	{
-		lock (_lock)
+		if (!_connector.GetConnectionInfo().IsConnected) { return (false, "Not connected"); }
+		lock (_containersLock)
 		{
 			if (_containers.FirstOrDefault(c => c.Id == container.Id) is not null)
 			{
@@ -194,7 +226,7 @@ public class Trader
             _containersService.UpdateAsync(container.Id, container).GetAwaiter();
         }
 		bool res;
-		lock (_lock)
+		lock (_containersLock)
 		{
 			res = _containers.Remove(container);
 		}
@@ -203,11 +235,44 @@ public class Trader
     public Container? GetContainer(string symbol, string account)
 	{
 		Container? container = null;
-		lock (_lock)
+		lock (_containersLock)
 		{
 			container = _containers.FirstOrDefault(c => c.ParentInstrument.FullName == symbol && c.Account == account);
 		}
 		return container;
+	}
+	public bool StopContainer(string id)
+	{
+		bool removed = false;
+		Container? container = null;
+		lock (_containersLock)
+		{
+			container = _containers.FirstOrDefault(c => c.Id == id);
+			if (container != null)
+			{
+				removed = _containers.Remove(container);
+			}
+		}
+		if (container != null)
+		{
+			foreach (var straddle in container.Straddles)
+			{
+				if (straddle.CallLeg.OpenOrder != null)
+					_connector.CancelOrder(straddle.CallLeg.OpenOrder);
+
+                if (straddle.PutLeg.OpenOrder != null)
+                    _connector.CancelOrder(straddle.PutLeg.OpenOrder);
+
+                if (straddle.CallLeg.Closure != null)
+					if (straddle.CallLeg.Closure.OpenOrder != null)
+						_connector.CancelOrder(straddle.CallLeg.Closure.OpenOrder);
+
+				if (straddle.PutLeg.Closure != null)
+					if (straddle.PutLeg.Closure.OpenOrder != null)
+						_connector.CancelOrder(straddle.PutLeg.Closure.OpenOrder);
+            }
+		}
+		return removed;
 	}
 	public void Stop()
 	{

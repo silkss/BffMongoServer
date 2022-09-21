@@ -19,6 +19,7 @@ public class ContainersService
 			containerStoreDatabase.Value.DatabaseName);
 		_containersCollection = mongoDatabase.GetCollection<Container>(
 			containerStoreDatabase.Value.ContainersCollectionName);
+
 	}
     public async Task<List<Container>> GetAsync() =>
         await _containersCollection.Find(_ => true).ToListAsync();

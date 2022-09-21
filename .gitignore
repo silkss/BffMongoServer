@@ -10,5 +10,6 @@
 */.vs
 */.vscode
 
+/gui
 *.zip
 *.bak

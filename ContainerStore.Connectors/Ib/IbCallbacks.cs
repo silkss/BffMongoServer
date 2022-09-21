@@ -7,6 +7,7 @@ using ContainerStore.Data.Models.Events;
 using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.Instruments.PriceRules;
 using ContainerStore.Data.Models.Transactions;
+using ContainerStore.Data.ServiceModel;
 using IBApi;
 using Microsoft.Extensions.Logging;
 using System;
@@ -22,8 +23,10 @@ internal class IbCallbacks : DefaultEWrapper
 	private readonly Dictionary<int, OptionChain> _optionChains;
 	private readonly OpenOrdersCache _openOrdersCache;
 	private readonly Dictionary<int, List<PriceBorder>> _marketRules;
+	private readonly ConnectorModel _connectionInfo;
+    
 
-	private void onPriceChanged(PriceChangedEventArgs args)
+    private void onPriceChanged(PriceChangedEventArgs args)
 	{
 		var handler = PriceChange;
 		if (handler != null)
@@ -32,20 +35,22 @@ internal class IbCallbacks : DefaultEWrapper
 		}
 	}
 	public event EventHandler<PriceChangedEventArgs> PriceChange = delegate { };
-	public int NextOrderId { get; set; }
-
+    public event Action<bool> ConnectionChanged = delegate { };
+    public int NextOrderId { get; set; }
     public IbCallbacks(
 		ILogger<IbConnector> logger, RequestInstrumentCache requestInstrument, 
 		Dictionary<int, OptionChain> optionChains, OpenOrdersCache openOrdersCache,
-		Dictionary<int, List<PriceBorder>> marketRules)
+		Dictionary<int, List<PriceBorder>> marketRules, ConnectorModel connectionInfo)
 	{
 		_logger = logger;
 		_requestInstrument = requestInstrument;
 		_optionChains = optionChains;
 		_openOrdersCache = openOrdersCache;
 		_marketRules = marketRules;
+		_connectionInfo = connectionInfo;
 	}
-    public List<Account> Accounts { get; } = new();
+    public event Action LostConnection = delegate { };
+
 	public override void contractDetails(int reqId, ContractDetails contractDetails)
 	{
 		Console.WriteLine(contractDetails.MarketRuleIds);
@@ -146,10 +151,10 @@ internal class IbCallbacks : DefaultEWrapper
 	}
 	public override void managedAccounts(string accountsList)
 	{
-        Accounts.Clear();
+        _connectionInfo.Accounts.Clear();
 		foreach (var account in accountsList.Trim().Split(','))
 		{
-            Accounts.Add(new Account { Name = account });
+            _connectionInfo.Accounts.Add(new Account { Name = account });
 		}
 	}
 	public override void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
@@ -191,10 +196,19 @@ internal class IbCallbacks : DefaultEWrapper
                 _requestInstrument.ReceivedSignal();
 				_logger.LogError($"Чтото не так с запросом инструмента.CODE:{errorCode}\nMESSAGE:{errorMsg}");
                 break;
-			case 110: // wrong order price.
-			case 10147: //не найден ордер для отмены. Будем все равно имитировать что его отменили. Хотя, скорей всего, он исполнился.
-            case 201: //Ордер отклонен
-            case 202: // someone cancelled order
+			case 2106:  // Connected!
+				_connectionInfo.IsConnected = true;
+				ConnectionChanged?.Invoke(true);
+				break;
+            case 504:	// NotCOnnected
+				_logger.LogError("NOT CONNECTED!");
+				_connectionInfo.IsConnected = false;
+                ConnectionChanged?.Invoke(false);
+                break;
+            case 110:	// wrong order price.
+			case 10147:	// не найден ордер для отмены. Будем все равно имитировать что его отменили. Хотя, скорей всего, он исполнился.
+            case 201:	// ордер отклонен
+            case 202:	// someone cancelled order
             case 512:
                 if (_openOrdersCache.GetById(id) is Transaction canceledorder)
                 {

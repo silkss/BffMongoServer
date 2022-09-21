@@ -1,7 +1,6 @@
 ﻿using ContainerStore.Data.Models;
 using ContainerStore.Traders.Base;
 using ContainerStore.WebApi.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -39,4 +38,6 @@ public class TraderController : ControllerBase
         return Ok(result.message);
     }
 
+    [HttpDelete("{id:length(24)}")]
+    public IActionResult Stop(string id) => _trader.StopContainer(id) ? Ok() : NotFound();
 }
