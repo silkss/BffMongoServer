@@ -55,5 +55,8 @@
     <Page Update="Views\Styles\Variables.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Templates\StraddleTemplate.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

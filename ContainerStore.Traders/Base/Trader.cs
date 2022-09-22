@@ -14,6 +14,7 @@ using System;
 using ContainerStore.Data.Models.Instruments;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.IO;
+using ContainerStore.Traders.Helpers;
 
 namespace ContainerStore.Traders.Base;
 
@@ -85,7 +86,6 @@ public class Trader
 
 		sendOrder(leg.Instrument, leg.CreateOpeningOrder(account), leg.Instrument.TradablePrice(leg.Direction), orderPriceShift);
 	}
-	
 	private void closeStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
 	{
 		if (!leg.IsDone()) return;
@@ -109,7 +109,6 @@ public class Trader
 				break;
 			case TradeLogic.Close when leg.OpenOrder == null:
 				closeStraddleLeg(leg, account, orderPriceShift);
-				
 				break;
 			case TradeLogic.Close when leg.OpenOrder != null:
 			case TradeLogic.Open when leg.OpenOrder != null:
@@ -131,6 +130,14 @@ public class Trader
 		if (container.ParentInstrument == null) return;
 		foreach (var straddle in container.Straddles)
 		{
+			if (straddle.Logic == TradeLogic.Open)
+			{
+
+			}
+			else
+			{
+
+			}
 			if (straddle.CallLeg != null) 
 				straddleLegWork(straddle.CallLeg, container.Account, container.OrderPriceShift, container.ClosurePriceGapProcent);
 			if (straddle.PutLeg != null)
@@ -154,6 +161,7 @@ public class Trader
 			{
 				if (c.Id == null) return;
 				c.Stop();
+				OrdersHelper.CancelContainerOrders(_connector, c);
 				_containersService.UpdateAsync(c.Id, c).GetAwaiter();
 			});
 		});
@@ -241,7 +249,7 @@ public class Trader
 		}
 		return container;
 	}
-	public bool StopContainer(string id)
+	public async Task<bool> StopContainerAsync(string id)
 	{
 		bool removed = false;
 		Container? container = null;
@@ -253,26 +261,15 @@ public class Trader
 				removed = _containers.Remove(container);
 			}
 		}
-		if (container != null)
+		if (container == null) return removed;
+		
+		foreach (var straddle in container.Straddles)
 		{
-			foreach (var straddle in container.Straddles)
-			{
-				if (straddle.CallLeg.OpenOrder != null)
-					_connector.CancelOrder(straddle.CallLeg.OpenOrder);
-
-                if (straddle.PutLeg.OpenOrder != null)
-                    _connector.CancelOrder(straddle.PutLeg.OpenOrder);
-
-                if (straddle.CallLeg.Closure != null)
-					if (straddle.CallLeg.Closure.OpenOrder != null)
-						_connector.CancelOrder(straddle.CallLeg.Closure.OpenOrder);
-
-				if (straddle.PutLeg.Closure != null)
-					if (straddle.PutLeg.Closure.OpenOrder != null)
-						_connector.CancelOrder(straddle.PutLeg.Closure.OpenOrder);
-            }
-		}
-		return removed;
+			OrdersHelper.CancelStraddleOrders(_connector, straddle);
+        }
+        if (container.Id == null) return removed;
+        await _containersService.UpdateAsync(container.Id, container);
+        return removed;
 	}
 	public void Stop()
 	{

@@ -88,8 +88,13 @@ internal class ConnectorViewModel : ViewModel
 	public LambdaCommand Connect { get; }
 	private async void onConnect(object? obj)
 	{
-		var model = new ConnectorModel(Host, Port, ClientId);
-		model.IsConnected = IsConnected;
+		var model = new ConnectorModel
+		{
+			Host = Host,
+			Port = Port,
+			ClientId = ClientId,
+			IsConnected = IsConnected
+		};
 
         var res = await _client.PostAsJsonAsync(_connectorEndpoint, model);
 

@@ -33,6 +33,6 @@ public interface IConnector
 
     #region Transactions/ Orders
     void SendOrder(Instrument instrument, Transaction order, decimal price, int priceShift);
-    void CancelOrder(Transaction transaction);
+    IConnector CancelOrder(Transaction? transaction);
     #endregion
 }

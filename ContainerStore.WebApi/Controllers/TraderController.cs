@@ -39,5 +39,5 @@ public class TraderController : ControllerBase
     }
 
     [HttpDelete("{id:length(24)}")]
-    public IActionResult Stop(string id) => _trader.StopContainer(id) ? Ok() : NotFound();
+    public async Task<IActionResult> Stop(string id) => await _trader.StopContainerAsync(id) ? Ok() : NotFound();
 }

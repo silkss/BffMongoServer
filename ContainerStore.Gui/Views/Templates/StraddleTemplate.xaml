@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ContainerStore.Data.Models;assembly=ContainerStore.Data">
+    <DataTemplate x:Key="StraddleTemplate" DataType="{x:Type local:Straddle}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="{Binding CallLeg.Instrument.FullName}"/>
+                <TextBlock Text="{Binding CallLeg.Position}"/>
+                <TextBlock Text="{Binding CallLeg.Logic}"/>
+                <TextBlock Text="{Binding CallLeg.CurrencyPnl}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="{Binding PutLeg.Instrument.FullName}"/>
+                <TextBlock Text="{Binding PutLeg.Position}"/>
+                <TextBlock Text="{Binding PutLeg.Logic}"/>
+                <TextBlock Text="{Binding PutLeg.CurrencyPnl}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

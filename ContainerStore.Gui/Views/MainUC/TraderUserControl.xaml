@@ -30,6 +30,102 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
                 <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>
+                <DataGridTextColumn Header="Opened" Binding="{Binding OpenStraddle.CreatedTime,StringFormat={}{0:dd.MM.yyyy hh:mm}}"/>
+
+                <DataGridTemplateColumn Header="OpenStraddle">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                        Text="CALL:" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="1"
+                                        Text="{Binding OpenStraddle.CallLeg.Instrument.Strike}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="2"
+                                        Text="{Binding OpenStraddle.CallLeg.Position}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="3"
+                                        Text="{Binding OpenStraddle.CallLeg.Logic}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="4"
+                                        Text="{Binding OpenStraddle.CallLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                        Text="CLOSURE:" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="1"
+                                        Text="{Binding OpenStraddle.CallLeg.Closure.Instrument.Strike}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="2"
+                                        Text="{Binding OpenStraddle.CallLeg.Closure.Position}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="3"
+                                        Text="{Binding OpenStraddle.CallLeg.Closure.Logic}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="4"
+                                        Text="{Binding OpenStraddle.CallLeg.Closure.CurrencyPnl,StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid Grid.Row="2" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                        Text="PUT:" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="1"
+                                        Text="{Binding OpenStraddle.PutLeg.Instrument.Strike}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="2"
+                                        Text="{Binding OpenStraddle.PutLeg.Position}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="3"
+                                        Text="{Binding OpenStraddle.PutLeg.Logic}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="4"
+                                        Text="{Binding OpenStraddle.PutLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid Grid.Row="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                        Text="CLOSURE:" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="1"
+                                        Text="{Binding OpenStraddle.PutLeg.Closure.Instrument.Strike}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="2"
+                                        Text="{Binding OpenStraddle.PutLeg.Closure.Position}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="3"
+                                        Text="{Binding OpenStraddle.PutLeg.Closure.Logic}" Margin="0,0,10,0"/>
+                                    <TextBlock Grid.Column="4"
+                                        Text="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Expiration" Binding="{Binding OpenStraddle.ExpirationDate, StringFormat={}{0:dd.MM.yyyy}}"/>
+                <DataGridTextColumn Header="~Close date" Binding="{Binding ApproximateCloseDate, StringFormat={}{0:dd.MM.yyyy}}"/>
+                <DataGridTextColumn Header="Target Pnl" Binding="{Binding StraddleTargetPnl}"/>
                 <DataGridTextColumn Header="Open Pnl" Binding="{Binding CurrencyOpenPnl, StringFormat={}{0:0.##}}"/>
                 <DataGridTextColumn Header="Total Pnl" Binding="{Binding CurrencyPnl, StringFormat={}{0:0.##}}"/>
             </DataGrid.Columns>

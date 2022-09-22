@@ -71,9 +71,21 @@ internal class TraderViewModel : ViewModel
 	}
 
 	public LambdaCommand Stop { get; }
-	private void onStop(object? obj)
+	private async void onStop(object? obj)
 	{
+		if (obj is Container container)
+		{
+			if (container.Id == null) return;
 
+			var res = await _client.DeleteAsync(_traderEndpoint + container.Id);
+			if (res.IsSuccessStatusCode)
+			{
+				App.Current.Dispatcher.Invoke(() =>
+				{
+					ContainersInTrade.Remove(container);
+				});
+			}
+		}
 	}
 	private bool canStop(object? obj) => obj is Container;
     #endregion

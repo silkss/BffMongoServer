@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using ContainerStore.Common.Enums;
+using ContainerStore.Data.Infrastructure.Wpf;
 using ContainerStore.Data.Models.Instruments;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace ContainerStore.Data.Models;
 
-public class Container : INotifyPropertyChanged
+public class Container : NotifyProperty
 {
     private readonly object _lock = new();
 
@@ -55,6 +55,13 @@ public class Container : INotifyPropertyChanged
     public int ClosurePriceGapProcent { get; set; } = 110;
 
     [BsonIgnore]
+    [JsonIgnore]
+    public Straddle? OpenStraddle => Straddles.FirstOrDefault(s => s.Logic == TradeLogic.Open);
+    [JsonIgnore]
+    [BsonIgnore]
+    public DateTime? ApproximateCloseDate => OpenStraddle?.CreatedTime.AddDays(StraddleLiveDays);
+    
+    [BsonIgnore]
     public decimal CurrencyPnl => Straddles.Sum(s => s.CurrencyPnl);
     [BsonIgnore]
     public decimal CurrencyOpenPnl => Straddles
@@ -65,7 +72,6 @@ public class Container : INotifyPropertyChanged
     public List<Straddle> Straddles { get; private set; } = new();
     public decimal Pnl => Straddles.Sum(s => s.GetPnl());
 
-
     public void AddStraddle(Straddle straddle)
     {
         lock (_lock)
@@ -74,6 +80,11 @@ public class Container : INotifyPropertyChanged
             Straddles.Add(straddle);
         }
     }
+
+    /// <summary>
+    ///  Дата, больше которой должен быть экспирация опциона при добавлении стрэддла.
+    /// </summary>
+    /// <returns></returns>
     public DateTime GetApproximateExpirationDate() => DateTime.Now.AddDays(StraddleExpirationDays);
     public void Stop()
     {
@@ -81,22 +92,5 @@ public class Container : INotifyPropertyChanged
         {
             straddle.Stop();
         }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-    protected virtual bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (propertyName == null)
-        {
-            throw new ArgumentNullException(nameof(propertyName));
-        }
-        if (Equals(field, value)) return false;
-        field = value;
-        NotifyPropertyChanged(propertyName);
-        return true;
     }
 }

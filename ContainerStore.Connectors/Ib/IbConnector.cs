@@ -210,9 +210,11 @@ public class IbConnector : IConnector
         order.LimitPrice = price;
         _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
     }
-    public void CancelOrder(Transaction transaction)
+    public IConnector CancelOrder(Transaction? transaction)
     {
+        if (transaction == null) return this;
         _client.cancelOrder(transaction.BrokerId, "");
+        return this;
     }
     #endregion
 }

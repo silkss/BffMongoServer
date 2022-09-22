@@ -29,13 +29,13 @@ public abstract class TradeUnit : IOrderHolder
             {
                 foreach (var order in Transactions)
                 {
-                    if (order.Direction == Direction)
+                    if (order.Direction == Directions.Buy)
                         position += order.FilledQuantity;
                     else
                         position -= order.FilledQuantity;
                 }
             }
-            return Direction == Directions.Sell ? -position : position;
+            return position;
         }
     }
     public virtual decimal CurrencyPnl => GetPnl() * Instrument.Multiplier;
