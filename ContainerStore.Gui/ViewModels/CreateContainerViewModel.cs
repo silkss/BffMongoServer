@@ -39,7 +39,7 @@ internal class CreateContainerViewModel : ViewModel
     {
         _instrumentEndpoint = AppServices.INSTRUMENT_ENDPOINT;
         _connectorEndpoint = AppServices.CONNECTOR_ENDPOINT;
-        _containerEndpoint = AppServices.CONTAINER_ENDPOINT;
+        _containerEndpoint = AppServices.CONTAINERS_ENDPOINT;
 
         _client = AppServices.Client;
 
@@ -49,6 +49,7 @@ internal class CreateContainerViewModel : ViewModel
         reqAccounts();
     }
     #region Commands
+    #region Req Instrument
     public LambdaCommand ReqInstrument { get; }
     private void onReqInstrument(object? obj)
     {
@@ -61,6 +62,8 @@ internal class CreateContainerViewModel : ViewModel
     }
     private bool canRequest(object? obj) => !string.IsNullOrEmpty(InstrumentName)
         && !string.IsNullOrEmpty(Exchange);
+    #endregion
+    #region Create
     public LambdaCommand Create { get; }
     private async void onCreatedAsync(object? obj)
     {
@@ -72,6 +75,7 @@ internal class CreateContainerViewModel : ViewModel
         }
     }
     private bool canCreate(object? obj) => Container.ParentInstrument != null && !string.IsNullOrEmpty(Container.Account);
+    #endregion
     #endregion
     #region Props
     public Container Container { get; } = new Container();

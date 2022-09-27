@@ -10,15 +10,13 @@
     <TabControl>
         <TabItem Header="Properties">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="49*"/>
-                    <ColumnDefinition Width="148*"/>
-                </Grid.ColumnDefinitions>
+                
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="26"/>
+                    <RowDefinition Height="26"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.ColumnSpan="2">
+                <StackPanel Grid.Row="0">
                     <UniformGrid Rows="1">
                         <TextBlock Text="Account"/>
                         <TextBlock Text="{Binding Container.Account}"/>
@@ -60,7 +58,9 @@
                     </UniformGrid>
 
                 </StackPanel>
-                <Button Content="Update" Grid.ColumnSpan="2" Margin="0,380,0,0" Grid.RowSpan="2"/>
+                <Button Content="Update" Click="UpdateStraddle"  Grid.Row="2"/>
+                <TextBlock Grid.Row="1"
+                    Text="{Binding Message}"/>
             </Grid>
 
         </TabItem>

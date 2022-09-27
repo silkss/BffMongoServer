@@ -46,7 +46,7 @@ internal class ContainersViewModel : ViewModel
     }
 	public ContainersViewModel()
 	{
-        _containersEndpoint = AppServices.CONTAINER_ENDPOINT;
+        _containersEndpoint = AppServices.CONTAINERS_ENDPOINT;
         _traderEndpoint = AppServices.TRADER_ENDPOINT;
 
 		_client = AppServices.Client;

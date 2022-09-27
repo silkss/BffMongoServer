@@ -80,6 +80,13 @@ public class Container : NotifyProperty
             Straddles.Add(straddle);
         }
     }
+    public void Close()
+    {
+        foreach (var straddle in Straddles)
+        {
+            straddle.Close();
+        }
+    }
 
     /// <summary>
     ///  Дата, больше которой должен быть экспирация опциона при добавлении стрэддла.

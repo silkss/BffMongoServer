@@ -12,14 +12,14 @@ using ContainerStore.Data.Models.Transactions;
 using ContainerStore.WebApi.Services;
 using System;
 using ContainerStore.Data.Models.Instruments;
-using MongoDB.Bson.Serialization.IdGenerators;
-using MongoDB.Bson.IO;
 using ContainerStore.Traders.Helpers;
 
 namespace ContainerStore.Traders.Base;
 
 public class Trader
 {
+	private const int BORDER_MUL = 4;
+
 	private readonly object _containersLock = new();
     private readonly List<Container> _containers = new();
 	private readonly IConnector _connector;
@@ -70,13 +70,38 @@ public class Trader
 			sendOrder(closure.Instrument, closure.CreateOrder(account, closure.Direction), limitPrice);
 		}
     }
-    private void openStraddleLeg(StraddleLeg leg, string account, int orderPriceShift, int closureGapProcent)
-	{
-		if (leg.IsDone())
+    private void closeClosure(Closure? closure, string account, int orderPriceShift)
+    {
+		if (closure == null) return;
+		
+		if (closure.OpenOrder == null)
 		{
-			openClosure(account, leg.Closure, leg.OpenPrice * (closureGapProcent / 100m));
+            if (closure.IsDone()) return;
+            sendOrder(closure.Instrument, 
+				closure.CreateClosingOrder(account), 
+				closure.Instrument.TradablePrice(closure.CloseDirection()));
 			return;
 		}
+		if (closure.OpenOrder != null)
+		{
+			if (closure.OpenOrder.Direction != closure.CurrentDirection())
+			{
+				_connector.CancelOrder(closure.OpenOrder);
+				return;
+			}
+            if (closure.IsDone()) return;
+            var up_border = closure.Instrument.TradablePrice(closure.CurrentDirection()) + closure.Instrument.MinTick * BORDER_MUL * orderPriceShift;
+            var down_border = closure.Instrument.TradablePrice(closure.CurrentDirection()) - closure.Instrument.MinTick * BORDER_MUL * orderPriceShift;
+
+            if (closure.OpenOrder.LimitPrice > up_border || closure.OpenOrder.LimitPrice < down_border)
+            {
+                _logger.LogInformation($"order LMT price {closure.OpenOrder.LimitPrice} is out of borders: up {up_border}, down {down_border}");
+                _connector.CancelOrder(closure.OpenOrder);
+            }
+        }
+    }
+    private void openStraddleLeg(StraddleLeg leg, string account, int orderPriceShift, int closureGapProcent)
+	{
 		if (leg.Instrument == null) return;
         if (leg.Instrument.TradablePrice(leg.Direction) == 0)
         {
@@ -88,7 +113,6 @@ public class Trader
 	}
 	private void closeStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
 	{
-		if (!leg.IsDone()) return;
 		if (leg.Instrument == null) return;
 		if (leg.Instrument.TradablePrice(leg.Direction) == 0)
 		{
@@ -100,29 +124,48 @@ public class Trader
 			leg.Instrument.TradablePrice(leg.CloseDirection()), 
 			orderPriceShift);
     }
-	private void straddleLegWork(StraddleLeg leg, string account, int orderPriceShift, int closurePriceProcent)
+
+    private void straddleLegWork(StraddleLeg leg, string account, int orderPriceShift, int closurePriceProcent)
 	{
 		switch (leg.Logic)
 		{
 			case TradeLogic.Open when leg.OpenOrder == null:
-				openStraddleLeg(leg, account, orderPriceShift, closurePriceProcent);
+				if (leg.IsDone())
+				{
+					openClosure(account, leg.Closure, leg.OpenPrice);
+				}
+				else
+				{
+                    openStraddleLeg(leg, account, orderPriceShift, closurePriceProcent);
+                }
 				break;
 			case TradeLogic.Close when leg.OpenOrder == null:
-				closeStraddleLeg(leg, account, orderPriceShift);
+				if (!leg.IsDone())
+				{
+                    closeStraddleLeg(leg, account, orderPriceShift);
+                }
+				closeClosure(leg.Closure, account, orderPriceShift);
 				break;
 			case TradeLogic.Close when leg.OpenOrder != null:
 			case TradeLogic.Open when leg.OpenOrder != null:
-				var up_border = leg.Instrument.TradablePrice(leg.CurrentDirection()) + leg.Instrument.MinTick * 2 * orderPriceShift;
-				var down_border = leg.Instrument.TradablePrice(leg.CurrentDirection()) - leg.Instrument.MinTick * 2 * orderPriceShift;
-
-				if (leg.OpenOrder.LimitPrice > up_border || leg.OpenOrder.LimitPrice < down_border)
+				if (leg.OpenOrder.Direction != leg.CurrentDirection())
 				{
-					_logger.LogInformation($"order LMT price {leg.OpenOrder.LimitPrice} is out of borders: up {up_border}, down {down_border}");
 					_connector.CancelOrder(leg.OpenOrder);
 				}
-				break;
-			default: break;
+				else
+				{
+					var up_border = leg.Instrument.TradablePrice(leg.CurrentDirection()) + leg.Instrument.MinTick * BORDER_MUL * orderPriceShift;
+					var down_border = leg.Instrument.TradablePrice(leg.CurrentDirection()) - leg.Instrument.MinTick * BORDER_MUL * orderPriceShift;
 
+					if (leg.OpenOrder.LimitPrice > up_border || leg.OpenOrder.LimitPrice < down_border)
+					{
+						_logger.LogInformation($"order LMT price {leg.OpenOrder.LimitPrice} is out of borders: up {up_border}, down {down_border}");
+						_connector.CancelOrder(leg.OpenOrder);
+					}
+                }
+                closeClosure(leg.Closure, account, orderPriceShift);
+                break;
+			default: break;
 		}
 	}
 	private void work(Container container)
@@ -130,14 +173,6 @@ public class Trader
 		if (container.ParentInstrument == null) return;
 		foreach (var straddle in container.Straddles)
 		{
-			if (straddle.Logic == TradeLogic.Open)
-			{
-
-			}
-			else
-			{
-
-			}
 			if (straddle.CallLeg != null) 
 				straddleLegWork(straddle.CallLeg, container.Account, container.OrderPriceShift, container.ClosurePriceGapProcent);
 			if (straddle.PutLeg != null)

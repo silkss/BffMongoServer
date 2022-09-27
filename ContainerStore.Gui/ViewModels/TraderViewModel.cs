@@ -64,13 +64,15 @@ internal class TraderViewModel : ViewModel
 	public ObservableCollection<Container> ContainersInTrade { get; } = new();
     #endregion
     #region Command
+    #region Refresh
     public LambdaCommand Refresh { get; }
 	private void onRefresh(object? obj) 
 	{
 		requestTradeContainers();
 	}
-
-	public LambdaCommand Stop { get; }
+    #endregion
+    #region Stop
+    public LambdaCommand Stop { get; }
 	private async void onStop(object? obj)
 	{
 		if (obj is Container container)
@@ -88,5 +90,6 @@ internal class TraderViewModel : ViewModel
 		}
 	}
 	private bool canStop(object? obj) => obj is Container;
+    #endregion
     #endregion
 }

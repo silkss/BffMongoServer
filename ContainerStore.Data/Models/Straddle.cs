@@ -41,6 +41,12 @@ public class Straddle
         CallLeg?.Stop();
         PutLeg?.Stop();
     }
+    public void Close()
+    {
+        CallLeg?.Close();
+        PutLeg?.Close();
+    }
+    public bool IsDone() => CallLeg.IsDone() || PutLeg.IsDone();
     [BsonIgnore]
     public decimal CurrencyPnl => CallLeg.CurrencyPnl + PutLeg.CurrencyPnl;
     public decimal GetPnl() => CallLeg.GetPnl() + PutLeg.GetPnl();

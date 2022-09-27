@@ -6,6 +6,7 @@ using ContainerStore.WebApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver.Core.WireProtocol.Messages.Encoders;
 using System;
 using System.Linq;
 
@@ -76,7 +77,34 @@ public class McAPIController : ControllerBase
 	}
 	private string getCloseSignal(Container container)
 	{
-		return "Ok";
+		if (container == null) return "No container";
+		string message = string.Empty;
+		if (container.CurrencyOpenPnl >= container.StraddleTargetPnl)
+		{
+			message = $"Current Pnl: {container.CurrencyOpenPnl}. TargetPnl: {container.StraddleTargetPnl}. Closing by profit";
+			container.Close();
+			return message;
+		}
+		if (container.OpenStraddle?.CreatedTime > container.ApproximateCloseDate)
+		{
+			message = $"Opened at: {container.OpenStraddle?.CreatedTime}. " +
+                $"ApproximateCloseDate: {container.ApproximateCloseDate}. Closing by close date";
+
+			container.Close();
+			return message;
+		}
+		if (container.OpenStraddle?.IsDone() is true)
+		{
+			message = $"Straddle didn't have time to open. Closing!";
+			container.Close();
+			return message;
+        }
+
+        message = $"Current Pnl: {container.CurrencyOpenPnl}. TargetPnl: {container.StraddleTargetPnl}.\n" +
+            $"Opened at: {container.OpenStraddle?.CreatedTime}." +
+            $"ApproximateCloseDate: {container.ApproximateCloseDate}.";
+
+        return message;
 	}
 	public McAPIController(ILogger<McAPIController> logger, IConnector connector, ContainersService containersService, Trader trader)
 	{
