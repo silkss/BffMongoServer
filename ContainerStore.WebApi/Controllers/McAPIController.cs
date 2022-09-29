@@ -117,6 +117,7 @@ public class McAPIController : ControllerBase
 	[HttpGet]
 	public IActionResult Get(string symbol, double price, string account, string type)
 	{
+		_logger.LogInformation($"SIGNAL::symbol:{symbol}::price:{price}::account:{account}::type:{type}");
 		var container = _trader.GetContainer(symbol, account);
 		if (container == null) return Ok();
 		type = type.Trim().ToUpper();

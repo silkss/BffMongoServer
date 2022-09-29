@@ -193,9 +193,16 @@ public class IbConnector : IConnector
         _openOrdersCache.Add(order);
         var min_tick = instrument.MinTick;
 
-        if (_marketRules.GetValueOrDefault(instrument.MarketRuleId) is List<PriceBorder> borders)
+        try
         {
-            min_tick = borders.OrderByDescending(b => b.LowEdge).First(b => price > b.Incriment).Incriment;
+            if (_marketRules.GetValueOrDefault(instrument.MarketRuleId) is List<PriceBorder> borders)
+            {
+                min_tick = borders.OrderByDescending(b => b.LowEdge).First(b => price > b.Incriment).Incriment;
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            min_tick = instrument.MinTick;
         }
 
         price = Helper.RoundUp(price, min_tick);

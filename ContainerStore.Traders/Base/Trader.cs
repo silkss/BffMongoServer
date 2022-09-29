@@ -18,7 +18,7 @@ namespace ContainerStore.Traders.Base;
 
 public class Trader
 {
-	private const int BORDER_MUL = 4;
+	private const int BORDER_MUL = 4; //количество мин тиков для отслеживания смещение цены.
 
 	private readonly object _containersLock = new();
     private readonly List<Container> _containers = new();
@@ -124,7 +124,6 @@ public class Trader
 			leg.Instrument.TradablePrice(leg.CloseDirection()), 
 			orderPriceShift);
     }
-
     private void straddleLegWork(StraddleLeg leg, string account, int orderPriceShift, int closurePriceProcent)
 	{
 		switch (leg.Logic)
@@ -302,7 +301,11 @@ public class Trader
 		{
 			OrdersHelper.CancelStraddleOrders(_connector, straddle);
         }
-        if (container.Id == null) return removed;
+		if (container.Id == null)
+		{
+			_logger.LogError("Cant save container. NO ID");
+			return removed;
+		}
         await _containersService.UpdateAsync(container.Id, container);
         return removed;
 	}

@@ -65,7 +65,7 @@ public class Instrument
         Directions.Buy => Type switch
         {
             InstrumentType.Future => Last,
-            InstrumentType.Option => TheorPrice > Ask && Ask != 0 ? Ask : Helper.RoundUp(TheorPrice, MinTick),
+            InstrumentType.Option => TheorPrice > Ask && Ask > 0 ? Ask : Helper.RoundUp(TheorPrice, MinTick),
             _ => Last,
         },
         _ => Last,

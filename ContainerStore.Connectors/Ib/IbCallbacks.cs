@@ -206,7 +206,8 @@ internal class IbCallbacks : DefaultEWrapper
                 ConnectionChanged?.Invoke(false);
                 break;
             case 110:	// wrong order price.
-			case 10147:	// не найден ордер для отмены. Будем все равно имитировать что его отменили. Хотя, скорей всего, он исполнился.
+			case 10147: // не найден ордер для отмены. Будем все равно имитировать что его отменили. Хотя, скорей всего, он исполнился.
+			case 10148: // Order already cancelled
             case 201:	// ордер отклонен
             case 202:	// someone cancelled order
             case 512:

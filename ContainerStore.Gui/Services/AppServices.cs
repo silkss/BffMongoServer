@@ -15,7 +15,7 @@ internal static class AppServices
 	static AppServices()
 	{
 		Client = new HttpClient();
-		Client.BaseAddress = new Uri("http://localhost:5001");
+		Client.BaseAddress = new Uri("http://localhost:5000");
         Client.DefaultRequestHeaders.Accept.Clear();
         Client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));

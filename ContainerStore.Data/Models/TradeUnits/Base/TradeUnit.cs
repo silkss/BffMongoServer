@@ -47,11 +47,21 @@ public abstract class TradeUnit : IOrderHolder
 
         lock (_transactionLock)
         {
-            pnl = Transactions.Sum(o => o.Direction == Directions.Buy
-                ? -o.FilledQuantity * o.AvgFilledPrice
-                : o.FilledQuantity * o.AvgFilledPrice) + (Instrument != null
-                    ? Instrument.TradablePrice(CloseDirection()) * pos
-                    : 0);
+            foreach (var trasaction in Transactions)
+            {
+                if (trasaction.Direction == Directions.Buy)
+                {
+                    pnl -= (trasaction.FilledQuantity * trasaction.AvgFilledPrice);
+                }
+                else
+                {
+                    pnl += (trasaction.FilledQuantity * trasaction.AvgFilledPrice);
+                }
+            }
+        }
+        if (Instrument != null)
+        {
+            pnl += Instrument.TradablePrice(CloseDirection()) * pos;
         }
         return pnl;
     }
