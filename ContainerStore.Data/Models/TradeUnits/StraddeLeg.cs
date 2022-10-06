@@ -28,12 +28,9 @@ public class StraddleLeg : TradeUnit
         Closure = new Closure(instrument);
         return this;
     }
-    public override decimal GetPnl() => base.GetPnl() + (Closure?.GetPnl() ?? 0);
     public void Close()
     {
         Logic = Common.Enums.TradeLogic.Close;
         Closure.Logic = Common.Enums.TradeLogic.Close;
     }
-    [BsonIgnore]
-    public override decimal CurrencyPnl => base.CurrencyPnl + (Closure?.CurrencyPnl ?? 0);
 }

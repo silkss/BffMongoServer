@@ -23,6 +23,9 @@ public class McAPIController : ControllerBase
 
 	private string getOpenSignal(Container container, double price)
 	{
+		if (container.OpenStraddle != null)
+			return "Already have open straddle";
+
 		var optionclass = _connector
 			.GetOptionTradingClass(container.ParentInstrument.Id, container.GetApproximateExpirationDate());
 		if (optionclass == null)
@@ -93,9 +96,9 @@ public class McAPIController : ControllerBase
 			container.Close();
 			return message;
 		}
-		if (container.OpenStraddle?.IsDone() is true)
+		if (container.OpenStraddle?.IsDone() is false)
 		{
-			message = $"Straddle didn't have time to open. Closing!";
+			message = $"Страддл не успел открывться. Закрываю!";
 			container.Close();
 			return message;
         }
@@ -119,7 +122,11 @@ public class McAPIController : ControllerBase
 	{
 		_logger.LogInformation($"SIGNAL::symbol:{symbol}::price:{price}::account:{account}::type:{type}");
 		var container = _trader.GetContainer(symbol, account);
-		if (container == null) return Ok();
+		if (container == null)
+		{
+			_logger.LogInformation("No container in trade.");
+			return Ok();
+		}
 		type = type.Trim().ToUpper();
 		if (type == "OPEN")
 		{

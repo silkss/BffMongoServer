@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.TradeUnits;
 using ContainerStore.Data.Models.Transactions;
 using ContainerStore.WebApi.Services;
-using System;
 using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Traders.Helpers;
 
@@ -77,9 +77,11 @@ public class Trader
 		if (closure.OpenOrder == null)
 		{
             if (closure.IsDone()) return;
-            sendOrder(closure.Instrument, 
+            sendOrder(
+				closure.Instrument, 
 				closure.CreateClosingOrder(account), 
-				closure.Instrument.TradablePrice(closure.CloseDirection()));
+				closure.Instrument.TradablePrice(closure.CloseDirection())
+				);
 			return;
 		}
 		if (closure.OpenOrder != null)
@@ -100,7 +102,7 @@ public class Trader
             }
         }
     }
-    private void openStraddleLeg(StraddleLeg leg, string account, int orderPriceShift, int closureGapProcent)
+    private void openStraddleLeg(StraddleLeg leg, string account, int orderPriceShift)
 	{
 		if (leg.Instrument == null) return;
         if (leg.Instrument.TradablePrice(leg.Direction) == 0)
@@ -131,11 +133,12 @@ public class Trader
 			case TradeLogic.Open when leg.OpenOrder == null:
 				if (leg.IsDone())
 				{
-					openClosure(account, leg.Closure, leg.OpenPrice);
+					var limitPrice = leg.OpenPrice * (closurePriceProcent / 100m);
+					openClosure(account, leg.Closure, limitPrice);
 				}
 				else
 				{
-                    openStraddleLeg(leg, account, orderPriceShift, closurePriceProcent);
+                    openStraddleLeg(leg, account, orderPriceShift);
                 }
 				break;
 			case TradeLogic.Close when leg.OpenOrder == null:

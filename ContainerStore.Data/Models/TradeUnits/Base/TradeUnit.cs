@@ -38,8 +38,9 @@ public abstract class TradeUnit : IOrderHolder
             return position;
         }
     }
-    public virtual decimal CurrencyPnl => GetPnl() * Instrument.Multiplier;
-    public virtual decimal GetPnl() 
+    [BsonIgnore]
+    public decimal CurrencyPnl => GetPnl() * Instrument.Multiplier;
+    public decimal GetPnl() 
     {
         var pos = Position;
         decimal pnl = 0m;

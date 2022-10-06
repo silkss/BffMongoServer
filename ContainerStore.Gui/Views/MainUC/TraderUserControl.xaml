@@ -26,7 +26,7 @@
             <Button Content="Refresh" Command="{Binding Refresh}"/>
         </UniformGrid>
         <DataGrid Grid.Row="1" x:Name="dgContainersInTrade"
-                  ItemsSource="{Binding ContainersInTrade}" AutoGenerateColumns="False" CanUserAddRows="False">
+                  ItemsSource="{Binding ContainersInTrade}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
                 <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>

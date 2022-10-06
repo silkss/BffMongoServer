@@ -43,11 +43,43 @@ public class Straddle
     }
     public void Close()
     {
+        Logic = TradeLogic.Close;
         CallLeg?.Close();
         PutLeg?.Close();
     }
     public bool IsDone() => CallLeg.IsDone() || PutLeg.IsDone();
     [BsonIgnore]
-    public decimal CurrencyPnl => CallLeg.CurrencyPnl + PutLeg.CurrencyPnl;
-    public decimal GetPnl() => CallLeg.GetPnl() + PutLeg.GetPnl();
+    public decimal CurrencyPnl
+    {
+        get
+        {
+            var currency_pnl = 0m;
+            currency_pnl = CallLeg.CurrencyPnl + PutLeg.CurrencyPnl;
+            if (CallLeg.Closure != null)
+            {
+                currency_pnl += CallLeg.Closure.CurrencyPnl;
+            }
+            if (PutLeg.Closure != null)
+            {
+                currency_pnl += PutLeg.Closure.CurrencyPnl;
+            }
+
+            return currency_pnl;
+        }
+    }
+    public decimal GetPnl()
+    {
+        var pnl = 0m;
+
+        pnl = CallLeg.GetPnl() + PutLeg.GetPnl();
+        if (CallLeg.Closure != null)
+        {
+            pnl += CallLeg.Closure.GetPnl();
+        }
+        if (PutLeg.Closure != null)
+        {
+            pnl += PutLeg.Closure.GetPnl();
+        }
+        return pnl;
+    }
 }

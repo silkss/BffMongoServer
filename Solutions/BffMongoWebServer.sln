@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContainerStore.Traders", ".
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IBApi", "..\IBApi\IBApi.csproj", "{82EBF65C-2F14-4E3B-97C8-6D1CE4E0254B}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BotFs.Trader", "..\BotFs.Trader\BotFs.Trader.fsproj", "{4FB9B454-8BB4-4EC1-A01D-7738C97BA6B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{82EBF65C-2F14-4E3B-97C8-6D1CE4E0254B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82EBF65C-2F14-4E3B-97C8-6D1CE4E0254B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82EBF65C-2F14-4E3B-97C8-6D1CE4E0254B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FB9B454-8BB4-4EC1-A01D-7738C97BA6B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FB9B454-8BB4-4EC1-A01D-7738C97BA6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FB9B454-8BB4-4EC1-A01D-7738C97BA6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FB9B454-8BB4-4EC1-A01D-7738C97BA6B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
