@@ -211,6 +211,7 @@ internal class IbCallbacks : DefaultEWrapper
             case 201:	// ордер отклонен
             case 202:	// someone cancelled order
             case 512:
+			case 321: // Зачемто послан ордер с нулевым объемом!
                 if (_openOrdersCache.GetById(id) is Transaction canceledorder)
                 {
 					_logger.LogError($"Something wrong with order: {errorMsg}");

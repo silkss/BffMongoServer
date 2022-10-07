@@ -22,9 +22,15 @@ public interface IConnector
     #endregion
     #region Instruments Requests
     Instrument? RequestInstrument(string fullname, string exchange);
-    Instrument? RequestDependentInstrument(InstrumentType type, OptionType optionType, Instrument parent, double strike, DateTime expDate);
-    Instrument? RequestCall(Instrument parent, double strike, DateTime expirationDate);
-    Instrument? RequestPut(Instrument parent, double strike, DateTime expirationDate);
+    IConnector RequestDependentInstrument(
+        InstrumentType type, 
+        OptionType optionType, 
+        Instrument parent, 
+        double strike,
+        DateTime expDate, 
+        out Instrument? instrument);
+    IConnector RequestCall(Instrument parent, double strike, DateTime expirationDate, out Instrument? instrument);
+    IConnector RequestPut(Instrument parent, double strike, DateTime expirationDate, out Instrument? instrument);
     IConnector RequestOptionChain(Instrument instrument);
     IConnector RequestMarketData(Instrument? instrument);
     OptionTradingClass? GetOptionTradingClass(int parentId, DateTime approximateDate);

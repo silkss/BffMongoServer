@@ -9,9 +9,9 @@ using ContainerStore.Connectors;
 using ContainerStore.Common.Enums;
 using ContainerStore.Data.Models;
 using ContainerStore.Data.Models.TradeUnits;
+using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.Transactions;
 using ContainerStore.WebApi.Services;
-using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Traders.Helpers;
 
 namespace ContainerStore.Traders.Base;
@@ -27,6 +27,7 @@ public class Trader
 	private readonly ContainersService _containersService;
 	private readonly IHostApplicationLifetime _lifetime;
 	private bool _strated = true;
+
 	private void onConnectionChanged(bool isConnected)
 	{
 		if (isConnected)

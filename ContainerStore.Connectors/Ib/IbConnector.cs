@@ -118,7 +118,8 @@ public class IbConnector : IConnector
         };
         return reqContract(contract);
     }
-    public Instrument? RequestDependentInstrument(InstrumentType type, OptionType optionType, Instrument parent, double strike, DateTime expDate)
+    public IConnector RequestDependentInstrument(InstrumentType type, OptionType optionType, Instrument parent, 
+        double strike, DateTime expDate, out Instrument? instrument)
     {
         var contract = new Contract
         {
@@ -141,12 +142,13 @@ public class IbConnector : IConnector
         {
             contract.TradingClass = "LNE";
         }
-        return reqContract(contract);
+        instrument = reqContract(contract);
+        return this;
     }
-    public Instrument? RequestCall(Instrument parent, double strike, DateTime expirationDate) =>
-        RequestDependentInstrument(InstrumentType.Option, OptionType.Call, parent, strike, expirationDate);
-    public Instrument? RequestPut(Instrument parent, double strike, DateTime expirationDate) =>
-        RequestDependentInstrument(InstrumentType.Option, OptionType.Put, parent, strike, expirationDate);
+    public IConnector RequestCall(Instrument parent, double strike, DateTime expirationDate, out Instrument? instrument) =>
+        RequestDependentInstrument(InstrumentType.Option, OptionType.Call, parent, strike, expirationDate, out instrument);
+    public IConnector RequestPut(Instrument parent, double strike, DateTime expirationDate, out Instrument? instrument) =>
+        RequestDependentInstrument(InstrumentType.Option, OptionType.Put, parent, strike, expirationDate, out instrument);
     public IConnector RequestOptionChain(Instrument instrument)
     {
         if (instrument.Type != InstrumentType.Future) return this;
