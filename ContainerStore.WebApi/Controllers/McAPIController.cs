@@ -22,8 +22,8 @@ public class McAPIController : ControllerBase
 
 	private string straddleWorkingMessage(Container container) =>
 		$"Straddle working:\n" +
-        $"Pnl: {container.CurrencyOpenPnl}\n" +
-        $"{container.OpenStraddle?.CreatedTime}";
+        $"OpenPnl: {container.CurrencyOpenPnl}\tTargetPnl: {container.CurrencyOpenPnl}\n" +
+        $"~CloseDate: {container.ApproximateCloseDate}\tCreatedDate: {container.OpenStraddle?.CreatedTime}";
 	private StraddleStatus statusOfOpenStraddle(Container container)
 	{
 		if (container.OpenStraddle is null)
@@ -139,14 +139,18 @@ public class McAPIController : ControllerBase
 	[HttpGet]
 	public IActionResult Get(string symbol, double price, string account, string type)
 	{
-		_logger.LogInformation($"SIGNAL::symbol:{symbol}::price:{price}::account:{account}::type:{type}");
+		var sb = new StringBuilder();
+		sb.AppendLine($"SIGNAL\n" +
+            $"symbol:{symbol}\tprice:{price}\taccount:{account}\ttype:{type}");
 		var container = _trader.GetContainer(symbol, account);
 		if (container is null)
 		{
-			_logger.LogInformation("No container in trade.");
-			return Ok();
+			sb.AppendLine("No container in trade.");
+            _logger.LogInformation(sb.ToString(), toTelegram: true);
+            return Ok();
 		}
-		_logger.LogInformation(parseSignal(type, container, price));
+		sb.AppendLine(parseSignal(type, container, price));
+		_logger.LogInformation(sb.ToString(), toTelegram: true);
 		return Ok();
 	}
 }

@@ -66,6 +66,7 @@ public class Trader
 		{
 			closure.Logic = TradeLogic.Open;
 		}
+		if (closure.IsDone()) return;
 		if (closure.OpenOrder == null)
 		{
 			sendOrder(closure.Instrument, closure.CreateOrder(account, closure.Direction), limitPrice);

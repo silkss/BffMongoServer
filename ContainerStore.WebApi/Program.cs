@@ -5,6 +5,7 @@ using ContainerStore.Traders.Base;
 using ContainerStore.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using TraderBot.Notifier;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.Configure<ContainerStoreDatabaseSettings>(
 builder.Services.AddSingleton<ContainersService>();
 builder.Services.AddSingleton<IConnector, IbConnector>();
 builder.Services.AddSingleton<Trader>();
+builder.Services.AddSingleton<Notifier>();
 
 var app = builder.Build();
 
