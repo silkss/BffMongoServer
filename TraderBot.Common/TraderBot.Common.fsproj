@@ -9,4 +9,8 @@
     <Compile Include="CommonTypes.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IBApi\IBApi.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -13,6 +13,7 @@ using ContainerStore.Data.Models.Instruments.PriceRules;
 using System.Linq;
 using ContainerStore.Common.Helpers;
 using ContainerStore.Data.ServiceModel;
+using TraderBot.Notifier;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -24,7 +25,7 @@ public class IbConnector : IConnector
     private readonly EClientSocket _client;
     private readonly IbCallbacks _callbacks;
     private readonly EReaderSignal _signalMonitor = new EReaderMonitorSignal();
-    private readonly ILogger<IbConnector> _logger;
+    private readonly Notifier _logger;
     private readonly Dictionary<int, List<PriceBorder>> _marketRules = new();
     private readonly Dictionary<int, OptionChain> _optionChains = new();
     private Timer? _timer;
@@ -51,7 +52,7 @@ public class IbConnector : IConnector
         if (_connectionInfo.TimeOfLastConnection.AddMinutes(1) < DateTime.Now)
             Connect(_connectionInfo.Host, _connectionInfo.Port, _connectionInfo.ClientId);
     }
-    public IbConnector(ILogger<IbConnector> logger)
+    public IbConnector(Notifier logger)
 	{
         _logger = logger;
 

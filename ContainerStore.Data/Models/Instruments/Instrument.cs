@@ -1,11 +1,8 @@
 ﻿using ContainerStore.Common.Enums;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
-using System.Diagnostics.Metrics;
-using System.Diagnostics;
 using ContainerStore.Common.Helpers;
 using ContainerStore.Data.Models.Events;
-using ContainerStore.Data.Models.Instruments.PriceRules;
 
 namespace ContainerStore.Data.Models.Instruments;
 

@@ -1,14 +1,13 @@
 ﻿using ContainerStore.Common.Enums;
 using ContainerStore.Connectors;
 using ContainerStore.Data.Models;
-using ContainerStore.Data.Models.Instruments.PriceRules;
 using ContainerStore.Traders.Base;
 using ContainerStore.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Text;
+using TraderBot.Notifier;
 
 namespace ContainerStore.WebApi.Controllers;
 
@@ -16,7 +15,7 @@ namespace ContainerStore.WebApi.Controllers;
 [ApiController]
 public class McAPIController : ControllerBase
 {
-	private readonly ILogger<McAPIController> _logger;
+	private readonly Notifier _logger;
 	private readonly IConnector _connector;
 	private readonly ContainersService _containersService;
 	private readonly Trader _trader;
@@ -129,8 +128,7 @@ public class McAPIController : ControllerBase
 			.AppendLine(openStraddle(container, price))
 			.ToString();
 
-
-    public McAPIController(ILogger<McAPIController> logger, IConnector connector, ContainersService containersService, Trader trader)
+    public McAPIController(Notifier logger, IConnector connector, ContainersService containersService, Trader trader)
 	{
 		_logger = logger;
 		_connector = connector;
@@ -151,5 +149,4 @@ public class McAPIController : ControllerBase
 		_logger.LogInformation(parseSignal(type, container, price));
 		return Ok();
 	}
-
 }

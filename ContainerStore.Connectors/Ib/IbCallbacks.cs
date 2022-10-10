@@ -9,23 +9,22 @@ using ContainerStore.Data.Models.Instruments.PriceRules;
 using ContainerStore.Data.Models.Transactions;
 using ContainerStore.Data.ServiceModel;
 using IBApi;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using TraderBot.Notifier;
 
 namespace ContainerStore.Connectors.Ib;
 
 internal class IbCallbacks : DefaultEWrapper
 {
-	private readonly ILogger<IbConnector> _logger;
+	private readonly Notifier _logger;
 	private readonly RequestInstrumentCache _requestInstrument;
 	private readonly Dictionary<int, OptionChain> _optionChains;
 	private readonly OpenOrdersCache _openOrdersCache;
 	private readonly Dictionary<int, List<PriceBorder>> _marketRules;
 	private readonly ConnectorModel _connectionInfo;
     
-
     private void onPriceChanged(PriceChangedEventArgs args)
 	{
 		var handler = PriceChange;
@@ -38,7 +37,7 @@ internal class IbCallbacks : DefaultEWrapper
     public event Action<bool> ConnectionChanged = delegate { };
     public int NextOrderId { get; set; }
     public IbCallbacks(
-		ILogger<IbConnector> logger, RequestInstrumentCache requestInstrument, 
+        Notifier logger, RequestInstrumentCache requestInstrument, 
 		Dictionary<int, OptionChain> optionChains, OpenOrdersCache openOrdersCache,
 		Dictionary<int, List<PriceBorder>> marketRules, ConnectorModel connectionInfo)
 	{

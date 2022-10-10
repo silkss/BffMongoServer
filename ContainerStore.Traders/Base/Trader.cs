@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using ContainerStore.Connectors;
 using ContainerStore.Common.Enums;
@@ -13,6 +12,7 @@ using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.Transactions;
 using ContainerStore.WebApi.Services;
 using ContainerStore.Traders.Helpers;
+using TraderBot.Notifier;
 
 namespace ContainerStore.Traders.Base;
 
@@ -23,7 +23,7 @@ public class Trader
 	private readonly object _containersLock = new();
     private readonly List<Container> _containers = new();
 	private readonly IConnector _connector;
-	private readonly ILogger<Trader> _logger;
+	private readonly Notifier _logger;
 	private readonly ContainersService _containersService;
 	private readonly IHostApplicationLifetime _lifetime;
 	private bool _strated = true;
@@ -98,7 +98,9 @@ public class Trader
 
             if (closure.OpenOrder.LimitPrice > up_border || closure.OpenOrder.LimitPrice < down_border)
             {
-                _logger.LogInformation($"order LMT price {closure.OpenOrder.LimitPrice} is out of borders: up {up_border}, down {down_border}");
+                _logger.LogInformation(
+					$"order LMT price {closure.OpenOrder.LimitPrice} is out of borders: " +
+                    $"up {up_border}, down {down_border}");
                 _connector.CancelOrder(closure.OpenOrder);
             }
         }
@@ -182,7 +184,7 @@ public class Trader
 				straddleLegWork(straddle.PutLeg, container.Account, container.OrderPriceShift, container.ClosurePriceGapProcent);
 		}
 	}
-	public Trader(IConnector connector, ILogger<Trader> logger, ContainersService containersService, IHostApplicationLifetime lifetime)
+	public Trader(IConnector connector, Notifier logger, ContainersService containersService, IHostApplicationLifetime lifetime)
 	{
 		_connector = connector;
 		_logger = logger;

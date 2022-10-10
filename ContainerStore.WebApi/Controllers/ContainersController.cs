@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TraderBot.Notifier;
 
 namespace ContainerStore.WebApi.Controllers;
 
@@ -11,10 +12,10 @@ namespace ContainerStore.WebApi.Controllers;
 [Route("api/[controller]")]
 public class ContainersController : ControllerBase
 {
-    private readonly ILogger<ContainersController> _logger;
+    private readonly Notifier _logger;
     private readonly ContainersService _containersService;
 
-    public ContainersController(ILogger<ContainersController> logger, ContainersService containersService)
+    public ContainersController(Notifier logger, ContainersService containersService)
     {
         _logger = logger;
         _containersService = containersService;
