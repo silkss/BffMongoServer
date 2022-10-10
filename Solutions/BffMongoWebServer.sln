@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContainerStore.Traders", ".
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IBApi", "..\IBApi\IBApi.csproj", "{82EBF65C-2F14-4E3B-97C8-6D1CE4E0254B}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TraderBot.Common", "..\TraderBot.Common\TraderBot.Common.fsproj", "{29D3B7E4-D3B8-4B39-96F9-726E3EB5EDD4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TraderBot.Notifier", "..\TraderBot.TelegramNotifier\TraderBot.Notifier.csproj", "{0CF22CF9-EC21-490B-B1F5-CB1B6A318C64}"
 EndProject
 Global
@@ -49,10 +47,6 @@ Global
 		{82EBF65C-2F14-4E3B-97C8-6D1CE4E0254B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82EBF65C-2F14-4E3B-97C8-6D1CE4E0254B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82EBF65C-2F14-4E3B-97C8-6D1CE4E0254B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29D3B7E4-D3B8-4B39-96F9-726E3EB5EDD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29D3B7E4-D3B8-4B39-96F9-726E3EB5EDD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29D3B7E4-D3B8-4B39-96F9-726E3EB5EDD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29D3B7E4-D3B8-4B39-96F9-726E3EB5EDD4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0CF22CF9-EC21-490B-B1F5-CB1B6A318C64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0CF22CF9-EC21-490B-B1F5-CB1B6A318C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CF22CF9-EC21-490B-B1F5-CB1B6A318C64}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -200,7 +200,7 @@ internal class IbCallbacks : DefaultEWrapper
 				ConnectionChanged?.Invoke(true);
 				break;
             case 504:	// NotCOnnected
-				_logger.LogError("NOT CONNECTED!");
+				_logger.LogError("NOT CONNECTED!", toTelegram: true);
 				_connectionInfo.IsConnected = false;
                 ConnectionChanged?.Invoke(false);
                 break;

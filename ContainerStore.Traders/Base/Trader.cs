@@ -58,7 +58,7 @@ public class Trader
 	{
 		_connector.SendOrder(instrument, transaction, price, priceShift);
 	}
-    private void openClosure( string account, Closure? closure, decimal limitPrice)
+	private void openClosure(string account, Closure? closure, decimal limitPrice)
     {
         if (closure == null) return;
 		if (limitPrice == 0m) return;
