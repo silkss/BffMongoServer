@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ContainerStore.Gui.Views.MainUC"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:vm="clr-namespace:ContainerStore.Gui.ViewModels"
              xmlns:cmd="clr-namespace:ContainerStore.Gui.Commands"
              mc:Ignorable="d" 
@@ -13,31 +14,43 @@
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="24"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
         
         <UniformGrid Rows="1">
-            <Button Content="Add To Trade" Command="{Binding AddToTrade}"
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Trade" Style="{StaticResource fixedBtn}"
+                        Command="{Binding AddToTrade}" 
+                        CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
+
+                <Button Content="Create" Style="{StaticResource fixedBtn}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+                    <Button.Command>
+                        <cmd:CreateContainerViewCommand/>
+                    </Button.Command>
+                </Button>
+                <Button Content="Modify" Style="{StaticResource fixedBtn}"
+                        CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}">
+                    <Button.Command>
+                        <cmd:ShowContainerView/>
+                    </Button.Command>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Refresh" Style="{StaticResource fixedBtn}"
+                        Command="{Binding Refresh}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                <Button Content="Delete" Style="{StaticResource fixedBtn}"
+                        Command="{Binding Delete}" 
                     CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
-            <Button Content="Refresh" Command="{Binding Refresh}"/>
-            <Button Content="Create" 
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
-                <Button.Command>
-                    <cmd:CreateContainerViewCommand/>
-                </Button.Command>
-            </Button>
-            <Button Content="Modify" CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}">
-                <Button.Command>
-                    <cmd:ShowContainerView/>
-                </Button.Command>
-            </Button>
-            <Button Content="Delete" Command="{Binding Delete}" 
-                    CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
+            </StackPanel>
         </UniformGrid>
+
         <DataGrid x:Name="dgContainers" Grid.Row="1" CanUserAddRows="False" AutoGenerateColumns="False"
-                  ItemsSource="{Binding Containers}" Style="{StaticResource dgStyle}">
+                  ItemsSource="{Binding Containers}" Style="{StaticResource dataGrid}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
                 <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>

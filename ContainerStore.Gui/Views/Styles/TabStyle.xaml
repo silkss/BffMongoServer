@@ -1,12 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style x:Key="MainTabControl" TargetType="TabControl">
+    <Style x:Key="baseTabStyle" TargetType="TabControl">
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Margin" Value="5 0 0 5"/>
     </Style>
-
-    <Style x:Key="tabItem" TargetType="TabItem">
-        
+    <Style x:Key="baseTabItem" TargetType="TabItem">
+        <Setter Property="BorderThickness" Value="0"/>
     </Style>
-    
 </ResourceDictionary>

@@ -22,8 +22,11 @@ public class McAPIController : ControllerBase
 
 	private string straddleWorkingMessage(Container container) =>
 		$"Straddle working:\n" +
-        $"OpenPnl: {container.CurrencyOpenPnl}\tTargetPnl: {container.CurrencyOpenPnl}\n" +
-        $"~CloseDate: {container.ApproximateCloseDate}\tCreatedDate: {container.OpenStraddle?.CreatedTime}";
+        $"OpenPnl: {container.CurrencyOpenPnl}\n" +
+        $"TargetPnl: {container.StraddleTargetPnl}\n" +
+		$"--------------------------\n" +
+        $"CloseDate: ~{container.ApproximateCloseDate}\n" +
+        $"CreatedDate: {container.OpenStraddle?.CreatedTime}";
 	private StraddleStatus statusOfOpenStraddle(Container container)
 	{
 		if (container.OpenStraddle is null)
@@ -140,8 +143,11 @@ public class McAPIController : ControllerBase
 	public IActionResult Get(string symbol, double price, string account, string type)
 	{
 		var sb = new StringBuilder();
-		sb.AppendLine($"SIGNAL\n" +
-            $"symbol:{symbol}\tprice:{price}\taccount:{account}\ttype:{type}");
+		sb.AppendLine($"SIGNAL:\n" +
+            $"Symbol:{symbol}\n" +
+            $"Price:{price}\n" +
+            $"Account:{account}\n" +
+            $"Type:{type}");
 		var container = _trader.GetContainer(symbol, account);
 		if (container is null)
 		{

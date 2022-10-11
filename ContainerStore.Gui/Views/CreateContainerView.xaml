@@ -13,15 +13,15 @@
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition MinHeight="40"/>
-            <RowDefinition MinHeight="80"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <UniformGrid Rows="1" Grid.Row="0">
             <Label Content="Account:" Style="{StaticResource labMainStyle}" />
@@ -32,7 +32,8 @@
             <Label Content="Instrument:" Style="{StaticResource labMainStyle}"/>
             <TextBox Text="{Binding InstrumentName}" Style="{StaticResource txtBox}"/>
             <TextBox Text="{Binding Exchange}" Style="{StaticResource txtBox}"/>
-            <Button Content="Request" Command="{Binding ReqInstrument}"/>
+            <Button Content="Request" Style="{StaticResource btn}"
+                    Command="{Binding ReqInstrument}"/>
 
             <Label Content="{Binding Container.ParentInstrument.Symbol}"/>
             <Label Content="{Binding Container.ParentInstrument.FullName}"/>
@@ -70,6 +71,7 @@
             <TextBox Text="{Binding Container.OrderPriceShift}"
                      Style="{StaticResource txtBox}"/>
         </UniformGrid>
-        <Button Content="Create" Grid.Row="8" Command="{Binding Create}"/>
+        <Button Content="Create" Grid.Row="8" Style="{StaticResource btn}"
+                Command="{Binding Create}"/>
     </Grid>
 </Window>

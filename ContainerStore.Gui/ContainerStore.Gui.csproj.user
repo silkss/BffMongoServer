@@ -37,19 +37,10 @@
     <Page Update="Views\Styles\Button.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\Styles\CheckBox.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\Styles\DataGrid.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\Styles\Label.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Styles\TabControl.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Styles\TextBox.xaml">
+    <Page Update="Views\Styles\TabStyle.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Styles\Variables.xaml">

@@ -3,30 +3,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ContainerStore.Gui.Views.MainUC"
              xmlns:vm="clr-namespace:ContainerStore.Gui.ViewModels"
-             xmlns:models="clr-namespace:ContainerStore.Data.Models;assembly=ContainerStore.Data"
-             
+             xmlns:converters="clr-namespace:ContainerStore.Gui.Converters"
+                             
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-
+             d:DesignHeight="450" d:DesignWidth="900">
+    <UserControl.Resources>
+        <converters:PnlToBoolConverter x:Key="PnlConverter"/>
+    </UserControl.Resources>
     <UserControl.DataContext>
         <vm:TraderViewModel/>
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="24"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
         <UniformGrid Rows="1">
-            <Button Content="Stop" Command="{Binding Stop}"
-                    CommandParameter="{Binding ElementName=dgContainersInTrade,Path=SelectedItem}"/>
-            <Button Content="Details"/>
-            <Button Content="Refresh" Command="{Binding Refresh}"/>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Details" Style="{StaticResource fixedBtn}"/>
+                <Button Content="Refresh" Style="{StaticResource fixedBtn}" Command="{Binding Refresh}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                <Button Content="Stop" Style="{StaticResource fixedBtn}"
+                        Command="{Binding Stop}"
+                        CommandParameter="{Binding ElementName=dgContainersInTrade,Path=SelectedItem}"/>
+            </StackPanel>
         </UniformGrid>
-        <DataGrid Grid.Row="1" x:Name="dgContainersInTrade"
-                  ItemsSource="{Binding ContainersInTrade}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+        <DataGrid Grid.Row="1" x:Name="dgContainersInTrade" 
+                  Style="{StaticResource dataGrid}"
+                  ItemsSource="{Binding ContainersInTrade}" 
+                  AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
                 <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>
@@ -51,15 +59,28 @@
                                         <ColumnDefinition Width="auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0"
-                                        Text="CALL:" Margin="0,0,10,0"/>
+                                            Text="CALL:" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="1"
-                                        Text="{Binding OpenStraddle.CallLeg.Instrument.Strike}" Margin="0,0,10,0"/>
+                                            Text="{Binding OpenStraddle.CallLeg.Instrument.Strike}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="2"
-                                        Text="{Binding OpenStraddle.CallLeg.Position}" Margin="0,0,10,0"/>
+                                            Text="{Binding OpenStraddle.CallLeg.Position}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="3"
-                                        Text="{Binding OpenStraddle.CallLeg.Logic}" Margin="0,0,10,0"/>
+                                            Text="{Binding OpenStraddle.CallLeg.Logic}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="4"
-                                        Text="{Binding OpenStraddle.CallLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+                                               Text="{Binding OpenStraddle.CallLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="red"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=Text, RelativeSource={RelativeSource AncestorType=TextBlock}, Converter={StaticResource PnlConverter}}">
+                                                        <Setter Property="Foreground" Value="Green"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <Grid.ColumnDefinitions>
@@ -78,7 +99,19 @@
                                     <TextBlock Grid.Column="3"
                                         Text="{Binding OpenStraddle.CallLeg.Closure.Logic}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="4"
-                                        Text="{Binding OpenStraddle.CallLeg.Closure.CurrencyPnl,StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+                                        Text="{Binding OpenStraddle.CallLeg.Closure.CurrencyPnl,StringFormat={}{0:0.##}}" 
+                                               Margin="0,0,10,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="red"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=Text, RelativeSource={RelativeSource AncestorType=TextBlock}, Converter={StaticResource PnlConverter}}">
+                                                        <Setter Property="Foreground" Value="Green"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </Grid>
                                 <Grid Grid.Row="2" >
                                     <Grid.ColumnDefinitions>
@@ -97,7 +130,21 @@
                                     <TextBlock Grid.Column="3"
                                         Text="{Binding OpenStraddle.PutLeg.Logic}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="4"
-                                        Text="{Binding OpenStraddle.PutLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+                                        Text="{Binding OpenStraddle.PutLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding OpenStraddle.PutLeg.CurrencyPnl, 
+                                                        Converter={StaticResource PnlConverter}}" Value="True">
+                                                        <Setter Property="Foreground" Value="Green"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                        
+
                                 </Grid>
                                 <Grid Grid.Row="3">
                                     <Grid.ColumnDefinitions>
@@ -116,7 +163,19 @@
                                     <TextBlock Grid.Column="3"
                                         Text="{Binding OpenStraddle.PutLeg.Closure.Logic}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="4"
-                                        Text="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+                                               Text="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, StringFormat={}{0:0.##}}" 
+                                               Margin="0,0,10,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="red"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, Converter={StaticResource PnlConverter}}">
+                                                        <Setter Property="Foreground" Value="Green"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
@@ -126,8 +185,31 @@
                 <DataGridTextColumn Header="Expiration" Binding="{Binding OpenStraddle.ExpirationDate, StringFormat={}{0:dd.MM.yyyy}}"/>
                 <DataGridTextColumn Header="~Close date" Binding="{Binding ApproximateCloseDate, StringFormat={}{0:dd.MM.yyyy}}"/>
                 <DataGridTextColumn Header="Target Pnl" Binding="{Binding StraddleTargetPnl}"/>
-                <DataGridTextColumn Header="Open Pnl" Binding="{Binding CurrencyOpenPnl, StringFormat={}{0:0.##}}"/>
-                <DataGridTextColumn Header="Total Pnl" Binding="{Binding CurrencyPnl, StringFormat={}{0:0.##}}"/>
+                <DataGridTextColumn Header="Open Pnl"  Binding="{Binding CurrencyOpenPnl, StringFormat={}{0:0.##}}">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Foreground" Value="Red"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TextBlock}, Path=Text,
+                                    Converter={StaticResource PnlConverter}}">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Total Pnl" Binding="{Binding CurrencyPnl, StringFormat={}{0:0.##}}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="Red"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrencyPnl, Converter={StaticResource PnlConverter}}">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">

@@ -6,27 +6,30 @@
         xmlns:vm="clr-namespace:ContainerStore.Gui.ViewModels"
         xmlns:uc="clr-namespace:ContainerStore.Gui.Views.MainUC"
         Title="Main" MinHeight="500" MinWidth="450">
-   
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="26"/>
+            <RowDefinition Height="Auto" MinHeight="34"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <UniformGrid Rows="1">
             <UniformGrid.DataContext>
                 <vm:ConnectorViewModel/>
             </UniformGrid.DataContext>
-            <TextBox Text="{Binding Host}" IsEnabled="{Binding CanConnect}" 
-                     Style="{StaticResource txtBox}" ToolTip="Host"/>
-            <TextBox Text="{Binding Port}" IsEnabled="{Binding CanConnect}" 
-                     Style="{StaticResource txtBox}" ToolTip="Port"/>
-            <TextBox Text="{Binding ClientId}" IsEnabled="{Binding CanConnect}" 
-                     Style="{StaticResource txtBox}" ToolTip="ClientId"/>
+            <TextBox Text="{Binding Host}" 
+                     IsEnabled="{Binding CanConnect}" 
+                     ToolTip="Host"/>
+            <TextBox Text="{Binding Port}" 
+                     IsEnabled="{Binding CanConnect}" 
+                     ToolTip="Port"/>
+            <TextBox Text="{Binding ClientId}" 
+                     IsEnabled="{Binding CanConnect}" 
+                     ToolTip="ClientId"/>
             <CheckBox IsChecked="{Binding IsConnected}" Command="{Binding Connect}"
-                      Style="{StaticResource checkBox}"/>
+                      />
         </UniformGrid>
-        <TabControl Grid.Row="1">
-            <TabItem Header="Trading Containers" Style="{StaticResource tabItem}">
+        <TabControl Grid.Row="1" Style="{StaticResource baseTabStyle}">
+            <TabItem Header="Trading Containers"  Style="{StaticResource baseTabItem}">
                 <uc:TraderUserControl/>
             </TabItem>
             <TabItem Header="All Containers">

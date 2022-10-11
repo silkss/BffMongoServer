@@ -8,12 +8,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Views/Styles/Variables.xaml"/>
                 <ResourceDictionary Source="/Views/Styles/Button.xaml"/>
-                <ResourceDictionary Source="/Views/Styles/CheckBox.xaml"/>
                 <ResourceDictionary Source="/Views/Styles/DataGrid.xaml"/>
-                <ResourceDictionary Source="/Views/Styles/Label.xaml"/>
-                <ResourceDictionary Source="/Views/Styles/TabControl.xaml"/>
-                <ResourceDictionary Source="/Views/Styles/TextBox.xaml"/>
-                
+                <ResourceDictionary Source="/Views/Styles/TabStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

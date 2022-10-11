@@ -3,18 +3,19 @@
     <FontFamily x:Key="MainFont">
         Segoe UI
     </FontFamily>
-    <Color x:Key="NewMainColor">
-        #00A1D2
+    <Color x:Key="MainColor">
+        #FDFAD0
     </Color>
 
-    <SolidColorBrush x:Key="MainBrush" Color="{StaticResource NewMainColor}"/>
+    <Color x:Key="SecondColor">
+        #C1BFA0
+    </Color>
 
-    <SolidColorBrush x:Key="SecondBrush" Color="White"/>
+    <SolidColorBrush x:Key="MainBrush" Color="{StaticResource MainColor}"/>
+    <SolidColorBrush x:Key="SecondBrush" Color="{StaticResource SecondColor}" Opacity=".6"/>
 
+    <DropShadowEffect x:Key="MainShadow"  ShadowDepth="0"/>
 
-    
-
-    
-
+    <Border x:Key="MainCorneredBorder" CornerRadius="6"/>
     
 </ResourceDictionary>
