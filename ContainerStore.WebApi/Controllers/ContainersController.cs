@@ -1,9 +1,9 @@
+using ContainerStore.Common.DTO;
 using ContainerStore.Data.Models;
 using ContainerStore.WebApi.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using TraderBot.Notifier;
 
 namespace ContainerStore.WebApi.Controllers;
@@ -43,15 +43,22 @@ public class ContainersController : ControllerBase
     }
 
     [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, Container updatedContainer)
+    public async Task<IActionResult> Update(string id, ContainerDTO updates)
     {
         var container = await _containersService.GetAsync(id);
         if (container is null)
         {
             return NotFound();
         }
-        updatedContainer.Id = container.Id;
-        await _containersService.UpdateAsync(id, updatedContainer);
+
+        container.Account = updates.Account;
+        container.StraddleExpirationDays = updates.StraddleExpirationDays;
+        container.ClosurePriceGapProcent = updates.ClosurePriceGapProcent;
+        container.ClosureStrikeStep = updates.ClosureStrikeStep;
+        container.StraddleLiveDays = updates.StraddleLiveDays;
+        container.OrderPriceShift = updates.OrderPriceShift;
+
+        await _containersService.UpdateAsync(id, container);
         return NoContent();
     }
 

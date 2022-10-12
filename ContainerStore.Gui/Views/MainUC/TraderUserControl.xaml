@@ -8,9 +8,6 @@
                              
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="900">
-    <UserControl.Resources>
-        <converters:PnlToBoolConverter x:Key="PnlConverter"/>
-    </UserControl.Resources>
     <UserControl.DataContext>
         <vm:TraderViewModel/>
     </UserControl.DataContext>
@@ -67,18 +64,8 @@
                                     <TextBlock Grid.Column="3"
                                             Text="{Binding OpenStraddle.CallLeg.Logic}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="4"
-                                               Text="{Binding OpenStraddle.CallLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="red"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=Text, RelativeSource={RelativeSource AncestorType=TextBlock}, Converter={StaticResource PnlConverter}}">
-                                                        <Setter Property="Foreground" Value="Green"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                               Text="{Binding OpenStraddle.CallLeg.CurrencyPnl, StringFormat={}{0:0.##}}" 
+                                               Margin="0,0,10,0"/>
 
 
                                 </Grid>
@@ -99,19 +86,8 @@
                                     <TextBlock Grid.Column="3"
                                         Text="{Binding OpenStraddle.CallLeg.Closure.Logic}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="4"
-                                        Text="{Binding OpenStraddle.CallLeg.Closure.CurrencyPnl,StringFormat={}{0:0.##}}" 
-                                               Margin="0,0,10,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="red"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=Text, RelativeSource={RelativeSource AncestorType=TextBlock}, Converter={StaticResource PnlConverter}}">
-                                                        <Setter Property="Foreground" Value="Green"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                               Text="{Binding OpenStraddle.CallLeg.Closure.CurrencyPnl,StringFormat={}{0:0.##}}" 
+                                               Margin="0,0,10,0"/>
                                 </Grid>
                                 <Grid Grid.Row="2" >
                                     <Grid.ColumnDefinitions>
@@ -130,20 +106,8 @@
                                     <TextBlock Grid.Column="3"
                                         Text="{Binding OpenStraddle.PutLeg.Logic}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="4"
-                                        Text="{Binding OpenStraddle.PutLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="Red"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding OpenStraddle.PutLeg.CurrencyPnl, 
-                                                        Converter={StaticResource PnlConverter}}" Value="True">
-                                                        <Setter Property="Foreground" Value="Green"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                        
+                                        Text="{Binding OpenStraddle.PutLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
+
 
                                 </Grid>
                                 <Grid Grid.Row="3">
@@ -164,18 +128,7 @@
                                         Text="{Binding OpenStraddle.PutLeg.Closure.Logic}" Margin="0,0,10,0"/>
                                     <TextBlock Grid.Column="4"
                                                Text="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, StringFormat={}{0:0.##}}" 
-                                               Margin="0,0,10,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="red"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, Converter={StaticResource PnlConverter}}">
-                                                        <Setter Property="Foreground" Value="Green"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                               Margin="0,0,10,0"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
@@ -185,31 +138,8 @@
                 <DataGridTextColumn Header="Expiration" Binding="{Binding OpenStraddle.ExpirationDate, StringFormat={}{0:dd.MM.yyyy}}"/>
                 <DataGridTextColumn Header="~Close date" Binding="{Binding ApproximateCloseDate, StringFormat={}{0:dd.MM.yyyy}}"/>
                 <DataGridTextColumn Header="Target Pnl" Binding="{Binding StraddleTargetPnl}"/>
-                <DataGridTextColumn Header="Open Pnl"  Binding="{Binding CurrencyOpenPnl, StringFormat={}{0:0.##}}">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Foreground" Value="Red"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TextBlock}, Path=Text,
-                                    Converter={StaticResource PnlConverter}}">
-                                    <Setter Property="Foreground" Value="Green"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Total Pnl" Binding="{Binding CurrencyPnl, StringFormat={}{0:0.##}}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="Red"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding CurrencyPnl, Converter={StaticResource PnlConverter}}">
-                                    <Setter Property="Foreground" Value="Green"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <DataGridTextColumn Header="Open Pnl"  Binding="{Binding CurrencyOpenPnl, StringFormat={}{0:0.##}}"/>
+                <DataGridTextColumn Header="Total Pnl" Binding="{Binding CurrencyPnl, StringFormat={}{0:0.##}}"/>
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">

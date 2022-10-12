@@ -1,4 +1,5 @@
-﻿using ContainerStore.Data.Models;
+﻿using ContainerStore.Common.DTO;
+using ContainerStore.Data.Models;
 using ContainerStore.Gui.Services;
 using System;
 using System.Net.Http;
@@ -15,6 +16,7 @@ public partial class ContainerView : Window
     {
         InitializeComponent();
     }
+    public bool IsContainerInTrade { get; set; }
 
     public static readonly DependencyProperty MessageProperty = DependencyProperty.Register(
         nameof(Message),
@@ -46,21 +48,34 @@ public partial class ContainerView : Window
         var client = AppServices.Client;
         var endpoint = AppServices.CONTAINERS_ENDPOINT;
 
+        var dto = new ContainerDTO
+        {
+            Account = Container.Account,
+            ClosurePriceGapProcent = Container.ClosurePriceGapProcent,
+            ClosureStrikeStep = Container.ClosureStrikeStep,
+            OrderPriceShift = Container.OrderPriceShift,
+            StraddleExpirationDays = Container.StraddleExpirationDays,
+            StraddleLiveDays = Container.StraddleLiveDays
+        };
+
         if (Container.Id != null)
         {
             try
             {
-                var res = await client.PutAsJsonAsync(endpoint + Container.Id, Container);
+                var res = await client.PutAsJsonAsync(endpoint + Container.Id, dto);
                 if (res.IsSuccessStatusCode)
                 {
-                    Message = "Update";
+                    Message = "Updated";
+                }
+                else
+                {
+                    Message = $"Error: {res.StatusCode}";
                 }
             }
             catch (Exception exp)
             {
                 Message = exp.Message;
             }
-        }
-        
+        }   
     }
 }

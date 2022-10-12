@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
 using ContainerStore.Connectors;
 using ContainerStore.Common.Enums;
 using ContainerStore.Data.Models;
@@ -13,6 +12,7 @@ using ContainerStore.Data.Models.Transactions;
 using ContainerStore.WebApi.Services;
 using ContainerStore.Traders.Helpers;
 using TraderBot.Notifier;
+using Microsoft.Extensions.Hosting;
 
 namespace ContainerStore.Traders.Base;
 

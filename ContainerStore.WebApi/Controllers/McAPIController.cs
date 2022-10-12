@@ -143,20 +143,19 @@ public class McAPIController : ControllerBase
 	public IActionResult Get(string symbol, double price, string account, string type)
 	{
 		var sb = new StringBuilder();
-		sb.AppendLine($"SIGNAL:\n" +
-            $"Symbol:{symbol}\n" +
-            $"Price:{price}\n" +
-            $"Account:{account}\n" +
-            $"Type:{type}");
+		sb.AppendLine($"SIGNAL: {symbol}-{type}");
+
 		var container = _trader.GetContainer(symbol, account);
 		if (container is null)
 		{
 			sb.AppendLine("No container in trade.");
+			sb.AppendLine($"Account: {account}. Price: {price}.");
             _logger.LogInformation(sb.ToString(), toTelegram: true);
             return Ok();
 		}
 		sb.AppendLine(parseSignal(type, container, price));
-		_logger.LogInformation(sb.ToString(), toTelegram: true);
+        sb.AppendLine($"Account: {account}. Price: {price}.");
+        _logger.LogInformation(sb.ToString(), toTelegram: true);
 		return Ok();
 	}
 }

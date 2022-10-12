@@ -34,7 +34,7 @@
                 <Button Content="Modify" Style="{StaticResource fixedBtn}"
                         CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}">
                     <Button.Command>
-                        <cmd:ShowContainerView/>
+                        <cmd:ShowContainerView IsContainerInTrade="False"/>
                     </Button.Command>
                 </Button>
             </StackPanel>

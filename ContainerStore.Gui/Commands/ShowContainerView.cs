@@ -6,6 +6,7 @@ namespace ContainerStore.Gui.Commands;
 
 internal class ShowContainerView : Command
 {
+    public bool IsContainerInTrade { get; set; }
     public override bool CanExecute(object? parameter) => parameter is Container;
 
     public override void Execute(object? parameter)
@@ -14,6 +15,7 @@ internal class ShowContainerView : Command
         {
             new ContainerView
             {
+                IsContainerInTrade = IsContainerInTrade,
                 Container = container,
                 Owner = App.Current.MainWindow,
             }.Show();
