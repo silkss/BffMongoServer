@@ -57,6 +57,7 @@ public class ContainersController : ControllerBase
         container.ClosureStrikeStep = updates.ClosureStrikeStep;
         container.StraddleLiveDays = updates.StraddleLiveDays;
         container.OrderPriceShift = updates.OrderPriceShift;
+        container.StraddleTargetPnl = updates.StraddleTargetPnl;
 
         await _containersService.UpdateAsync(id, container);
         return NoContent();

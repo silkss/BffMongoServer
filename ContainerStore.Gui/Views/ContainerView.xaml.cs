@@ -55,7 +55,8 @@ public partial class ContainerView : Window
             ClosureStrikeStep = Container.ClosureStrikeStep,
             OrderPriceShift = Container.OrderPriceShift,
             StraddleExpirationDays = Container.StraddleExpirationDays,
-            StraddleLiveDays = Container.StraddleLiveDays
+            StraddleLiveDays = Container.StraddleLiveDays,
+            StraddleTargetPnl = Container.StraddleTargetPnl
         };
 
         if (Container.Id != null)

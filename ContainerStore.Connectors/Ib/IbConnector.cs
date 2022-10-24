@@ -19,6 +19,7 @@ namespace ContainerStore.Connectors.Ib;
 
 public class IbConnector : IConnector
 {
+    private const int CHECK_CONNECTION_INTERVAL = 5; //in minutes
     private readonly RequestInstrumentCache _requestInstrument = new();
     private readonly OpenOrdersCache _openOrdersCache = new();
     private readonly ConnectorModel _connectionInfo = new();
@@ -45,12 +46,18 @@ public class IbConnector : IConnector
         }
         return responseContract;
     }
-    private void reqServerTime(object? state) => _client.reqCurrentTime();
+    private void reqServerTime(object? state)
+    {
+        _logger.LogInformation($"{DateTime.Now} request time sended.");
+        _client.reqCurrentTime();
+    }
     private void reconnect(bool isConnected)
     {
         if (isConnected) return;
         if (_connectionInfo.TimeOfLastConnection.AddMinutes(1) < DateTime.Now)
+        {
             Connect(_connectionInfo.Host, _connectionInfo.Port, _connectionInfo.ClientId);
+        }
     }
     public IbConnector(Notifier logger)
 	{
@@ -96,7 +103,9 @@ public class IbConnector : IConnector
         _client.reqMarketDataType(3);
 
         if (_timer == null)
-            _timer = new Timer(reqServerTime, null, 10000, 10000);
+            _timer = new Timer(reqServerTime, null,
+                TimeSpan.FromMinutes(CHECK_CONNECTION_INTERVAL),
+                TimeSpan.FromMinutes(CHECK_CONNECTION_INTERVAL));
     }
     public void Disconnect()
     {

@@ -4,13 +4,78 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:ContainerStore.Gui.ViewModels"
-             xmlns:converters="clr-namespace:ContainerStore.Gui.Converters"
+             xmlns:conv="clr-namespace:ContainerStore.Gui.Converters"
+             xmlns:models="clr-namespace:ContainerStore.Data.Models;assembly=ContainerStore.Data"
                              
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="900">
     <UserControl.DataContext>
         <vm:TraderViewModel/>
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <conv:PnlColorConverter x:Key="PnlColorConv"/>
+        <DataTemplate x:Key="StraddleTemplate">
+            <StackPanel Grid.Column="0">
+                <UniformGrid Rows="1">
+                    <TextBlock Text="CALL:"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.CallLeg.Instrument.Strike}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.CallLeg.Position}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.CallLeg.Logic}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.CallLeg.CurrencyPnl, StringFormat={}{0:0.##}}"
+                               Style="{StaticResource tblockDGStyle}"
+                               FontWeight="Bold"
+                               Foreground="{Binding OpenStraddle.CallLeg.CurrencyPnl, Converter={StaticResource PnlColorConv}}"/>
+                </UniformGrid>
+                <UniformGrid Rows="1">
+                    <TextBlock Text="CLOSURE:"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.CallLeg.Closure.Instrument.Strike}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.CallLeg.Closure.Position}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.CallLeg.Closure.Logic}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.CallLeg.Closure.CurrencyPnl, StringFormat={}{0:0.##}}"
+                               Style="{StaticResource tblockDGStyle}"
+                               FontWeight="Bold"
+                               Foreground="{Binding OpenStraddle.CallLeg.Closure.CurrencyPnl, Converter={StaticResource PnlColorConv}}"/>
+                </UniformGrid>
+                <UniformGrid Rows="1">
+                    <TextBlock Text="PUT:"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.PutLeg.Instrument.Strike}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.PutLeg.Position}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.PutLeg.Logic}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.PutLeg.CurrencyPnl, StringFormat={}{0:0.##}}"
+                               Style="{StaticResource tblockDGStyle}"
+                               FontWeight="Bold"
+                               Foreground="{Binding OpenStraddle.PutLeg.CurrencyPnl, Converter={StaticResource PnlColorConv}}"/>
+                </UniformGrid>
+                <UniformGrid Rows="1">
+                    <TextBlock Text="CLOSURE:"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.PutLeg.Closure.Instrument.Strike}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.PutLeg.Closure.Position}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.PutLeg.Closure.Logic}"
+                               Style="{StaticResource tblockDGStyle}"/>
+                    <TextBlock Text="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, StringFormat={}{0:0.##}}"
+                               Style="{StaticResource tblockDGStyle}"
+                               FontWeight="Bold"
+                               Foreground="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, Converter={StaticResource PnlColorConv}}"/>
+
+                </UniformGrid>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -33,113 +98,84 @@
                   ItemsSource="{Binding ContainersInTrade}" 
                   AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>
-                <DataGridTextColumn Header="Instrument" Binding="{Binding ParentInstrument.FullName}"/>
-                <DataGridTextColumn Header="Opened" Binding="{Binding OpenStraddle.CreatedTime,StringFormat={}{0:dd.MM.yyyy hh:mm}}"/>
-
-                <DataGridTemplateColumn Header="OpenStraddle">
+                <DataGridTemplateColumn Header="Account">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0"
-                                            Text="CALL:" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="1"
-                                            Text="{Binding OpenStraddle.CallLeg.Instrument.Strike}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="2"
-                                            Text="{Binding OpenStraddle.CallLeg.Position}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="3"
-                                            Text="{Binding OpenStraddle.CallLeg.Logic}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="4"
-                                               Text="{Binding OpenStraddle.CallLeg.CurrencyPnl, StringFormat={}{0:0.##}}" 
-                                               Margin="0,0,10,0"/>
-
-
-                                </Grid>
-                                <Grid Grid.Row="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0"
-                                        Text="CLOSURE:" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="1"
-                                        Text="{Binding OpenStraddle.CallLeg.Closure.Instrument.Strike}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="2"
-                                        Text="{Binding OpenStraddle.CallLeg.Closure.Position}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="3"
-                                        Text="{Binding OpenStraddle.CallLeg.Closure.Logic}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="4"
-                                               Text="{Binding OpenStraddle.CallLeg.Closure.CurrencyPnl,StringFormat={}{0:0.##}}" 
-                                               Margin="0,0,10,0"/>
-                                </Grid>
-                                <Grid Grid.Row="2" >
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0"
-                                        Text="PUT:" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="1"
-                                        Text="{Binding OpenStraddle.PutLeg.Instrument.Strike}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="2"
-                                        Text="{Binding OpenStraddle.PutLeg.Position}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="3"
-                                        Text="{Binding OpenStraddle.PutLeg.Logic}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="4"
-                                        Text="{Binding OpenStraddle.PutLeg.CurrencyPnl, StringFormat={}{0:0.##}}" Margin="0,0,10,0"/>
-
-
-                                </Grid>
-                                <Grid Grid.Row="3">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0"
-                                        Text="CLOSURE:" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="1"
-                                        Text="{Binding OpenStraddle.PutLeg.Closure.Instrument.Strike}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="2"
-                                        Text="{Binding OpenStraddle.PutLeg.Closure.Position}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="3"
-                                        Text="{Binding OpenStraddle.PutLeg.Closure.Logic}" Margin="0,0,10,0"/>
-                                    <TextBlock Grid.Column="4"
-                                               Text="{Binding OpenStraddle.PutLeg.Closure.CurrencyPnl, StringFormat={}{0:0.##}}" 
-                                               Margin="0,0,10,0"/>
-                                </Grid>
-                            </Grid>
+                            <TextBlock Text="{Binding Account}"
+                                       Style="{StaticResource tblockDGStyle}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="Expiration" Binding="{Binding OpenStraddle.ExpirationDate, StringFormat={}{0:dd.MM.yyyy}}"/>
-                <DataGridTextColumn Header="~Close date" Binding="{Binding ApproximateCloseDate, StringFormat={}{0:dd.MM.yyyy}}"/>
-                <DataGridTextColumn Header="Target Pnl" Binding="{Binding StraddleTargetPnl}"/>
-                <DataGridTextColumn Header="Open Pnl"  Binding="{Binding CurrencyOpenPnl, StringFormat={}{0:0.##}}"/>
-                <DataGridTextColumn Header="Total Pnl" Binding="{Binding CurrencyPnl, StringFormat={}{0:0.##}}"/>
+                <DataGridTemplateColumn Header="Instrument">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ParentInstrument.FullName}"
+                                       Style="{StaticResource tblockDGStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Opened">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OpenStraddle.CreatedTime,StringFormat={}{0:dd.MM.yyyy hh:mm}}"
+                                       Style="{StaticResource tblockDGStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn Header="OpenStraddle" 
+                                        CellTemplate="{StaticResource StraddleTemplate}"/>
+                
+                <DataGridTemplateColumn Header="Expiration">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OpenStraddle.ExpirationDate, StringFormat={}{0:dd.MM.yyyy}}"
+                                       Style="{StaticResource tblockDGStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn Header="~Close date">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ApproximateCloseDate, StringFormat={}{0:dd.MM.yyyy}}"
+                                       Style="{StaticResource tblockDGStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn Header="Target Pnl">
+                    <!--Binding="{Binding StraddleTargetPnl}">-->
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding StraddleTargetPnl}"
+                                       FontWeight="Bold"
+                                       Style="{StaticResource tblockDGStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                                   
+                <DataGridTemplateColumn Header="Open Pnl">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding CurrencyOpenPnl, StringFormat={}{0:0.##}}" FontWeight="Bold"
+                                       Foreground="{Binding Path=CurrencyOpenPnl, Converter={StaticResource PnlColorConv}}" 
+                                       Style="{StaticResource tblockDGStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>  
+                                    
+                <DataGridTemplateColumn Header="Total Pnl" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding CurrencyPnl, StringFormat={}{0:0.##}}" FontWeight="Bold"
+                                       Foreground="{Binding Path=CurrencyPnl, Converter={StaticResource PnlColorConv}}" 
+                                       Style="{StaticResource tblockDGStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">

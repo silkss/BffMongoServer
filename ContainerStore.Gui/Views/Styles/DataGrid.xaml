@@ -5,10 +5,15 @@
         <Setter Property="HeadersVisibility" Value="Column"/>
         <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="White"/>
         <Setter Property="ColumnHeaderStyle">
             <Setter.Value>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="Background" Value="{StaticResource MainBrush}"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 </Style>
             </Setter.Value>
         </Setter>
@@ -17,6 +22,7 @@
                 <Style TargetType="DataGridRow">
                     <!--<Setter Property="Background" Value="{StaticResource SecondBrush}"/>-->
                     <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
+                    <Setter Property="FontSize" Value="14"/>
                 </Style>
             </Setter.Value>
         </Setter>

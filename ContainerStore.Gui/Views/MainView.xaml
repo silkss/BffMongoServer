@@ -18,13 +18,16 @@
             </UniformGrid.DataContext>
             <TextBox Text="{Binding Host}" 
                      IsEnabled="{Binding CanConnect}" 
-                     ToolTip="Host"/>
+                     ToolTip="IP адрес TWS клиента."
+                     Style="{StaticResource tboxMain}"/>
             <TextBox Text="{Binding Port}" 
                      IsEnabled="{Binding CanConnect}" 
-                     ToolTip="Port"/>
+                     ToolTip="Порт, на котором 'слушает TWS"
+                     Style="{StaticResource tboxMain}"/>
             <TextBox Text="{Binding ClientId}" 
                      IsEnabled="{Binding CanConnect}" 
-                     ToolTip="ClientId"/>
+                     ToolTip="ИД клиента, необходим для подключения к TWS."
+                     Style="{StaticResource tboxMain}"/>
             <CheckBox IsChecked="{Binding IsConnected}" Command="{Binding Connect}"
                       />
         </UniformGrid>

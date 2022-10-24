@@ -100,4 +100,20 @@ public class Container : NotifyProperty
             straddle.Stop();
         }
     }
+    public StraddleStatus StatusOfOpenStraddle()
+    {
+        if (OpenStraddle is null)
+            return StraddleStatus.NotExist;
+
+        if (CurrencyOpenPnl >= StraddleTargetPnl)
+            return StraddleStatus.InProfit;
+
+        if (OpenStraddle.CreatedTime > ApproximateCloseDate)
+            return StraddleStatus.Expired;
+
+        if (OpenStraddle.IsDone() is false)
+            return StraddleStatus.NotOpen;
+
+        return StraddleStatus.Working;
+    }
 }

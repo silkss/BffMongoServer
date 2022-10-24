@@ -24,14 +24,14 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <UniformGrid Rows="1" Grid.Row="0">
-            <Label Content="Account:" Style="{StaticResource labMainStyle}" />
+            <Label Content="Account:" />
             <ComboBox ItemsSource="{Binding Accounts}" SelectedItem="{Binding Container.Account}"/>
             <!--<TextBox Text="{Binding Container.Account}"/>-->
         </UniformGrid>
         <UniformGrid Rows="2" Grid.Row="1">
-            <Label Content="Instrument:" Style="{StaticResource labMainStyle}"/>
-            <TextBox Text="{Binding InstrumentName}" Style="{StaticResource txtBox}"/>
-            <TextBox Text="{Binding Exchange}" Style="{StaticResource txtBox}"/>
+            <Label Content="Instrument:"/>
+            <TextBox Text="{Binding InstrumentName}"/>
+            <TextBox Text="{Binding Exchange}" />
             <Button Content="Request" Style="{StaticResource btn}"
                     Command="{Binding ReqInstrument}"/>
 
@@ -41,35 +41,29 @@
             <Label Content="{Binding Container.ParentInstrument.LastTradeDate, StringFormat='MM.dd.yyyy'}"/>
         </UniformGrid>
         <UniformGrid Rows="1" Grid.Row="2">
-            <Label Content="StraddleTargetPnl:" Style="{StaticResource labMainStyle}"/>
-            <TextBox Text="{Binding Container.StraddleTargetPnl}"
-                     Style="{StaticResource txtBox}"/>
+            <Label Content="StraddleTargetPnl:" />
+            <TextBox Text="{Binding Container.StraddleTargetPnl}"/>
         </UniformGrid>
         
         <UniformGrid Rows="1" Grid.Row="3">
-            <Label Content="StraddleLiveDays:" Style="{StaticResource labMainStyle}"/>
-            <TextBox Text="{Binding Container.StraddleLiveDays}"
-                     Style="{StaticResource txtBox}"/>
+            <Label Content="StraddleLiveDays:"/>
+            <TextBox Text="{Binding Container.StraddleLiveDays}"/>
         </UniformGrid>
         <UniformGrid Rows="1" Grid.Row="4">
-            <Label Content="StraddleExpirationDays:" Style="{StaticResource labMainStyle}"/>
-            <TextBox Text="{Binding Container.StraddleExpirationDays}"
-                     Style="{StaticResource txtBox}"/>
+            <Label Content="StraddleExpirationDays:" />
+            <TextBox Text="{Binding Container.StraddleExpirationDays}"/>
         </UniformGrid>
         <UniformGrid Rows="1" Grid.Row="5">
-            <Label Content="ClosureStrikeStep:" Style="{StaticResource labMainStyle}"/>
-            <TextBox Text="{Binding Container.ClosureStrikeStep}"
-                     Style="{StaticResource txtBox}"/>
+            <Label Content="ClosureStrikeStep:"/>
+            <TextBox Text="{Binding Container.ClosureStrikeStep}"/>
         </UniformGrid>
         <UniformGrid Rows="1" Grid.Row="6">
-            <Label Content="ClosurePriceGapProcent:" Style="{StaticResource labMainStyle}"/>
-            <TextBox Text="{Binding Container.ClosurePriceGapProcent}"
-                     Style="{StaticResource txtBox}"/>
+            <Label Content="ClosurePriceGapProcent:"/>
+            <TextBox Text="{Binding Container.ClosurePriceGapProcent}"/>
         </UniformGrid>
         <UniformGrid Rows="1" Grid.Row="7">
-            <Label Content="OrderPriceShift:" Style="{StaticResource labMainStyle}"/>
-            <TextBox Text="{Binding Container.OrderPriceShift}"
-                     Style="{StaticResource txtBox}"/>
+            <Label Content="OrderPriceShift:"/>
+            <TextBox Text="{Binding Container.OrderPriceShift}"/>
         </UniformGrid>
         <Button Content="Create" Grid.Row="8" Style="{StaticResource btn}"
                 Command="{Binding Create}"/>

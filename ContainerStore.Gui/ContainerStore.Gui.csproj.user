@@ -43,10 +43,13 @@
     <Page Update="Views\Styles\TabStyle.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\Styles\Variables.xaml">
+    <Page Update="Views\Styles\TextBlockStyle.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\Templates\StraddleTemplate.xaml">
+    <Page Update="Views\Styles\TextBoxStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Styles\Variables.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

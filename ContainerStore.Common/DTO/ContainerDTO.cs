@@ -7,5 +7,6 @@ public class ContainerDTO
     public int StraddleExpirationDays { get; set; }
     public int ClosureStrikeStep { get; set; }
     public int ClosurePriceGapProcent { get; set; }
-    public int OrderPriceShift { get; set; } = 2;
+    public int OrderPriceShift { get; set; }
+    public decimal StraddleTargetPnl { get; set; }
 }

@@ -27,26 +27,10 @@ public class McAPIController : ControllerBase
 		$"--------------------------\n" +
         $"CloseDate: ~{container.ApproximateCloseDate}\n" +
         $"CreatedDate: {container.OpenStraddle?.CreatedTime}";
-	private StraddleStatus statusOfOpenStraddle(Container container)
-	{
-		if (container.OpenStraddle is null)
-			return StraddleStatus.NotExist;
-
-		if (container.CurrencyOpenPnl >= container.StraddleTargetPnl)
-			return StraddleStatus.InProfit;
-
-		if (container.OpenStraddle.CreatedTime > container.ApproximateCloseDate)
-			return StraddleStatus.Expired;
-
-		if (container.OpenStraddle.IsDone() is false)
-			return StraddleStatus.NotOpen;
-
-		return StraddleStatus.Working;
-	}
 
 	private string parseSignal(string signal, Container container, double price) => signal.Trim().ToLower() switch
 	{
-		"open" => statusOfOpenStraddle(container) switch
+		"open" => container.StatusOfOpenStraddle() switch
 		{
 			StraddleStatus.NotExist => openStraddle(container, price),
 			StraddleStatus.Expired => closeAndOpenStraddle(container,price, $"Expired:" +
@@ -58,22 +42,27 @@ public class McAPIController : ControllerBase
 			StraddleStatus.Working => straddleWorkingMessage(container),
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!")
         },
-		"close" => statusOfOpenStraddle(container) switch
+		"close" => container.StatusOfOpenStraddle() switch
 		{
 			StraddleStatus.Expired => closeStraddle(container.OpenStraddle, "Expired:"),
 			StraddleStatus.InProfit => closeStraddle(container.OpenStraddle, "InProfit"), 
 			StraddleStatus.NotOpen => closeStraddle(container.OpenStraddle, "Не успел открыться"),
 			StraddleStatus.Working => straddleWorkingMessage(container),
-            StraddleStatus.NotExist => "Не существует открытого стрэддла!",
+            StraddleStatus.NotExist => "There is no open straddle in the container.",
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!"),
 		},
-		_ => throw new ArgumentException("Неизвестный сигнал.")
+		"alarmclose"=> container.StatusOfOpenStraddle() switch
+		{
+			StraddleStatus.NotExist => "There is no open straddle in the container.",
+			_ => closeStraddle(container.OpenStraddle, "Alarm stop."),
+		},
+		_ => $"unknow signal: {signal}."
 	};
 	private string closeStraddle(Straddle? straddle, string message)
 	{
 		if (straddle is null) throw new ArgumentNullException("while closing straddle it cant be null!");
 		straddle.Close();
-		return message;
+		return $"Closing straddle. Reasong: {message}";
 	}
     private string openStraddle(Container container, double price)
     {

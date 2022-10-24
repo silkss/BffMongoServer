@@ -45,11 +45,12 @@
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                 <Button Content="Delete" Style="{StaticResource fixedBtn}"
                         Command="{Binding Delete}" 
-                    CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
+                        CommandParameter="{Binding ElementName=dgContainers, Path=SelectedItem}"/>
             </StackPanel>
         </UniformGrid>
 
         <DataGrid x:Name="dgContainers" Grid.Row="1" CanUserAddRows="False" AutoGenerateColumns="False"
+                  IsReadOnly="True"
                   ItemsSource="{Binding Containers}" Style="{StaticResource dataGrid}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Account" Binding="{Binding Account}"/>

@@ -5,17 +5,13 @@ using System.Windows.Media;
 
 namespace ContainerStore.Gui.Converters;
 
-internal class PnlColorConverter : IValueConverter
+public class PnlColorConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value switch
     {
-        var brush = new SolidColorBrush(Colors.AliceBlue);
-        if (value == null)
-            return brush;
-        return value.ToString().Contains("-")
-            ? new SolidColorBrush(Colors.Red)
-            : new SolidColorBrush(Colors.ForestGreen);
-    }
+        decimal d => d > 0 ? new SolidColorBrush(Colors.ForestGreen) : new SolidColorBrush(Colors.Red),
+        _ => new SolidColorBrush(Colors.Blue)
+    };
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
