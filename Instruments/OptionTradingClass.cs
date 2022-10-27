@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ContainerStore.Data.Models.Instruments;
+namespace Instruments;
 
 public class OptionTradingClass
 {

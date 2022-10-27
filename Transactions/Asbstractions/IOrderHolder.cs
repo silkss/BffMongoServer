@@ -1,4 +1,4 @@
-﻿namespace ContainerStore.Common;
+﻿namespace Transactions.Asbstractions;
 
 public interface IOrderHolder
 {

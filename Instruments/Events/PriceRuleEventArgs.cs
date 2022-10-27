@@ -1,8 +1,8 @@
-﻿using ContainerStore.Data.Models.Instruments.PriceRules;
+﻿using Instruments.PriceRules;
 using System;
 using System.Collections.Generic;
 
-namespace ContainerStore.Data.Models.Events;
+namespace Instruments.Events;
 
 public class PriceRuleEventArgs : EventArgs
 {

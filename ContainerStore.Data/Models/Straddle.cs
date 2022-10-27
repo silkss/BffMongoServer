@@ -1,7 +1,8 @@
 using ContainerStore.Common.Enums;
-using ContainerStore.Data.Models.Instruments;
 using ContainerStore.Data.Models.TradeUnits;
+using Instruments;
 using MongoDB.Bson.Serialization.Attributes;
+using Strategies.Enums;
 using System;
 
 namespace ContainerStore.Data.Models;
@@ -11,8 +12,8 @@ public class Straddle
     private StraddleLeg createLeg(Instrument instrument) => new StraddleLeg
     {
         Instrument = instrument,
-        Logic  = TradeLogic.Open
-    };
+        Logic  = Logic.Open
+    }\
     public Straddle() { }
     public Straddle(Instrument call, Instrument put)
     {
@@ -32,7 +33,7 @@ public class Straddle
     }
     public decimal Strike  { get; set; }
     public DateTime ExpirationDate { get; set; }
-    public TradeLogic Logic { get; set; }
+    public Logic Logic { get; set; }
     public StraddleLeg CallLeg {  get; set; }
     public StraddleLeg PutLeg { get; set; }
     public DateTime CreatedTime { get; set; }

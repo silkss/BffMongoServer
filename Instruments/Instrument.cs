@@ -1,10 +1,10 @@
 ﻿using ContainerStore.Common.Enums;
+using ContainerStore.Common.Helpers;
+using Instruments.Events;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
-using ContainerStore.Common.Helpers;
-using ContainerStore.Data.Models.Events;
 
-namespace ContainerStore.Data.Models.Instruments;
+namespace Instruments;
 
 public class Instrument
 {
@@ -21,6 +21,7 @@ public class Instrument
     public OptionType OptionType { get; set; }
     public int MarketRuleId { get; set; }
     public int Multiplier { get; set; }
+
     [BsonIgnore]
     public decimal Ask { get; set; }
     [BsonIgnore]

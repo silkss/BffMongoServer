@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ContainerStore.Data.Models.Instruments.PriceRules;
+namespace Instruments.PriceRules;
 
 public class PriceRule
 {
@@ -16,7 +16,6 @@ public class PriceRule
         Borders = borders;
     }
 }
-
 
 public class PriceBorder
 {

@@ -87,6 +87,11 @@
                 <Button Content="Details" Style="{StaticResource fixedBtn}"/>
                 <Button Content="Refresh" Style="{StaticResource fixedBtn}" Command="{Binding Refresh}"/>
             </StackPanel>
+            <StackPanel>
+                <Button Content="Close" Style="{StaticResource fixedBtn}" 
+                        Command="{Binding SendAlarmCloseSignal}"
+                        CommandParameter="{Binding ElementName=dgContainersInTrade,Path=SelectedItem}"/>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                 <Button Content="Stop" Style="{StaticResource fixedBtn}"
                         Command="{Binding Stop}"
