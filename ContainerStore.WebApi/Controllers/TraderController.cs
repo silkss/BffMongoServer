@@ -1,7 +1,7 @@
-﻿using ContainerStore.Data.Models;
-using ContainerStore.Traders.Base;
-using ContainerStore.WebApi.Services;
+﻿using ContainerStore.Traders.Base;
 using Microsoft.AspNetCore.Mvc;
+using MongoDbSettings;
+using Strategies;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,30 +12,30 @@ namespace ContainerStore.WebApi.Controllers;
 public class TraderController : ControllerBase
 {
 	private readonly Trader _trader;
-	private readonly ContainersService _containersService;
+    private readonly StrategyService _strategyService;
 
-	public TraderController(Trader trader, ContainersService containersService)
+	public TraderController(Trader trader, StrategyService strategyService)
 	{
 		_trader = trader;
-		_containersService = containersService;
+        _strategyService = strategyService;
 	}
     [HttpGet]
-    public IEnumerable<Container> Get() => _trader.GetContainers();
+    public IEnumerable<MainStrategy> Get() => _trader.GetStrategies();
 
     [HttpPost("{id:length(24)}")]
     public async Task<IActionResult> Start(string id)
     {
-        var container = await _containersService.GetAsync(id);
-        if (container is null)
+        var strategy = await _strategyService.GetAsync(id);
+        if (strategy is null)
         {
             return NotFound();
         }
-        var result = _trader.AddToTrade(container);
-        if (!result.isAdded)
+        var result = _trader.AddToTrade(strategy);
+        if (!result)
         {
-            return BadRequest(result.message);
+            return BadRequest();
         }
-        return Ok(result.message);
+        return Ok();
     }
 
     [HttpDelete("{id:length(24)}")]

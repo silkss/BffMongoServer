@@ -1,10 +1,9 @@
 using ContainerStore.Connectors;
 using ContainerStore.Connectors.Ib;
-using ContainerStore.Data.Settings;
 using ContainerStore.Traders.Base;
-using ContainerStore.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDbSettings;
 using TraderBot.Notifier;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,14 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
-builder.Services.AddCors(options => {
-    options.AddDefaultPolicy(policy =>{
-        policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
-    });
-});
-builder.Services.Configure<ContainerStoreDatabaseSettings>(
-    builder.Configuration.GetSection("ContainerStoreDatabase"));
-builder.Services.AddSingleton<ContainersService>();
+
+builder.Services.Configure<StrategyDatabaseSettings>(
+    builder.Configuration.GetSection("StrategiesStoreDb"));
+builder.Services.AddSingleton<StrategyService>();
+
 builder.Services.AddSingleton<IConnector, IbConnector>();
 builder.Services.AddSingleton<Trader>();
 builder.Services.AddSingleton<Notifier>();

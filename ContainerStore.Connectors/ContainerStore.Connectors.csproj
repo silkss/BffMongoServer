@@ -8,9 +8,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ContainerStore.Common\ContainerStore.Common.csproj" />
-    <ProjectReference Include="..\ContainerStore.Data\ContainerStore.Data.csproj" />
     <ProjectReference Include="..\IBApi\IBApi.csproj" />
+    <ProjectReference Include="..\Instruments\Instruments.csproj" />
     <ProjectReference Include="..\TraderBot.TelegramNotifier\TraderBot.Notifier.csproj" />
+    <ProjectReference Include="..\Transactions\Transactions.csproj" />
   </ItemGroup>
 
 </Project>

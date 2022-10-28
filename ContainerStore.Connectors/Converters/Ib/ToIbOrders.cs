@@ -1,6 +1,6 @@
 ﻿using ContainerStore.Common.Enums;
-using ContainerStore.Data.Models.Transactions;
 using IBApi;
+using Transactions;
 
 namespace ContainerStore.Connectors.Converters.Ib;
 

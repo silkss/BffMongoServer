@@ -1,9 +1,10 @@
-﻿using ContainerStore.Common.Enums;
-using ContainerStore.Connectors;
-using ContainerStore.Data.Models;
+﻿using ContainerStore.Connectors;
 using ContainerStore.Traders.Base;
-using ContainerStore.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using MongoDbSettings;
+using Strategies;
+using Strategies.Enums;
+using Strategies.TradeUnions;
 using System;
 using System.Linq;
 using System.Text;
@@ -17,114 +18,119 @@ public class McAPIController : ControllerBase
 {
 	private readonly Notifier _logger;
 	private readonly IConnector _connector;
-	private readonly ContainersService _containersService;
+	private readonly StrategyService _strategyService;
 	private readonly Trader _trader;
 
-	private string straddleWorkingMessage(Container container) =>
+	private string straddleWorkingMessage(MainStrategy strategy) =>
 		$"Straddle working:\n" +
-        $"OpenPnl: {container.CurrencyOpenPnl}\n" +
-        $"TargetPnl: {container.StraddleTargetPnl}\n" +
+		$"OpenPnl: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}\n" +
+		$"TargetPnl: {strategy.StraddleSettings?.StraddleTargetPnl}\n" +
 		$"--------------------------\n" +
-        $"CloseDate: ~{container.ApproximateCloseDate}\n" +
-        $"CreatedDate: {container.OpenStraddle?.CreatedTime}";
+		$"CloseDate: ~{strategy.GetApproximateCloseDate()}\n" +
+		$"CreatedDate: {strategy.GetOpenStraddle()?.CreatedTime}";
 
-	private string parseSignal(string signal, Container container, double price) => signal.Trim().ToLower() switch
+	private string parseSignal(string signal, MainStrategy strategy, double price) => signal.Trim().ToLower() switch
 	{
-		"open" => container.StatusOfOpenStraddle() switch
+		"open" => strategy.GetOpenStraddleStatus() switch
 		{
-			StraddleStatus.NotExist => openStraddle(container, price),
-			StraddleStatus.Expired => closeAndOpenStraddle(container,price, $"Expired:" +
-                $"opened: {container.OpenStraddle?.CreatedTime}"),
-			StraddleStatus.InProfit => closeAndOpenStraddle(container, price, $"InProfit:\n" +
-                $"target: {container.StraddleTargetPnl}\n" +
-                $"open: {container.CurrencyOpenPnl}"),
-            StraddleStatus.NotOpen => closeAndOpenStraddle(container, price, "Не успел открыться"),
-			StraddleStatus.Working => straddleWorkingMessage(container),
+			StraddleStatus.NotExist => openStraddle(strategy, price),
+			StraddleStatus.Expired => closeAndOpenStraddle(strategy, price, $"Expired:" +
+				$"opened: {strategy.GetOpenStraddle()?.CreatedTime}"),
+			StraddleStatus.InProfit => closeAndOpenStraddle(strategy, price, $"InProfit:\n" +
+				$"target: {strategy.StraddleSettings?.StraddleTargetPnl}\n" +
+				$"open: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}"),
+			StraddleStatus.NotOpen => closeAndOpenStraddle(strategy, price, "Не успел открыться"),
+			StraddleStatus.Working => straddleWorkingMessage(strategy),
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!")
-        },
-		"close" => container.StatusOfOpenStraddle() switch
+		},
+		"close" => strategy.GetOpenStraddleStatus() switch
 		{
-			StraddleStatus.Expired => closeStraddle(container.OpenStraddle, "Expired:"),
-			StraddleStatus.InProfit => closeStraddle(container.OpenStraddle, "InProfit"), 
-			StraddleStatus.NotOpen => closeStraddle(container.OpenStraddle, "Не успел открыться"),
-			StraddleStatus.Working => straddleWorkingMessage(container),
-            StraddleStatus.NotExist => "There is no open straddle in the container.",
+			StraddleStatus.Expired => closeStraddle(strategy.GetOpenStraddle(), "Expired:"),
+			StraddleStatus.InProfit => closeStraddle(strategy.GetOpenStraddle(), "InProfit"),
+			StraddleStatus.NotOpen => closeStraddle(strategy.GetOpenStraddle(), "Не успел открыться"),
+			StraddleStatus.Working => straddleWorkingMessage(strategy),
+			StraddleStatus.NotExist => "There is no open straddle in the container.",
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!"),
 		},
-		"alarmclose"=> container.StatusOfOpenStraddle() switch
+		"alarmclose" => strategy.GetOpenStraddleStatus() switch
 		{
 			StraddleStatus.NotExist => "There is no open straddle in the container.",
-			_ => closeStraddle(container.OpenStraddle, "Alarm stop."),
+			_ => closeStraddle(strategy.GetOpenStraddle(), "Alarm stop."),
 		},
 		_ => $"unknow signal: {signal}."
 	};
 	private string closeStraddle(Straddle? straddle, string message)
 	{
 		if (straddle is null) throw new ArgumentNullException("while closing straddle it cant be null!");
-		straddle.Close();
+		straddle.Close(_connector);
 		return $"Closing straddle. Reasong: {message}";
 	}
-    private string openStraddle(Container container, double price)
-    {
-        var optionclass = _connector
-            .GetOptionTradingClass(container.ParentInstrument.Id, container.GetApproximateExpirationDate());
-        if (optionclass == null)
-        {
-            return "Нет подходящего опционного класса.";
-        }
-        var basestrike = optionclass.Strikes.MinBy(s => Math.Abs(s - price));
-        var basestrikeIdx = optionclass.Strikes.FindIndex(s => s == basestrike);
-        var closureCallStike = optionclass.Strikes[basestrikeIdx + container.ClosureStrikeStep];
-        var closurePutStrike = optionclass.Strikes[basestrikeIdx - container.ClosureStrikeStep];
+
+	private string openStraddle(MainStrategy mainStrategy, double price)
+	{
+		var optionclass = _connector
+			.GetOptionTradingClass(mainStrategy.Instrument.Id, mainStrategy.GetApproximateExpirationDate());
+		if (optionclass == null)
+		{
+			return "Нет подходящего опционного класса.";
+		}
+		var baseStrike = optionclass.Strikes.MinBy(s => Math.Abs(s - price));
+		var baseStrikeIdx = optionclass.Strikes.FindIndex(s => s == baseStrike);
+		var closureCallStike = optionclass
+			.Strikes[baseStrikeIdx + (mainStrategy.ClosureSettings?.ClosureStrikeStep ?? 0)];
+
+		var closurePutStrike = optionclass
+			.Strikes[baseStrikeIdx - (mainStrategy.ClosureSettings?.ClosureStrikeStep ?? 0)];
 
 		_connector
-			.RequestCall(container.ParentInstrument, basestrike, optionclass.ExpirationDate, out var baseCall)
-			.RequestCall(container.ParentInstrument, closureCallStike, optionclass.ExpirationDate, out var closureCall)
-			.RequestPut(container.ParentInstrument, basestrike, optionclass.ExpirationDate, out var basePut)
-			.RequestPut(container.ParentInstrument, closurePutStrike, optionclass.ExpirationDate, out var closurePut);
+			.RequestCall(mainStrategy.Instrument, baseStrike, optionclass.ExpirationDate, out var baseCall)
+			.RequestCall(mainStrategy.Instrument, closureCallStike, optionclass.ExpirationDate, out var closureCall)
+			.RequestPut(mainStrategy.Instrument, baseStrike, optionclass.ExpirationDate, out var basePut)
+			.RequestPut(mainStrategy.Instrument, closurePutStrike, optionclass.ExpirationDate, out var closurePut);
 
-        if (baseCall is null)
-        {
-            return $"не удалось запросить Call для ноги стредла:\n" +
-                $"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
+		if (baseCall is null)
+		{
+			return $"не удалось запросить Call для ноги стредла:\n" +
+				$"parentId: {mainStrategy.Instrument.Id}. Strike:{baseStrike}. ExpDate: {optionclass.ExpirationDate}.";
 
-        }
-        if (closureCall is null)
-        {
-            return $"не удалось запросить Call для замыкания:\n" +
-                $"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
-        }
-        if (basePut is null)
-        {
-            return $"не удалось запросить Put для ноги стредла:\n" +
-                $"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
-        }
-        if (closurePut is null)
-        {
-            return $"не удалось запросить Put для замыкания:\n" +
-                $"parentId: {container.ParentInstrument.Id}. Strike:{basestrike}. ExpDate: {optionclass.ExpirationDate}.";
-        }
+		}
+		if (closureCall is null)
+		{
+			return $"не удалось запросить Call для замыкания:\n" +
+				$"parentId: {mainStrategy.Instrument.Id}. Strike:{baseStrike}. ExpDate: {optionclass.ExpirationDate}.";
+		}
+		if (basePut is null)
+		{
+			return $"не удалось запросить Put для ноги стредла:\n" +
+				$"parentId: {mainStrategy.Instrument.Id}. Strike:{baseStrike}. ExpDate: {optionclass.ExpirationDate}.";
+		}
+		if (closurePut is null)
+		{
+			return $"не удалось запросить Put для замыкания:\n" +
+				$"parentId: {mainStrategy.Instrument.Id}. Strike:{baseStrike}. ExpDate: {optionclass.ExpirationDate}.";
+		}
 
-        _connector
-            .RequestMarketData(baseCall)
-            .RequestMarketData(basePut)
-            .RequestMarketData(closureCall)
-            .RequestMarketData(closurePut);
+		_connector
+			.RequestMarketData(baseCall)
+			.RequestMarketData(basePut)
+			.RequestMarketData(closureCall)
+			.RequestMarketData(closurePut);
 
-        container.AddStraddle(new Straddle(baseCall, closureCall, basePut, closurePut));
-        return "Straddle добавлен.";
-    }
-	private string closeAndOpenStraddle(Container container, double price, string message) =>
+        mainStrategy.AddStraddle(new Straddle(baseCall, closureCall, basePut, closurePut), _connector);
+		return "Straddle добавлен.";
+	}
+
+	private string closeAndOpenStraddle(MainStrategy mainStrategy, double price, string message) =>
 		new StringBuilder()
-			.AppendLine(closeStraddle(container.OpenStraddle, message))
-			.AppendLine(openStraddle(container, price))
+			.AppendLine(closeStraddle(mainStrategy.GetOpenStraddle(), message))
+			.AppendLine(openStraddle(mainStrategy, price))
 			.ToString();
 
-    public McAPIController(Notifier logger, IConnector connector, ContainersService containersService, Trader trader)
+	public McAPIController(Notifier logger, IConnector connector, StrategyService strategyService , Trader trader)
 	{
 		_logger = logger;
 		_connector = connector;
-		_containersService = containersService;
+        _strategyService = strategyService;
 		_trader = trader;
 	}
 
@@ -134,17 +140,17 @@ public class McAPIController : ControllerBase
 		var sb = new StringBuilder();
 		sb.AppendLine($"SIGNAL: {symbol}-{type}");
 
-		var container = _trader.GetContainer(symbol, account);
-		if (container is null)
+		var strategy = _trader.GetStrategy(symbol, account);
+		if (strategy is null)
 		{
 			sb.AppendLine("No container in trade.");
 			sb.AppendLine($"Account: {account}. Price: {price}.");
-            _logger.LogInformation(sb.ToString(), toTelegram: true);
-            return Ok();
+			_logger.LogInformation(sb.ToString(), toTelegram: true);
+			return Ok();
 		}
-		sb.AppendLine(parseSignal(type, container, price));
-        sb.AppendLine($"Account: {account}. Price: {price}.");
-        _logger.LogInformation(sb.ToString(), toTelegram: true);
+		sb.AppendLine(parseSignal(type, strategy, price));
+		sb.AppendLine($"Account: {account}. Price: {price}.");
+		_logger.LogInformation(sb.ToString(), toTelegram: true);
 		return Ok();
 	}
 }

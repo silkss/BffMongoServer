@@ -1,10 +1,12 @@
 using ContainerStore.Common.DTO;
-using ContainerStore.Data.Models;
-using ContainerStore.WebApi.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TraderBot.Notifier;
+using Strategies;
+using Strategies.DTO;
+using MongoDbSettings;
+using ZstdSharp.Unsafe;
 
 namespace ContainerStore.WebApi.Controllers;
 
@@ -13,65 +15,69 @@ namespace ContainerStore.WebApi.Controllers;
 public class ContainersController : ControllerBase
 {
     private readonly Notifier _logger;
-    private readonly ContainersService _containersService;
+    private readonly StrategyService _strategyService;
 
-    public ContainersController(Notifier logger, ContainersService containersService)
+    public ContainersController(Notifier logger, StrategyService strategyService)
     {
         _logger = logger;
-        _containersService = containersService;
+        _strategyService = strategyService;
     }
 
     [HttpGet]
-    public async Task<List<Container>> Get() => await _containersService.GetAsync();
+    public async Task<List<MainStrategy>> Get() => await _strategyService.GetAsync();
 
     [HttpGet("{id:length(24)}")]
-    public async Task<ActionResult<Container>> Get(string id)
+    public async Task<ActionResult<MainStrategy>> Get(string id)
     {
-        var book = await _containersService.GetAsync(id);
-        if (book is null)
+        var strategy = await _strategyService.GetAsync(id);
+        if (strategy is null)
         {
             return NotFound();
         }
-        return book;
+        return strategy;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Container newContainer)
+    public async Task<IActionResult> Post(MainStrategy newStrategy)
     {
-        await _containersService.CreateAsync(newContainer);
-        return CreatedAtAction(nameof(Get), new { id = newContainer.Id }, newContainer);
+        await _strategyService.CreateAsync(newStrategy);
+        return CreatedAtAction(nameof(Get), new { id = newStrategy.Id }, newStrategy);
     }
 
     [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, ContainerDTO updates)
+    public async Task<IActionResult> Update(string id, MainStrategyDTO updates)
     {
-        var container = await _containersService.GetAsync(id);
-        if (container is null)
+        var strategy = await _strategyService.GetAsync(id);
+        if (strategy is null)
         {
             return NotFound();
         }
+        if (updates.MainSettings != null)
+        {
+            strategy.MainSettings = updates.MainSettings;
+        }
+        if (updates.StraddleSettings != null)
+        {
+            strategy.StraddleSettings = updates.StraddleSettings;
+        }
+        if (updates.ClosureSettings != null)
+        {
+            strategy.ClosureSettings = updates.ClosureSettings;
+        }
 
-        container.Account = updates.Account;
-        container.StraddleExpirationDays = updates.StraddleExpirationDays;
-        container.ClosurePriceGapProcent = updates.ClosurePriceGapProcent;
-        container.ClosureStrikeStep = updates.ClosureStrikeStep;
-        container.StraddleLiveDays = updates.StraddleLiveDays;
-        container.OrderPriceShift = updates.OrderPriceShift;
-        container.StraddleTargetPnl = updates.StraddleTargetPnl;
-
-        await _containersService.UpdateAsync(id, container);
+        await _strategyService.UpdateAsync(id, strategy);
         return NoContent();
     }
 
     [HttpDelete("{id:length(24)}")]
     public async Task<IActionResult> Delete(string id)
     {
-        var book = await _containersService.GetAsync(id);
+        var book = await _strategyService.GetAsync(id);
         if (book is null)
         {
             return NotFound();
         }
-        await _containersService.RemoveAsync(id);
+        await _strategyService.RemoveAsync(id);
         return NoContent();
     }
 }

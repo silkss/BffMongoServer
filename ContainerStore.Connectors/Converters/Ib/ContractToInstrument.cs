@@ -1,8 +1,7 @@
 ﻿using ContainerStore.Common.Enums;
 using ContainerStore.Common.Helpers;
-using ContainerStore.Data.Models.Instruments;
-using ContainerStore.Data.Models.Instruments.PriceRules;
 using IBApi;
+using Instruments;
 using System;
 using System.Globalization;
 using System.Linq;

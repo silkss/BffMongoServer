@@ -1,4 +1,4 @@
-﻿namespace ContainerStore.Common.Enums;
+﻿namespace Strategies.Enums;
 
 public enum StraddleStatus
 {

@@ -6,6 +6,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transactions;
 
 namespace ContainerStore.Data.Models.TradeUnits.Base;
 

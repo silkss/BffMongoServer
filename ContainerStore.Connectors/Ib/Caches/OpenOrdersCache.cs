@@ -1,6 +1,6 @@
-﻿using ContainerStore.Data.Models.Transactions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Transactions;
 
 namespace ContainerStore.Connectors.Ib.Caches;
 

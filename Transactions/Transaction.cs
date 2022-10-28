@@ -14,8 +14,8 @@ public class Transaction
         Status = "Created";
         Account = account;
     }
-    public int BrokerId { get; init; }
-    public DateTime CreatedTime { get; init; } 
+    public int BrokerId { get; set; }
+    public DateTime CreatedTime { get; set; } 
     public DateTime FilledTime { get; set; }
     public Directions Direction { get; set; }
     public string Status { get; set; }

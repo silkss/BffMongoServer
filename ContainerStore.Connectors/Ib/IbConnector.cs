@@ -1,19 +1,17 @@
-﻿using Microsoft.Extensions.Logging;
-using ContainerStore.Connectors.Ib.Caches;
+﻿using ContainerStore.Connectors.Ib.Caches;
 using ContainerStore.Connectors.Converters.Ib;
 using System.Threading;
 using System.Collections.Generic;
 using IBApi;
-using ContainerStore.Data.Models.Accounts;
-using ContainerStore.Data.Models.Instruments;
 using System;
 using ContainerStore.Common.Enums;
-using ContainerStore.Data.Models.Transactions;
-using ContainerStore.Data.Models.Instruments.PriceRules;
 using System.Linq;
 using ContainerStore.Common.Helpers;
-using ContainerStore.Data.ServiceModel;
 using TraderBot.Notifier;
+using ContainerStore.Connectors.Info;
+using Instruments.PriceRules;
+using Instruments;
+using Transactions;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -22,7 +20,7 @@ public class IbConnector : IConnector
     private const int CHECK_CONNECTION_INTERVAL = 5; //in minutes
     private readonly RequestInstrumentCache _requestInstrument = new();
     private readonly OpenOrdersCache _openOrdersCache = new();
-    private readonly ConnectorModel _connectionInfo = new();
+    private readonly ConnectorInfo _connectionInfo = new();
     private readonly EClientSocket _client;
     private readonly IbCallbacks _callbacks;
     private readonly EReaderSignal _signalMonitor = new EReaderMonitorSignal();
@@ -32,7 +30,7 @@ public class IbConnector : IConnector
     private Timer? _timer;
     private Instrument? reqContract(Contract contract)
     {
-        var reqid = _callbacks.NextOrderId++;
+        var reqid = _callbacks.NextOrderId; ;
         _client.reqContractDetails(reqid, contract);
 
         while (!_requestInstrument.ContainsKey(reqid))
@@ -69,8 +67,8 @@ public class IbConnector : IConnector
         _client = new EClientSocket(_callbacks, _signalMonitor);
     }
     #region Connector props
-    public ConnectorModel GetConnectionInfo() => _connectionInfo;
-    public IEnumerable<Account> GetAccounts() => _connectionInfo.Accounts;
+    public ConnectorInfo GetConnectionInfo() => _connectionInfo;
+    public IEnumerable<string> GetAccounts() => _connectionInfo.Accounts;
     #endregion
     #region Connect / Disconnect
     public void Connect()
@@ -199,36 +197,55 @@ public class IbConnector : IConnector
     }
     #endregion
     #region Transaction/Orders
-    public void SendOrder(Instrument instrument, Transaction order, decimal price, int priceShift = 0)
+    /// <summary>
+    /// Посылает Лимитный ордер
+    /// </summary>
+    /// <param name="instrument"></param>
+    /// <param name="order"></param>
+    /// <param name="priceShift"> сдвиг цены </param>
+    /// <param name="needToRound"> округли цену до минимального тика, если необходимо. </param>
+    public void SendLimitOrder(Instrument instrument, Transaction order, int priceShift = 0, bool needToRound = true)
     {
-        order.BrokerId = _callbacks.NextOrderId++;
+        order.BrokerId = _callbacks.NextOrderId;
         _openOrdersCache.Add(order);
-        var min_tick = instrument.MinTick;
-
-        try
+        
+        if (needToRound)
         {
-            if (_marketRules.GetValueOrDefault(instrument.MarketRuleId) is List<PriceBorder> borders)
+            var min_tick = instrument.MinTick;
+            try
             {
-                min_tick = borders.OrderByDescending(b => b.LowEdge).First(b => price > b.Incriment).Incriment;
+                if (_marketRules.GetValueOrDefault(instrument.MarketRuleId) is List<PriceBorder> borders)
+                {
+                    min_tick = borders.OrderByDescending(b => b.LowEdge).First(b => order.LimitPrice > b.Incriment).Incriment;
+                }
             }
-        }
-        catch (InvalidOperationException)
-        {
-            min_tick = instrument.MinTick;
-        }
+            catch (InvalidOperationException)
+            {
+                min_tick = instrument.MinTick;
+            }
+            if (order.LimitPrice == 0m)
+            {
+                order.LimitPrice = instrument.TradablePrice(order.Direction);
+            }
 
-        price = Helper.RoundUp(price, min_tick);
-        if (order.Direction == Directions.Buy)
-        {
-            price += (min_tick * priceShift);
+            order.LimitPrice = Helper.RoundUp(order.LimitPrice, min_tick);
+
+            if (order.Direction == Directions.Buy)
+            {
+                order.LimitPrice += (min_tick * priceShift);
+            }
+            else
+            {
+                order.LimitPrice -= (min_tick * priceShift);
+            }
+            _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
         }
         else
         {
-            price -= (min_tick * priceShift);
+            _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
         }
-        order.LimitPrice = price;
-        _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
     }
+
     public IConnector CancelOrder(Transaction? transaction)
     {
         if (transaction == null) return this;

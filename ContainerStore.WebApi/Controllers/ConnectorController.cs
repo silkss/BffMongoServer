@@ -1,5 +1,5 @@
 ﻿using ContainerStore.Connectors;
-using ContainerStore.Data.ServiceModel;
+using ContainerStore.Connectors.Info;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,18 +18,18 @@ public class ConnectorController : ControllerBase
 	}
 
 	[HttpGet]
-	public ActionResult<ConnectorModel> Get() => Ok(_connector.GetConnectionInfo());
+	public ActionResult<ConnectorInfo> Get() => Ok(_connector.GetConnectionInfo());
 	
 	[HttpPost]
-	public IActionResult Post(ConnectorModel model)
+	public IActionResult Post(ConnectorInfo info)
 	{
-		if (model.IsConnected)
+		if (info.IsConnected)
 		{
 			if (_connector.GetConnectionInfo().IsConnected)
 				_connector.Disconnect();
-			_connector.Connect(model.Host, model.Port, model.ClientId);
+			_connector.Connect(info.Host, info.Port, info.ClientId);
 		}
-		else if (!model.IsConnected)
+		else if (!info.IsConnected)
 		{
 			_connector.Disconnect();
 		}

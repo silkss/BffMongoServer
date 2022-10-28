@@ -1,18 +1,17 @@
 ﻿using ContainerStore.Common.Enums;
-using ContainerStore.Data.Models.Accounts;
-using ContainerStore.Data.Models.Instruments;
-using ContainerStore.Data.Models.Transactions;
-using ContainerStore.Data.ServiceModel;
+using ContainerStore.Connectors.Info;
+using Instruments;
 using System;
 using System.Collections.Generic;
+using Transactions;
 
 namespace ContainerStore.Connectors;
 
 public interface IConnector
 {
     #region Connector Props
-    ConnectorModel GetConnectionInfo();
-    IEnumerable<Account> GetAccounts();
+    ConnectorInfo GetConnectionInfo();
+    IEnumerable<string> GetAccounts();
     #endregion
     #region Connect/Disconnect
     void Connect();
@@ -38,7 +37,8 @@ public interface IConnector
     #endregion
 
     #region Transactions/ Orders
-    void SendOrder(Instrument instrument, Transaction order, decimal price, int priceShift);
+    
+    void SendLimitOrder(Instrument instrument, Transaction order, int priceShift = 0, bool needToRounds = true);
     IConnector CancelOrder(Transaction? transaction);
     #endregion
 }

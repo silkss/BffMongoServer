@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using ContainerStore.Common.Enums;
-using ContainerStore.Data.Models;
 using Instruments;
 using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Enums;
+using Strategies.Strategies.TradeUnions;
 
 namespace ContainerStore.OLD.Data.Models;
 
@@ -36,15 +36,15 @@ public class Container
     [BsonIgnore]
     public DateTime? ApproximateCloseDate => OpenStraddle?.CreatedTime.AddDays(StraddleLiveDays);
     
+    //[BsonIgnore]
+    //public decimal CurrencyPnl => Straddles.Sum(s => s.CurrencyPnl);
     [BsonIgnore]
-    public decimal CurrencyPnl => Straddles.Sum(s => s.CurrencyPnl);
-    [BsonIgnore]
-    public decimal CurrencyOpenPnl => Straddles
-        .FirstOrDefault(s => s.Logic == Logic.Open) is Straddle straddle
-            ? straddle.CurrencyPnl
-            : 0m;
+    //public decimal CurrencyOpenPnl => Straddles
+    //    .FirstOrDefault(s => s.Logic == Logic.Open) is Straddle straddle
+    //        ? 0m //straddle.CurrencyPnl
+    //        : 0m;
     public List<Straddle> Straddles { get; private set; } = new();
-    public decimal Pnl => Straddles.Sum(s => s.GetPnl());
+    //public decimal Pnl => Straddles.Sum(s => s.GetPnl());
 
     public void AddStraddle(Straddle straddle)
     {
@@ -66,29 +66,29 @@ public class Container
     ///  Дата, больше которой должен быть экспирация опциона при добавлении стрэддла.
     /// </summary>
     /// <returns></returns>
-    public DateTime GetApproximateExpirationDate() => DateTime.Now.AddDays(StraddleExpirationDays);
-    public void Stop()
-    {
-        foreach (var straddle in Straddles)
-        {
-            straddle.Stop();
-        }
-    }
+    //public DateTime GetApproximateExpirationDate() => DateTime.Now.AddDays(StraddleExpirationDays);
+    //public void Stop()
+    //{
+    //    foreach (var straddle in Straddles)
+    //    {
+    //        straddle.Stop();
+    //    }
+    //}
 
-    public StraddleStatus StatusOfOpenStraddle()
-    {
-        if (OpenStraddle is null)
-            return StraddleStatus.NotExist;
+    //public StraddleStatus StatusOfOpenStraddle()
+    //{
+    //    if (OpenStraddle is null)
+    //        return StraddleStatus.NotExist;
 
-        if (CurrencyOpenPnl >= StraddleTargetPnl)
-            return StraddleStatus.InProfit;
+    //    if (CurrencyOpenPnl >= StraddleTargetPnl)
+    //        return StraddleStatus.InProfit;
 
-        if (OpenStraddle.CreatedTime > ApproximateCloseDate)
-            return StraddleStatus.Expired;
+    //    if (OpenStraddle.CreatedTime > ApproximateCloseDate)
+    //        return StraddleStatus.Expired;
 
-        if (OpenStraddle.IsDone() is false)
-            return StraddleStatus.NotOpen;
+    //    if (OpenStraddle.IsDone() is false)
+    //        return StraddleStatus.NotOpen;
 
-        return StraddleStatus.Working;
-    }
+    //    return StraddleStatus.Working;
+    //}
 }

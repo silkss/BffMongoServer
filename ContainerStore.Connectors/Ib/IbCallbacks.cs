@@ -2,17 +2,16 @@
 using ContainerStore.Common.Helpers;
 using ContainerStore.Connectors.Converters.Ib;
 using ContainerStore.Connectors.Ib.Caches;
-using ContainerStore.Data.Models.Accounts;
-using ContainerStore.Data.Models.Events;
-using ContainerStore.Data.Models.Instruments;
-using ContainerStore.Data.Models.Instruments.PriceRules;
-using ContainerStore.Data.Models.Transactions;
-using ContainerStore.Data.ServiceModel;
+using ContainerStore.Connectors.Info;
 using IBApi;
+using Instruments;
+using Instruments.Events;
+using Instruments.PriceRules;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using TraderBot.Notifier;
+using Transactions;
 
 namespace ContainerStore.Connectors.Ib;
 
@@ -23,7 +22,7 @@ internal class IbCallbacks : DefaultEWrapper
 	private readonly Dictionary<int, OptionChain> _optionChains;
 	private readonly OpenOrdersCache _openOrdersCache;
 	private readonly Dictionary<int, List<PriceBorder>> _marketRules;
-	private readonly ConnectorModel _connectionInfo;
+	private readonly ConnectorInfo _connectionInfo;
     
     private void onPriceChanged(PriceChangedEventArgs args)
 	{
@@ -35,11 +34,16 @@ internal class IbCallbacks : DefaultEWrapper
 	}
 	public event EventHandler<PriceChangedEventArgs> PriceChange = delegate { };
     public event Action<bool> ConnectionChanged = delegate { };
-    public int NextOrderId { get; set; }
+	private int _nextOrderId;
+    public int NextOrderId 
+	{ 
+		get => _nextOrderId++;
+		private set => _nextOrderId = value;
+	}
     public IbCallbacks(
         Notifier logger, RequestInstrumentCache requestInstrument, 
 		Dictionary<int, OptionChain> optionChains, OpenOrdersCache openOrdersCache,
-		Dictionary<int, List<PriceBorder>> marketRules, ConnectorModel connectionInfo)
+		Dictionary<int, List<PriceBorder>> marketRules, ConnectorInfo connectionInfo)
 	{
 		_logger = logger;
 		_requestInstrument = requestInstrument;
@@ -153,7 +157,7 @@ internal class IbCallbacks : DefaultEWrapper
         _connectionInfo.Accounts.Clear();
 		foreach (var account in accountsList.Trim().Split(','))
 		{
-            _connectionInfo.Accounts.Add(new Account { Name = account });
+            _connectionInfo.Accounts.Add(account);
 		}
 	}
 	public override void openOrder(int orderId, Contract contract, Order order, OrderState orderState)

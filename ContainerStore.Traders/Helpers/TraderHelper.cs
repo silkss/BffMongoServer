@@ -1,19 +1,12 @@
-﻿using ContainerStore.Common.Enums;
-using ContainerStore.Data.Models.TradeUnits;
+﻿using Strategies.TradeUnions;
 
 namespace ContainerStore.Traders.Helpers;
 
 internal static class TraderHelper
 {
-    public static void StraddleLegWork(StraddleLeg leg)
+    public static void StraddleWork(Straddle straddle)
     {
-        switch (leg.Logic)
-        {
-            case TradeLogic.Open when leg.OpenOrder == null:
-                break;
-            case TradeLogic.Close:
-                break;
-            default: break;
-        }
+        if (straddle.IsDone()) return;
+
     }
 }

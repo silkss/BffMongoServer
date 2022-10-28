@@ -5,15 +5,15 @@ using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Enums;
 using System;
 
-namespace ContainerStore.Data.Models;
+namespace ContainerStore.Data.Models.OLD;
 
 public class Straddle
 {
     private StraddleLeg createLeg(Instrument instrument) => new StraddleLeg
     {
         Instrument = instrument,
-        Logic  = Logic.Open
-    }\
+        Logic = Logic.Open
+    };
     public Straddle() { }
     public Straddle(Instrument call, Instrument put)
     {
@@ -44,7 +44,7 @@ public class Straddle
     }
     public void Close()
     {
-        Logic = TradeLogic.Close;
+        Logic = Logic.Close;
         CallLeg?.Close();
         PutLeg?.Close();
     }

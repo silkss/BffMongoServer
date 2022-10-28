@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Strategies.Strategies.Base.ForWpf;
+namespace Strategies.Base.ForWpf;
 
 public class PropertyNotifier : INotifyPropertyChanged
 {

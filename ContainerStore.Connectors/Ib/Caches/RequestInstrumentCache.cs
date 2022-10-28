@@ -1,4 +1,4 @@
-﻿using ContainerStore.Data.Models.Instruments;
+﻿using Instruments;
 using System.Collections.Generic;
 using System.Threading;
 

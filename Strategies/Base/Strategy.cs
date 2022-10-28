@@ -1,6 +1,6 @@
-﻿using System.Diagnostics.Metrics;
+﻿using Instruments;
 
-namespace Strategies.Strategies.Base;
+namespace Strategies.Base;
 
 public class Strategy : ForWpf.PropertyNotifier
 {

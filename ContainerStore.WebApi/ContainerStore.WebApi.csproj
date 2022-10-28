@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ContainerStore.Connectors\ContainerStore.Connectors.csproj" />
-    <ProjectReference Include="..\ContainerStore.Data\ContainerStore.Data.csproj" />
     <ProjectReference Include="..\ContainerStore.Traders\ContainerStore.Traders.csproj" />
+    <ProjectReference Include="..\MongoDbSettings\MongoDbSettings.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
