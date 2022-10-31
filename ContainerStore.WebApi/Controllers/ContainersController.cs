@@ -1,4 +1,3 @@
-using ContainerStore.Common.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +5,6 @@ using TraderBot.Notifier;
 using Strategies;
 using Strategies.DTO;
 using MongoDbSettings;
-using ZstdSharp.Unsafe;
 
 namespace ContainerStore.WebApi.Controllers;
 
@@ -38,7 +36,7 @@ public class ContainersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(MainStrategy newStrategy)
+    public async Task<IActionResult> Create(MainStrategy newStrategy)
     {
         await _strategyService.CreateAsync(newStrategy);
         return CreatedAtAction(nameof(Get), new { id = newStrategy.Id }, newStrategy);
@@ -69,6 +67,14 @@ public class ContainersController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("admin/{id:length(24)}")]
+    public async Task<IActionResult> Update(string id, MainStrategy source)
+    {
+        var target = await _strategyService.GetAsync(id);
+        if (target == null) return NotFound();
+        await _strategyService.UpdateAsync(id, source);
+        return NoContent();
+    }
     [HttpDelete("{id:length(24)}")]
     public async Task<IActionResult> Delete(string id)
     {

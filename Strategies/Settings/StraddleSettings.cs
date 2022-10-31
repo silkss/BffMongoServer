@@ -1,4 +1,6 @@
-﻿namespace Strategies.Settings;
+﻿using System.Collections.Generic;
+
+namespace Strategies.Settings;
 
 public class StraddleSettings
 {
@@ -18,4 +20,7 @@ public class StraddleSettings
     /// инструмент (опционы) для стреддла.
     /// </summary>
     public int StraddleExpirationDays { get; set; } = 10;
+
+    public List<ProfitLevel>? ClosuredProfitLevels { get; set; }
+    public List<ProfitLevel>? UnClosuredProfitLevels { get; set; }
 }

@@ -64,7 +64,7 @@ public class Trader
 		{
 			lock (_strategyLocker)
 			{
-				_strategies.ForEach(s => s.Work(_connector));
+				_strategies.ForEach(s => s.Work(_connector, _logger));
 			}
 		}
 	}

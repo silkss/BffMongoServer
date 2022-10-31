@@ -6,6 +6,7 @@ using Strategies.TradeUnions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TraderBot.Notifier;
 
 namespace Strategies;
 
@@ -53,12 +54,16 @@ public class MainStrategy : Base.Strategy
         foreach (var straddle in Straddles)
             straddle.Start(connector);
     }
-    public void Work(IConnector connector)
+    public void Work(IConnector connector, Notifier notifier)
     {
         foreach (var straddle in Straddles)
         {
-            if (MainSettings == null) break;
-            straddle.Work(connector, MainSettings);
+            if (StraddleSettings == null || MainSettings == null)
+            {
+                notifier.LogError("Некоторые настройки равны NULL работа страддла не возможно!");
+                break;
+            }
+            straddle.Work(connector, notifier, MainSettings, StraddleSettings);
         }
     }
     public void Stop(IConnector connector)
@@ -71,6 +76,4 @@ public class MainStrategy : Base.Strategy
     public DateTime GetApproximateExpirationDate() => StraddleSettings is null
         ? DateTime.Now.AddDays(30)
         : DateTime.Now.AddDays(StraddleSettings.StraddleExpirationDays);
-            
-        
 }

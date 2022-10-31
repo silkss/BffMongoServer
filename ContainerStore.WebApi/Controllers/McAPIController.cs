@@ -150,7 +150,11 @@ public class McAPIController : ControllerBase
 		}
 		sb.AppendLine(parseSignal(type, strategy, price));
 		sb.AppendLine($"Account: {account}. Price: {price}.");
+#if DEBUG
+		_logger.LogInformation(sb.ToString(), toTelegram: false);
+#else
 		_logger.LogInformation(sb.ToString(), toTelegram: true);
+#endif
 		return Ok();
 	}
 }

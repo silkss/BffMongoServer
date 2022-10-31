@@ -1,5 +1,6 @@
 ﻿using ContainerStore.Common.Enums;
 using ContainerStore.Connectors;
+using IBApi;
 using Instruments;
 using Strategies.Enums;
 using Strategies.Helpers;
@@ -13,6 +14,31 @@ namespace Strategies.Depend;
 public class OptionStrategy : Base.TradableStrategy
 {
 
+    private Transaction createOpenOrder( MainSettings settings, decimal orderPrice) => new Transaction(this, settings.Account)
+    {
+        Quantity = getTradableVolume(),
+        LimitPrice = orderPrice == 0 ? Instrument.TradablePrice(Direction) : orderPrice,
+        Direction = Direction,
+    };
+    private Transaction createCloseOrder(MainSettings settings) => new Transaction(this, settings.Account)
+    {
+        Quantity = Math.Abs(Strategy.GetPosition(Orders).pos),
+        LimitPrice = Instrument.TradablePrice(GetCloseDirection()),
+        Direction = GetCloseDirection(),
+    };
+    private void createAndSendOrder(bool isOpen, IConnector connector, MainSettings settings, decimal orderPrice=0)
+    {
+        if (isOpen)
+            OpenOrder = createOpenOrder(settings, orderPrice);
+        else
+            OpenOrder = createCloseOrder(settings);
+        lock (_transactionLock)
+        {
+            Orders.Add(OpenOrder);
+        }
+        connector.SendLimitOrder(Instrument, OpenOrder, settings.OrderPriceShift, orderPrice == 0);
+    }
+
     private int getTradableVolume()
     {
         (var pos, _) = Strategy.GetPosition(Orders);
@@ -22,6 +48,7 @@ public class OptionStrategy : Base.TradableStrategy
     private readonly object _transactionLock = new();
 
     public List<Transaction> Orders { get; } = new();
+    public decimal OpenPrice { get; set; }
     public Transaction? OpenOrder { get; private set; }
     public int Volume { get; set; }
     public Logic Logic { get; set; }
@@ -77,40 +104,62 @@ public class OptionStrategy : Base.TradableStrategy
     }
     public void Work(IConnector connector, MainSettings mainSettings, decimal orderPrice = 0m) 
     {
+        switch(Logic)
+        {
+            case Logic.Open when OpenOrder == null:
+                if (IsDone()) break;
+                createAndSendOrder(true, connector, mainSettings, orderPrice);
+                break;
+            case Logic.Open when OpenOrder != null:
+                if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                    connector.CancelOrder(OpenOrder);
+                break;
+            case Logic.Close when OpenOrder == null:
+                if (IsDone()) break;
+                createAndSendOrder(false, connector, mainSettings, orderPrice);
+                break;
+            case Logic.Close when OpenOrder != null:
+                if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                    connector.CancelOrder(OpenOrder);
+                break;
+            default:
+                break;
+            
+        }
+    }
+    public void WorkWithClosure(IConnector connector, MainSettings mainSettings, decimal orderPrice = 0m)
+    {
         switch (Logic)
         {
             case Logic.Open when OpenOrder == null:
                 if (IsClosured()) break;
                 if (IsDone() && Closure != null)
                 {
-                    Closure.Work(connector, mainSettings);
+                    if (OpenPrice != 0m)
+                        Closure.WorkWithClosure(connector, mainSettings, OpenPrice);
                     break;
                 }
                 if (Instrument.TradablePrice(Direction) == 0) break;
-                OpenOrder = new Transaction(this, mainSettings.Account)
-                {
-                    Quantity = getTradableVolume(),
-                    LimitPrice = orderPrice == 0 ? Instrument.TradablePrice(Direction) : orderPrice,
-                    Direction = Direction,
-                };
-                connector.SendLimitOrder(Instrument, OpenOrder, mainSettings.OrderPriceShift, orderPrice == 0);
+                createAndSendOrder(true, connector, mainSettings, orderPrice);
                 break;
-
+            case Logic.Open when OpenOrder != null:
+                if (orderPrice == 0) break;
+                if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                    connector.CancelOrder(OpenOrder);
+                break;
             case Logic.Close when OpenOrder == null:
                 if (IsClosured()) break;
                 if (IsDone() && Closure != null)
                 {
-                    Closure.Work(connector, mainSettings);
+                    Closure.WorkWithClosure(connector, mainSettings);
                     break;
                 }
                 if (Instrument.TradablePrice(Direction) == 0) break;
-                OpenOrder = new Transaction(this, mainSettings.Account)
-                {
-                    Quantity = getTradableVolume(),
-                    LimitPrice = Instrument.TradablePrice(GetCloseDirection()),
-                    Direction = GetCloseDirection(),
-                };
-                connector.SendLimitOrder(Instrument, OpenOrder, mainSettings.OrderPriceShift, true);
+                createAndSendOrder(false, connector, mainSettings);
+                break;
+            case Logic.Close when OpenOrder != null:
+                if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                    connector.CancelOrder(OpenOrder);
                 break;
             default:
                 break;
@@ -150,17 +199,30 @@ public class OptionStrategy : Base.TradableStrategy
     #region IOrderHolder
     public override void OnOrderCancelled(int brokerId)
     {
-        throw new System.NotImplementedException();
+        if (OpenOrder == null) return;
+        if (OpenOrder.BrokerId != brokerId) return;
+        OpenOrder = null;
     }
 
     public override void OnOrderFilled(int brokerId)
     {
-        throw new System.NotImplementedException();
+        if (OpenOrder == null) return;
+        if (OpenOrder.BrokerId != brokerId) return;
+        if (OpenOrder.Direction == Direction)
+        {
+            OpenPrice = OpenOrder.AvgFilledPrice;
+            if (Closure != null)
+            {
+                Closure.Logic = Logic.Open;
+            }
+        }
+        OpenOrder = null;
     }
 
-    public override void OnSubmitted(int brokerId)
-    {
-        throw new System.NotImplementedException();
+    public override void OnSubmitted(int brokerId) 
+    { 
+        if (OpenOrder == null) return;
+        if (OpenOrder.BrokerId != brokerId) return;
     }
     #endregion
 
