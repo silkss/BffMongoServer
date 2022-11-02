@@ -1,0 +1,29 @@
+﻿<Window x:Class="GUI.Views.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cmd="clr-namespace:GUI.Infrastructure.Commands"
+        xmlns:controls="clr-namespace:GUI.Views.Controls"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="400">
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Connector">
+                <MenuItem Header="Settings" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+                    <MenuItem.Command>
+                        <cmd:OpenConnectorSettingsCommand/>
+                    </MenuItem.Command>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <TabControl>
+            <TabItem Header="In Trade">
+                <controls:TradingStrategies/>
+            </TabItem>
+            <TabItem Header="All">
+                <controls:AllStrategies/>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

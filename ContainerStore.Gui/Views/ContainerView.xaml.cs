@@ -1,6 +1,6 @@
 ﻿using ContainerStore.Common.DTO;
-using ContainerStore.Data.Models;
 using ContainerStore.Gui.Services;
+using Strategies;
 using System;
 using System.Net.Http;
 using System.Windows;
@@ -33,13 +33,13 @@ public partial class ContainerView : Window
     public static readonly DependencyProperty ContainerProperty =
         DependencyProperty.Register(
             nameof(Container),
-            typeof(Container),
+            typeof(MainStrategy),
             typeof(ContainerView),
             new PropertyMetadata(null));
 
-    public Container Container
+    public MainStrategy Container
     {
-        get => (Container)GetValue(ContainerProperty);
+        get => (MainStrategy)GetValue(ContainerProperty);
         set => SetValue(ContainerProperty, value);
     }
 

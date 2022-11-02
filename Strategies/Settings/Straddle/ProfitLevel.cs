@@ -1,4 +1,4 @@
-﻿namespace Strategies.Settings;
+﻿namespace Strategies.Settings.Straddle;
 
 public class ProfitLevel
 {

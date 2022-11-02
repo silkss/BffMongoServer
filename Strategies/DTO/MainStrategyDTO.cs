@@ -1,10 +1,16 @@
-﻿using Strategies.Settings;
+﻿using Instruments;
 
 namespace Strategies.DTO;
 
-public class MainStrategyDTO
+public class MainStrategyDTO : MainStrategySettingsDTO
 {
-    public MainSettings? MainSettings { get; set; }
-    public StraddleSettings? StraddleSettings { get; set; }
-    public ClosureSettings? ClosureSettings { get; set; }
+    public string? Id { get; set; }
+    public Instrument? Instrument { get; set; }
+    public decimal Pnl { get; set; }
+    public static MainStrategyDTO GetFrom(MainStrategy strategy) => new MainStrategyDTO
+    {
+        Id = strategy.Id,
+        Instrument = strategy.Instrument,
+        Pnl = strategy.GetAllPnl()
+    };
 }

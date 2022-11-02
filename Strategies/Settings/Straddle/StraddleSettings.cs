@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Strategies.Settings;
+namespace Strategies.Settings.Straddle;
 
 public class StraddleSettings
 {
@@ -21,6 +21,6 @@ public class StraddleSettings
     /// </summary>
     public int StraddleExpirationDays { get; set; } = 10;
 
-    public List<ProfitLevel>? ClosuredProfitLevels { get; set; }
-    public List<ProfitLevel>? UnClosuredProfitLevels { get; set; }
+    public List<ProfitLevel> ClosuredProfitLevels { get; set; } = new();
+    public List<ProfitLevel> UnClosuredProfitLevels { get; set; } = new();
 }

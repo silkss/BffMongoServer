@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="GUI.Views.Controls.AllStrategies"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:GUI.ViewModels"
+             xmlns:cmd="clr-namespace:GUI.Infrastructure.Commands"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <vm:AllContainersViewModel/>
+    </UserControl.DataContext>
+    <DataGrid ItemsSource="{Binding Strategies}" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="New">
+                    <MenuItem.Command>
+                        <cmd:OpenCreateStrategyDialogCommand/>
+                    </MenuItem.Command>
+                </MenuItem>
+                <MenuItem Header="Start Trade"/>
+                <MenuItem Header="Modify"/>
+            </ContextMenu>
+        </DataGrid.ContextMenu>
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Instrumetn" 
+                                Binding="{Binding Instrument.FullName}" />
+            <DataGridTextColumn Header="Account" 
+                                Binding="{Binding MainSettings.Account}" />
+            <DataGridTextColumn Binding="{Binding Pnl}" Header="Pnl"/>
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>

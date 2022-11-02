@@ -2,6 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Enums;
 using Strategies.Settings;
+using Strategies.Settings.Straddle;
 using Strategies.TradeUnions;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,7 @@ public class MainStrategy : Base.Strategy
         }
         return StraddleStatus.NotExist;
     }
+    public decimal GetAllPnl() => Straddles.Sum(s => s.GetPnl());
     public DateTime? GetApproximateCloseDate() => GetOpenStraddle()?
         .GetCloseDate(StraddleSettings?.StraddleLiveDays);
     public void Start(IConnector connector)

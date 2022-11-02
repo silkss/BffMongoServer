@@ -6,6 +6,7 @@ using Instruments;
 using Strategies.Depend;
 using Strategies.Enums;
 using Strategies.Settings;
+using Strategies.Settings.Straddle;
 using TraderBot.Notifier;
 
 namespace Strategies.TradeUnions;
@@ -36,7 +37,8 @@ public class Straddle
             }
         }
     }
-	public Straddle(Instrument call, Instrument put)
+	public Straddle() { }
+    public Straddle(Instrument call, Instrument put)
 	{
         Legs.Add(OptionStrategy.CreateStraddleLeg(call, volume: 1));
 		Legs.Add(OptionStrategy.CreateStraddleLeg(put, volume: 1));
@@ -56,7 +58,7 @@ public class Straddle
 
         CreatedTime = DateTime.Now;
     }
-    public Logic Logic = Logic.Open;
+    public Logic Logic { get; set; } = Logic.Open;
     public List<OptionStrategy> Legs { get; } = new List<OptionStrategy>(2);
 	public DateTime CreatedTime { get; set; }
     public void Start(IConnector connector)

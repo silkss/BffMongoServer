@@ -9,7 +9,12 @@
 
   <ItemGroup>
         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
-        <ProjectReference Include="..\ContainerStore.Data\ContainerStore.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContainerStore.Common\ContainerStore.Common.csproj" />
+    <ProjectReference Include="..\Strategies\Strategies.csproj" />
+    <ProjectReference Include="..\Transactions\Transactions.csproj" />
   </ItemGroup>
 
 </Project>

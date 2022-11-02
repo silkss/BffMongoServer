@@ -2,6 +2,7 @@
 using ContainerStore.Gui.Commands;
 using ContainerStore.Gui.Services;
 using ContainerStore.Gui.ViewModels.Base;
+using Strategies;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http;
@@ -66,7 +67,7 @@ internal class TraderViewModel : ViewModel
 		set => Set(ref _errorMessage, value);
 	}
 
-	public ObservableCollection<Container> ContainersInTrade { get; } = new();
+	public ObservableCollection<MainStrategy> ContainersInTrade { get; } = new();
     #endregion
     #region Command
     #region Refresh
@@ -103,27 +104,27 @@ internal class TraderViewModel : ViewModel
             //var res = await _client.GetAsync();
 		}
 	}
-	private bool canSendAlarmCloseSignal(object? obj) => obj is Container;
+	private bool canSendAlarmCloseSignal(object? obj) => obj is MainStrategy;
     #endregion
     #region Stop
     public LambdaCommand Stop { get; }
 	private async void onStop(object? obj)
 	{
-		if (obj is Container container)
+		if (obj is MainStrategy strategy)
 		{
-			if (container.Id == null) return;
+			if (strategy.Id == null) return;
 
-			var res = await _client.DeleteAsync(_traderEndpoint + container.Id);
+			var res = await _client.DeleteAsync(_traderEndpoint + strategy.Id);
 			if (res.IsSuccessStatusCode)
 			{
 				App.Current.Dispatcher.Invoke(() =>
 				{
-					ContainersInTrade.Remove(container);
+					ContainersInTrade.Remove(strategy);
 				});
 			}
 		}
 	}
-	private bool canStop(object? obj) => obj is Container;
+	private bool canStop(object? obj) => obj is MainStrategy;
     #endregion
     #endregion
 }

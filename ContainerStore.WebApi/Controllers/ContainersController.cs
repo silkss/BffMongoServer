@@ -5,6 +5,7 @@ using TraderBot.Notifier;
 using Strategies;
 using Strategies.DTO;
 using MongoDbSettings;
+using System.Linq;
 
 namespace ContainerStore.WebApi.Controllers;
 
@@ -22,7 +23,12 @@ public class ContainersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<MainStrategy>> Get() => await _strategyService.GetAsync();
+    public async Task<IEnumerable<MainStrategyDTO>> Get()
+    {
+        var strategies = await _strategyService.GetAsync();
+        var dto = strategies.Select(s => MainStrategyDTO.GetFrom(s));
+        return dto;
+    }
 
     [HttpGet("{id:length(24)}")]
     public async Task<ActionResult<MainStrategy>> Get(string id)
@@ -36,14 +42,29 @@ public class ContainersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(MainStrategy newStrategy)
+    public async Task<IActionResult> Create(MainStrategyDTO newStrategyDto)
     {
+        if (newStrategyDto.Instrument == null ||
+            newStrategyDto.MainSettings == null ||
+            newStrategyDto.ClosureSettings == null ||
+            newStrategyDto.StraddleSettings == null )
+        { 
+            return BadRequest();
+        }
+        var newStrategy = new MainStrategy
+        {
+            Instrument = newStrategyDto.Instrument,
+            MainSettings = newStrategyDto.MainSettings,
+            ClosureSettings = newStrategyDto.ClosureSettings,
+            StraddleSettings = newStrategyDto.StraddleSettings
+        };
+
         await _strategyService.CreateAsync(newStrategy);
         return CreatedAtAction(nameof(Get), new { id = newStrategy.Id }, newStrategy);
     }
 
     [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, MainStrategyDTO updates)
+    public async Task<IActionResult> Update(string id, MainStrategySettingsDTO updates)
     {
         var strategy = await _strategyService.GetAsync(id);
         if (strategy is null)
