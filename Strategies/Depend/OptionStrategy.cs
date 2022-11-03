@@ -127,7 +127,7 @@ public class OptionStrategy : Base.TradableStrategy
             
         }
     }
-    public void WorkWithClosure(IConnector connector, MainSettings mainSettings, decimal orderPrice = 0m)
+    public void WorkWithClosure(IConnector connector, MainSettings mainSettings, ClosureSettings closureSettings, decimal orderPrice = 0m)
     {
         switch (Logic)
         {
@@ -136,10 +136,11 @@ public class OptionStrategy : Base.TradableStrategy
                 if (IsDone() && Closure != null)
                 {
                     if (OpenPrice != 0m)
-                        Closure.WorkWithClosure(connector, mainSettings, OpenPrice);
+                        Closure.WorkWithClosure(connector, mainSettings,closureSettings, OpenPrice);
                     break;
                 }
                 if (Instrument.TradablePrice(Direction) == 0) break;
+                orderPrice = (orderPrice * closureSettings.ClosurePriceGapProcent) / 100;
                 createAndSendOrder(true, connector, mainSettings, orderPrice);
                 break;
             case Logic.Open when OpenOrder != null:
@@ -151,7 +152,7 @@ public class OptionStrategy : Base.TradableStrategy
                 if (IsClosured()) break;
                 if (IsDone() && Closure != null)
                 {
-                    Closure.WorkWithClosure(connector, mainSettings);
+                    Closure.WorkWithClosure(connector, mainSettings, closureSettings);
                     break;
                 }
                 if (Instrument.TradablePrice(Direction) == 0) break;

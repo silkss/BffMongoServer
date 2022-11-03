@@ -68,7 +68,9 @@ public class Straddle
             leg.Start(connector);
         }
     }
-    public void Work(IConnector connector, Notifier notifier, MainSettings settings, StraddleSettings straddleSettings)
+    public void Work(IConnector connector, Notifier notifier, MainSettings settings, 
+        StraddleSettings straddleSettings,
+        ClosureSettings closureSettings)
     {
         if (Logic == Logic.Open)
         {
@@ -91,7 +93,7 @@ public class Straddle
             }
             else
             {
-                leg.WorkWithClosure(connector, settings);
+                leg.WorkWithClosure(connector, settings, closureSettings);
             }
         }
     }

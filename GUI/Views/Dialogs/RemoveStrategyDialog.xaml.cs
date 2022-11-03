@@ -30,7 +30,7 @@ public partial class RemoveStrategyDialog : Window
     public static readonly DependencyProperty StrategyProperty = DependencyProperty.Register(
         nameof(Strategy),
         typeof(MainStrategyDTO),
-        typeof(CreateStrategyDialog),
+        typeof(RemoveStrategyDialog),
         new PropertyMetadata(null));
 
     public MainStrategyDTO Strategy
@@ -38,9 +38,9 @@ public partial class RemoveStrategyDialog : Window
         get => (MainStrategyDTO)GetValue(StrategyProperty);
         set => SetValue(StrategyProperty, value);
     }
-    private async void YesButton_Click(object sender, RoutedEventArgs e)
+    private void YesButton_Click(object sender, RoutedEventArgs e)
     {
-        DialogResult = await Services.Get.RequesDeleteStrategy(Strategy.Id);
+        DialogResult = true;
     } 
     private void NoButton_Click(object sender, RoutedEventArgs e)
     {

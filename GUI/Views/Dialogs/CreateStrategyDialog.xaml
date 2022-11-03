@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI.Views.Dialogs"
         mc:Ignorable="d" DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="CreateStrategyDialog" MinHeight="650" Height="650" 
-        MinWidth="350" Width="350">
+        Title="CreateStrategyDialog" MinHeight="700" Height="700" 
+        MinWidth="450" Width="450">
     <StackPanel>
         <UniformGrid Rows="1">
             <TextBlock Text="Instrument"/>
@@ -59,22 +59,30 @@
                     <GroupBox Header="UnClosured PL">
                         <DataGrid ItemsSource="{Binding Strategy.StraddleSettings.UnClosuredProfitLevels}"
                                   CanUserAddRows="True"
-                                  AutoGenerateColumns="False"
-                                  Height="100" >
+                                  AutoGenerateColumns="False" IsReadOnly="False"
+                                  Height="200" >
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Days" Binding="{Binding MaxDaysAfterCreation}"/>
-                                <DataGridTextColumn Header="PnL" Binding="{Binding ProfitMinimum}"/>
+                                <DataGridTextColumn Header="Days" 
+                                                    Binding="{Binding MaxDaysAfterCreation}"
+                                                    Width="*"/>
+                                <DataGridTextColumn Header="PnL" 
+                                                    Binding="{Binding ProfitMinimum}"
+                                                    Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </GroupBox>
                     <GroupBox Header="Closured Pl">
                         <DataGrid ItemsSource="{Binding Strategy.StraddleSettings.ClosuredProfitLevels}"
                                   CanUserAddRows="True"
-                                  AutoGenerateColumns="False"
-                                  Height="100">
+                                  AutoGenerateColumns="False" IsReadOnly="False"
+                                  Height="200">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Days" Binding="{Binding MaxDaysAfterCreation}"/>
-                                <DataGridTextColumn Header="PnL" Binding="{Binding ProfitMinimum}"/>
+                                <DataGridTextColumn Header="Days" 
+                                                    Binding="{Binding MaxDaysAfterCreation}"
+                                                    Width="*"/>
+                                <DataGridTextColumn Header="PnL" 
+                                                    Binding="{Binding ProfitMinimum}"
+                                                    Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </GroupBox>

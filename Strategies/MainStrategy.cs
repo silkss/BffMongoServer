@@ -48,6 +48,7 @@ public class MainStrategy : Base.Strategy
         return StraddleStatus.NotExist;
     }
     public decimal GetAllPnl() => Straddles.Sum(s => s.GetPnl());
+    public decimal GetAllPnlCurrency() => Straddles.Sum(s => s.GetCurrencyPnl());
     public DateTime? GetApproximateCloseDate() => GetOpenStraddle()?
         .GetCloseDate(StraddleSettings?.StraddleLiveDays);
     public void Start(IConnector connector)
@@ -65,7 +66,7 @@ public class MainStrategy : Base.Strategy
                 notifier.LogError("Некоторые настройки равны NULL работа страддла не возможно!");
                 break;
             }
-            straddle.Work(connector, notifier, MainSettings, StraddleSettings);
+            straddle.Work(connector, notifier, MainSettings, StraddleSettings, ClosureSettings);
         }
     }
     public void Stop(IConnector connector)

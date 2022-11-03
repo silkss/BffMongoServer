@@ -11,6 +11,9 @@ public class MainStrategyDTO : MainStrategySettingsDTO
     {
         Id = strategy.Id,
         Instrument = strategy.Instrument,
-        Pnl = strategy.GetAllPnl()
+        Pnl = strategy.GetAllPnlCurrency(),
+        MainSettings = strategy.MainSettings,
+        ClosureSettings = strategy.ClosureSettings,
+        StraddleSettings = strategy.StraddleSettings
     };
 }

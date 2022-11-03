@@ -20,13 +20,19 @@
                         <cmd:OpenCreateStrategyDialogCommand/>
                     </MenuItem.Command>
                 </MenuItem>
+                <Separator/>
+                <MenuItem Header="Start Trade" CommandParameter="{Binding SelectedStrategy}">
+                    <MenuItem.Command>
+                        <cmd:AddStrategyToTradeCommand/>
+                    </MenuItem.Command>
+                </MenuItem>
+                <MenuItem Header="Modify" IsEnabled="False"/>
+                <Separator/>
                 <MenuItem Header="Remove" CommandParameter="{Binding SelectedStrategy}">
                     <MenuItem.Command>
                         <cmd:DeleteStrategyCommand/>
                     </MenuItem.Command>
                 </MenuItem>
-                <MenuItem Header="Start Trade"/>
-                <MenuItem Header="Modify"/>
             </ContextMenu>
         </DataGrid.ContextMenu>
         <DataGrid.Columns>

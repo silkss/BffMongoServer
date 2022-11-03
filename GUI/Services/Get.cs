@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using ContainerStore.Connectors.Info;
 using IBApi;
 using System.ComponentModel;
+using System.Security.Policy;
 
 namespace GUI.Services;
 
@@ -28,7 +29,6 @@ internal static class Get
         "GLOBEX",
         "NYMEX"
     };
-
 
     public static async void RequestAllStrategies()
     {
@@ -55,22 +55,28 @@ internal static class Get
     }
     public static async void RequestStrategiesInTrade()
     {
-        var resp = await Client.GetAsync(TRADER_ENDPOINT);
-        if (resp.IsSuccessStatusCode)
+        try
         {
-            var strategies = await resp.Content.ReadAsAsync<List<MainStrategyDTO>>();
-            App.Current.Dispatcher.Invoke(() =>
+            var resp = await Client.GetAsync(TRADER_ENDPOINT);
+            if (resp.IsSuccessStatusCode)
             {
-                StrategiesInTrade.Clear();
-                foreach (var strategy in strategies)
+                var strategies = await resp.Content.ReadAsAsync<List<MainStrategyDTO>>();
+                App.Current.Dispatcher.Invoke(() =>
                 {
-                    StrategiesInTrade.Add(strategy);
-                }
-            });
+                    StrategiesInTrade.Clear();
+                    foreach (var strategy in strategies)
+                    {
+                        StrategiesInTrade.Add(strategy);
+                    }
+                });
+            }
+        }
+        catch (HttpRequestException)
+        {
+            Debug.WriteLine("Не удалось выполнить запрос");
         }
     }
 
-    
     public static async Task<Instrument?> InstrumentAsync(string localname, string exchange)
     {
         Instrument? requstedInstument = null;
@@ -89,6 +95,13 @@ internal static class Get
             return true;
         }
         return false;
+    }
+    public static async Task<bool> RequesDeleteStrategy(string? id)
+    {
+        if (id == null) return false;
+
+        var res = await Client.DeleteAsync(CONTAINERS_ENDPOINT + id);
+        return res.IsSuccessStatusCode;
     }
 
     public static async Task<bool> RequestConnectAsync()
@@ -126,11 +139,18 @@ internal static class Get
         return false;
     }
 
-    public static async Task<bool> RequesDeleteStrategy(string? id)
+    public static async Task<bool> RequestAddToTrader(string? id)
     {
         if (id == null) return false;
-
-        var res = await Client.DeleteAsync(CONTAINERS_ENDPOINT + id);
+        var res = await Client.PostAsync(TRADER_ENDPOINT + id, null);
+        Debug.WriteLine(res.StatusCode);
+        return res.IsSuccessStatusCode;
+    }
+    public static async Task<bool> RequestRemoveFromTraade(string? id)
+    {
+        if (id == null) return false;
+        var res = await Client.DeleteAsync(TRADER_ENDPOINT + id);
+        Debug.WriteLine(res.StatusCode);
         return res.IsSuccessStatusCode;
     }
     

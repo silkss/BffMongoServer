@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDbSettings;
 using Strategies;
+using Strategies.DTO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ContainerStore.WebApi.Controllers;
@@ -20,7 +22,14 @@ public class TraderController : ControllerBase
         _strategyService = strategyService;
 	}
     [HttpGet]
-    public IEnumerable<MainStrategy> Get() => _trader.GetStrategies();
+    public IEnumerable<MainStrategyDTO> Get()
+    {
+        var strategies = _trader.GetStrategies();
+        var dto = strategies.Select(s => MainStrategyDTO.GetFrom(s));
+        return dto;
+    }
+    [HttpGet("admin/")]
+    public IEnumerable<MainStrategy> AdminGet() => _trader.GetStrategies();
 
     [HttpPost("{id:length(24)}")]
     public async Task<IActionResult> Start(string id)

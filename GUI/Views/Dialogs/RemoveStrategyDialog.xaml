@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GUI.Views.Dialogs"
         mc:Ignorable="d" ResizeMode="NoResize"
         Title="{Binding Strategy.Id}"  DataContext="{Binding RelativeSource={RelativeSource self}}"
-        MinHeight="120" Height="120" 
+        MinHeight="170" Height="auto" 
         MinWidth="250" Width="250">
     <StackPanel>
         <TextBlock Text="Вы уверены что хотите удалить:"/>

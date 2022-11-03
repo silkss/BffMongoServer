@@ -12,8 +12,8 @@ internal class AllContainersViewModel : Base.ViewModel
 	}
 	public ObservableCollection<MainStrategyDTO> Strategies => Services.Get.AllSatrategies;
 
-	private MainStrategy? _selecteStrategy;
-	public MainStrategy? SelectedStrategy
+	private MainStrategyDTO? _selecteStrategy;
+	public MainStrategyDTO? SelectedStrategy
 	{
 		get => _selecteStrategy;
 		set => Set(ref _selecteStrategy, value);
