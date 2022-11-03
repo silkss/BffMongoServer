@@ -10,12 +10,19 @@
     <UserControl.DataContext>
         <vm:AllContainersViewModel/>
     </UserControl.DataContext>
-    <DataGrid ItemsSource="{Binding Strategies}" AutoGenerateColumns="False" CanUserAddRows="False">
+    <DataGrid ItemsSource="{Binding Strategies}" 
+              SelectedItem="{Binding SelectedStrategy}"
+              AutoGenerateColumns="False" IsReadOnly="True">
         <DataGrid.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="New">
                     <MenuItem.Command>
                         <cmd:OpenCreateStrategyDialogCommand/>
+                    </MenuItem.Command>
+                </MenuItem>
+                <MenuItem Header="Remove" CommandParameter="{Binding SelectedStrategy}">
+                    <MenuItem.Command>
+                        <cmd:DeleteStrategyCommand/>
                     </MenuItem.Command>
                 </MenuItem>
                 <MenuItem Header="Start Trade"/>

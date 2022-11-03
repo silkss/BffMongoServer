@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="/Styles/DataGridStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/ComboBoxStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/GroupBoxStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/ListBoxStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -2,18 +2,15 @@
 using System.Net.Http;
 using System;
 using System.Collections.ObjectModel;
-using Strategies;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Strategies.DTO;
 using Instruments;
-using IBApi;
-using System.ComponentModel;
-using System.Windows.Controls;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using ContainerStore.Connectors.Info;
-using static System.Net.WebRequestMethods;
+using IBApi;
+using System.ComponentModel;
 
 namespace GUI.Services;
 
@@ -128,6 +125,15 @@ internal static class Get
         }
         return false;
     }
+
+    public static async Task<bool> RequesDeleteStrategy(string? id)
+    {
+        if (id == null) return false;
+
+        var res = await Client.DeleteAsync(CONTAINERS_ENDPOINT + id);
+        return res.IsSuccessStatusCode;
+    }
+    
     public static ConnectorInfo? ConnectorInfo { get; private set; } 
     public readonly static ObservableCollection<MainStrategyDTO> AllSatrategies = new();
     public readonly static ObservableCollection<MainStrategyDTO> StrategiesInTrade  = new();

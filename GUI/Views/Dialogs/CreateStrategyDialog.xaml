@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI.Views.Dialogs"
         mc:Ignorable="d" DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="CreateStrategyDialog" MinHeight="450" Height="550" 
+        Title="CreateStrategyDialog" MinHeight="650" Height="650" 
         MinWidth="350" Width="350">
     <StackPanel>
         <UniformGrid Rows="1">
@@ -57,28 +57,26 @@
                 </UniformGrid>
                 <UniformGrid Rows="1">
                     <GroupBox Header="UnClosured PL">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="36"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <UniformGrid Rows="1">
-                                <Button Content="+"/>
-                                <Button Content="-"/>
-                            </UniformGrid>
-                        </Grid>
+                        <DataGrid ItemsSource="{Binding Strategy.StraddleSettings.UnClosuredProfitLevels}"
+                                  CanUserAddRows="True"
+                                  AutoGenerateColumns="False"
+                                  Height="100" >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Days" Binding="{Binding MaxDaysAfterCreation}"/>
+                                <DataGridTextColumn Header="PnL" Binding="{Binding ProfitMinimum}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </GroupBox>
                     <GroupBox Header="Closured Pl">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="36"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <UniformGrid Rows="1">
-                                <Button Content="+"/>
-                                <Button Content="-"/>
-                            </UniformGrid>
-                        </Grid>
+                        <DataGrid ItemsSource="{Binding Strategy.StraddleSettings.ClosuredProfitLevels}"
+                                  CanUserAddRows="True"
+                                  AutoGenerateColumns="False"
+                                  Height="100">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Days" Binding="{Binding MaxDaysAfterCreation}"/>
+                                <DataGridTextColumn Header="PnL" Binding="{Binding ProfitMinimum}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </GroupBox>
                 </UniformGrid>
                              
