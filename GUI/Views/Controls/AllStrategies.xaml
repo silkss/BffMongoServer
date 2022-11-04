@@ -12,7 +12,8 @@
     </UserControl.DataContext>
     <DataGrid ItemsSource="{Binding Strategies}" 
               SelectedItem="{Binding SelectedStrategy}"
-              AutoGenerateColumns="False" IsReadOnly="True">
+              AutoGenerateColumns="False" IsReadOnly="True"
+              MouseDoubleClick="DataGrid_MouseDoubleClick">
         <DataGrid.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="New">

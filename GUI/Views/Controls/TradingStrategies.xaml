@@ -10,7 +10,8 @@
         <vm:StrategiesInTradeViewModel/>
     </UserControl.DataContext>
     
-    <DataGrid ItemsSource="{Binding Strategies}" SelectedItem="{Binding SelectedStrategy}">
+    <DataGrid ItemsSource="{Binding Strategies}" SelectedItem="{Binding SelectedStrategy}"
+              MouseDoubleClick="DataGrid_MouseDoubleClick">
         <DataGrid.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="Stop"/>

@@ -22,8 +22,8 @@ public class Straddle
         else
         {
             var wantedProfit = levels
-                .Where(level => level.MaxDaysAfterCreation >= daysAfterOpen)
-                .MinBy(level => level.MaxDaysAfterCreation)?
+                .Where(level => level.MaxDaysAfterCreation <= daysAfterOpen)
+                .MaxBy(level => level.MaxDaysAfterCreation)?
                 .ProfitMinimum;
 
             if (wantedProfit == null)
@@ -72,18 +72,32 @@ public class Straddle
         StraddleSettings straddleSettings,
         ClosureSettings closureSettings)
     {
+        var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
         if (Logic == Logic.Open)
         {
-            var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
             if (IsSomeLegIsClosured())
             {
                 checkProfitLevels(straddleSettings.ClosuredProfitLevels, daysAfterCreation, notifier, connector);
             }
             else
             {
+                //ПРОВЕРКУ НЕЗАМКНУТОГО СТРЭДДЛА НАДО ПРОВОДИТЬ ИСКЛЮЧИТЕЛЬНО В МОМЕНТ ПОЛУЧЕНИЯ СИГНАЛА О ЗАКРЫТИИ 
+                /* TODO:
+                 * УБРАТЬ от сюда эту проверку.
+                 * Вынести в отдельный метод, который будет проверять это во время приема сигнала!
+                 */
+
                 checkProfitLevels(straddleSettings.UnClosuredProfitLevels, daysAfterCreation, notifier, connector);
             }
         }
+
+        if (Logic == Logic.Open) // это необходимо потому. что код выше может изменить логику стрэддла.
+        {
+            if (CreatedTime.AddDays(straddleSettings.StraddleLiveDays) < DateTime.Now)
+            {
+                Close(connector);
+            }
+        }    
         
         foreach (var leg in Legs)
         {

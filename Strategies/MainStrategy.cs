@@ -13,6 +13,7 @@ namespace Strategies;
 
 public class MainStrategy : Base.Strategy
 {
+    private readonly object straddleLock = new();
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
     public string? Id { get; set; }
@@ -20,14 +21,18 @@ public class MainStrategy : Base.Strategy
     public MainSettings? MainSettings { get; set; }
     public StraddleSettings? StraddleSettings { get; set; }
     public ClosureSettings? ClosureSettings { get; set; }
+
     public List<Straddle> Straddles { get; set; } = new();
 
     public Straddle? GetOpenStraddle() => Straddles.FirstOrDefault(s => s.IsOpen());
 
     public void AddStraddle(Straddle straddle, IConnector connector)
     {
-        Straddles.ForEach(s => s.Close(connector));
-        Straddles.Add(straddle);
+        lock (straddleLock)
+        {
+            Straddles.ForEach(s => s.Close(connector));
+            Straddles.Add(straddle);
+        }
     }
     public StraddleStatus GetOpenStraddleStatus()
     {
@@ -59,14 +64,17 @@ public class MainStrategy : Base.Strategy
     }
     public void Work(IConnector connector, Notifier notifier)
     {
-        foreach (var straddle in Straddles)
+        lock (straddleLock)
         {
-            if (StraddleSettings == null || MainSettings == null)
+            foreach (var straddle in Straddles)
             {
-                notifier.LogError("Некоторые настройки равны NULL работа страддла не возможно!");
-                break;
+                if (StraddleSettings == null || MainSettings == null)
+                {
+                    notifier.LogError("Некоторые настройки равны NULL работа страддла не возможно!");
+                    break;
+                }
+                straddle.Work(connector, notifier, MainSettings, StraddleSettings, ClosureSettings);
             }
-            straddle.Work(connector, notifier, MainSettings, StraddleSettings, ClosureSettings);
         }
     }
     public void Stop(IConnector connector)
