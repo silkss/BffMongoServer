@@ -23,8 +23,10 @@
                                 Binding="{Binding Instrument.FullName}"/>
             <DataGridTextColumn Header="Account"
                                 Binding="{Binding MainSettings.Account}"/>
-            <DataGridTextColumn Header="PnL"
-                                Binding="{Binding Pnl}"/>
+            <DataGridTextColumn Header="PnL $"
+                                Binding="{Binding PnlCurrency}"/>
+            <DataGridTextColumn Header="OpenPnl $"
+                                Binding="{Binding OpenPnlCurrency}"/>
         </DataGrid.Columns>
     </DataGrid>
 </UserControl>
