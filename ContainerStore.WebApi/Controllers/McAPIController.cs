@@ -29,21 +29,21 @@ public class McAPIController : ControllerBase
 		$"CloseDate: ~{strategy.GetApproximateCloseDate()}\n" +
 		$"CreatedDate: {strategy.GetOpenStraddle()?.CreatedTime}";
 
-	private string parseSignal(string signal, MainStrategy strategy, double price) => signal.Trim().ToLower() switch
+	private string parseSignal(string signal, MainStrategy strategy, double price, Notifier notifier) => signal.Trim().ToLower() switch
 	{
-		"open" => strategy.GetOpenStraddleStatus() switch
+		"open" => strategy.GetOpenStraddleStatus(notifier) switch
 		{
 			StraddleStatus.NotExist => openStraddle(strategy, price),
 			StraddleStatus.Expired => closeAndOpenStraddle(strategy, price, $"Expired:" +
-				$"opened: {strategy.GetOpenStraddle()?.CreatedTime}"),
+				$"opening: {strategy.GetOpenStraddle()?.CreatedTime}"),
 			StraddleStatus.InProfit => closeAndOpenStraddle(strategy, price, $"InProfit:\n" +
 				$"target: {strategy.StraddleSettings?.StraddleTargetPnl}\n" +
-				$"open: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}"),
+				$"opening: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}"),
 			StraddleStatus.NotOpen => closeAndOpenStraddle(strategy, price, "Не успел открыться"),
 			StraddleStatus.Working => straddleWorkingMessage(strategy),
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!")
 		},
-		"close" => strategy.GetOpenStraddleStatus() switch
+		"close" => strategy.GetOpenStraddleStatus(notifier) switch
 		{
 			StraddleStatus.Expired => closeStraddle(strategy.GetOpenStraddle(), "Expired:"),
 			StraddleStatus.InProfit => closeStraddle(strategy.GetOpenStraddle(), "InProfit"),
@@ -52,7 +52,7 @@ public class McAPIController : ControllerBase
 			StraddleStatus.NotExist => "There is no open straddle in the container.",
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!"),
 		},
-		"alarmclose" => strategy.GetOpenStraddleStatus() switch
+		"alarmclose" => strategy.GetOpenStraddleStatus(notifier) switch
 		{
 			StraddleStatus.NotExist => "There is no open straddle in the container.",
 			_ => closeStraddle(strategy.GetOpenStraddle(), "Alarm stop."),
@@ -148,7 +148,7 @@ public class McAPIController : ControllerBase
 			_logger.LogInformation(sb.ToString(), toTelegram: true);
 			return Ok();
 		}
-		sb.AppendLine(parseSignal(type, strategy, price));
+		sb.AppendLine(parseSignal(type, strategy, price, _logger));
 		sb.AppendLine($"Account: {account}. Price: {price}.");
 #if DEBUG
 		_logger.LogInformation(sb.ToString(), toTelegram: false);

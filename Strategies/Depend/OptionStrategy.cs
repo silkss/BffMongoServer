@@ -127,7 +127,9 @@ public class OptionStrategy : Base.TradableStrategy
             
         }
     }
-    public void WorkWithClosure(IConnector connector, MainSettings mainSettings, ClosureSettings closureSettings, decimal orderPrice = 0m)
+    public void WorkWithClosure(IConnector connector, 
+        MainSettings mainSettings, 
+        ClosureSettings closureSettings, decimal orderPrice = 0m)
     {
         switch (Logic)
         {

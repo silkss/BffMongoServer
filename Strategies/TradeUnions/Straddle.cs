@@ -13,11 +13,12 @@ namespace Strategies.TradeUnions;
 
 public class Straddle
 {
-    private void checkProfitLevels(List<ProfitLevel>? levels, int daysAfterOpen, Notifier notifier, IConnector connector)
+    private bool checkProfitLevels(List<ProfitLevel>? levels, int daysAfterOpen, Notifier notifier)
     {
         if (levels == null)
         {
             notifier.LogInformation("Уровни \"замкнутого\" профита не заданы!");
+            return false;
         }
         else
         {
@@ -28,14 +29,15 @@ public class Straddle
 
             if (wantedProfit == null)
             {
-                return;
+                return false;
             }
             if (GetCurrencyPnl() > wantedProfit)
             {
-                Close(connector);
-                return;
+                //Close(connector);
+                return true; ;
             }
         }
+        return false;
     }
 	public Straddle() { }
     public Straddle(Instrument call, Instrument put)
@@ -68,6 +70,12 @@ public class Straddle
             leg.Start(connector);
         }
     }
+    public bool CheckUnclosuredProfitLevels(StraddleSettings straddleSettings, Notifier notifier)
+    {
+        if (IsSomeLegIsClosured()) return false;
+        var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
+        return checkProfitLevels(straddleSettings.UnClosuredProfitLevels, daysAfterCreation, notifier);
+    }
     public void Work(IConnector connector, Notifier notifier, MainSettings settings, 
         StraddleSettings straddleSettings,
         ClosureSettings closureSettings)
@@ -77,27 +85,10 @@ public class Straddle
         {
             if (IsSomeLegIsClosured())
             {
-                checkProfitLevels(straddleSettings.ClosuredProfitLevels, daysAfterCreation, notifier, connector);
+                if (checkProfitLevels(straddleSettings.ClosuredProfitLevels, daysAfterCreation, notifier))
+                    Close(connector);
             }
-            else
-            {
-                //ПРОВЕРКУ НЕЗАМКНУТОГО СТРЭДДЛА НАДО ПРОВОДИТЬ ИСКЛЮЧИТЕЛЬНО В МОМЕНТ ПОЛУЧЕНИЯ СИГНАЛА О ЗАКРЫТИИ 
-                /* TODO:
-                 * УБРАТЬ от сюда эту проверку.
-                 * Вынести в отдельный метод, который будет проверять это во время приема сигнала!
-                 */
-
-                checkProfitLevels(straddleSettings.UnClosuredProfitLevels, daysAfterCreation, notifier, connector);
-            }
-        }
-
-        if (Logic == Logic.Open) // это необходимо потому. что код выше может изменить логику стрэддла.
-        {
-            if (CreatedTime.AddDays(straddleSettings.StraddleLiveDays) < DateTime.Now)
-            {
-                Close(connector);
-            }
-        }    
+        } 
         
         foreach (var leg in Legs)
         {

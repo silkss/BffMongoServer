@@ -24,7 +24,8 @@ public class MainStrategy : Base.Strategy
 
     public List<Straddle> Straddles { get; set; } = new();
 
-    public Straddle? GetOpenStraddle() => Straddles.FirstOrDefault(s => s.IsOpen());
+    public Straddle? GetOpenStraddle() =>
+        Straddles.FirstOrDefault(s => s.IsOpen());
 
     public void AddStraddle(Straddle straddle, IConnector connector)
     {
@@ -34,15 +35,21 @@ public class MainStrategy : Base.Strategy
             Straddles.Add(straddle);
         }
     }
-    public StraddleStatus GetOpenStraddleStatus()
+    public StraddleStatus GetOpenStraddleStatus(Notifier notifier)
     {
         if (GetOpenStraddle() is Straddle straddle)
         {
 
+            if (StraddleSettings != null)
+            {
+                if (straddle.CheckUnclosuredProfitLevels(StraddleSettings, notifier))
+                    return StraddleStatus.UnClosureProfitLevelReached;
+            }
+
             if (straddle.GetPnl() >= StraddleSettings?.StraddleTargetPnl)
                 return StraddleStatus.InProfit;
 
-            if (straddle.GetCloseDate(StraddleSettings?.StraddleLiveDays) >= DateTime.Now)
+            if (straddle.GetCloseDate(StraddleSettings?.StraddleLiveDays) <= DateTime.Now)
                 return StraddleStatus.Expired;
 
             if (straddle.IsStartedWork() is false)
@@ -53,6 +60,7 @@ public class MainStrategy : Base.Strategy
         return StraddleStatus.NotExist;
     }
     public decimal GetAllPnl() => Straddles.Sum(s => s.GetPnl());
+    public decimal? GetOpenPnlCurrency() => GetOpenStraddle()?.GetCurrencyPnl();
     public decimal GetAllPnlCurrency() => Straddles.Sum(s => s.GetCurrencyPnl());
     public DateTime? GetApproximateCloseDate() => GetOpenStraddle()?
         .GetCloseDate(StraddleSettings?.StraddleLiveDays);
