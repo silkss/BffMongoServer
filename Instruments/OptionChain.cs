@@ -16,5 +16,5 @@ public class OptionChain
     public void AddTradingClass(OptionTradingClass otc) => _tradingClasses.Add(otc);
     public OptionTradingClass? GetTradingClass(DateTime approximateDate) => _tradingClasses
         .OrderBy(tc => tc.ExpirationDate)
-        .FirstOrDefault(tc => tc.ExpirationDate > approximateDate);
+        .FirstOrDefault(tc => tc.ExpirationDate >= approximateDate);
 }

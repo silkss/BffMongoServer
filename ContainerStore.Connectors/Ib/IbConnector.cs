@@ -245,7 +245,7 @@ public class IbConnector : IConnector
             _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
         }
     }
-
+    public bool IsOrderOpen(Transaction order) => _openOrdersCache.Contains(order);
     public IConnector CancelOrder(Transaction? transaction)
     {
         if (transaction == null) return this;

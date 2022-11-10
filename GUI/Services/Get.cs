@@ -26,6 +26,7 @@ internal static class Get
 
     public static readonly IEnumerable<string> Exchanges = new List<string>
     {
+        "CME",
         "GLOBEX",
         "NYMEX"
     };
@@ -53,6 +54,16 @@ internal static class Get
             Debug.WriteLine("Не удалось выполнить запрос");
         }
     }
+    public static async Task<bool> RequestModifyStrategy(MainStrategyDTO strategy)
+    {
+        var resp = await Client.PutAsJsonAsync<MainStrategyDTO>(CONTAINERS_ENDPOINT+strategy.Id, strategy);
+        if (resp.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public static async void RequestStrategiesInTrade()
     {
         try

@@ -13,22 +13,47 @@ public partial class CreateStrategyDialog : Window
     public CreateStrategyDialog(MainStrategyDTO? mainStrategy)
     {
         InitializeComponent();
-
+        
         cbExchange.ItemsSource = Services.Get.Exchanges;
         cbAccounts.ItemsSource = Services.Get.ConnectorInfo?.Accounts;
+
         if (mainStrategy == null)
         {
+            IsModifying = true;
             Strategy = new MainStrategyDTO
             {
                 MainSettings = new MainSettings(),
                 ClosureSettings = new ClosureSettings(),
                 StraddleSettings = new StraddleSettings()
             };
+            
         }
         else
         {
             Strategy = mainStrategy;
+
+            cbExchange.IsEnabled = false;
+            cbExchange.SelectedItem = Strategy.Instrument?.Exchange;
+
+            cbAccounts.IsEnabled = false;
+            
+            tbLocalSymbol.IsEnabled = false;
+            tbLocalSymbol.Text = Strategy.Instrument?.FullName;
+
+            OkButton.Content = "Update";
         }
+    }
+
+    public static readonly DependencyProperty IsModifyingProperty = DependencyProperty.Register(
+        nameof(IsModifying),
+        typeof(bool),
+        typeof(CreateStrategyDialog),
+        new PropertyMetadata(null));
+
+    public bool IsModifying
+    {
+        get => (bool)GetValue(IsModifyingProperty);
+        set => SetValue(IsModifyingProperty, value);
     }
 
     public static readonly DependencyProperty StrategyProperty = DependencyProperty.Register(
@@ -45,21 +70,7 @@ public partial class CreateStrategyDialog : Window
 
     private async void OkButton_Click(object sender, RoutedEventArgs e)
     {
-        if (cbExchange.SelectedItem is string exchange)
-        {
-            var instrument = await Services.Get.InstrumentAsync(tbLocalSymbol.Text, exchange);
-            if (instrument == null)
-            {
-                tbError.Text = "Неудалось запросить инструмент. Проверь настройки!";
-                return;
-            }
-            Strategy.Instrument = instrument;
-            if (await Services.Get.CreateStrategyAsync(Strategy))
-            {
-                DialogResult = true;
-            }
-            tbError.Text = "Чтото не так с создание стратегии!";
-        }
+        DialogResult = true;
     }
 
     private void CancelButton_Click(object sender, RoutedEventArgs e)

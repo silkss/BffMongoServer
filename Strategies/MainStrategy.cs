@@ -14,6 +14,7 @@ namespace Strategies;
 public class MainStrategy : Base.Strategy
 {
     private readonly object straddleLock = new();
+
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
     public string? Id { get; set; }
@@ -43,7 +44,9 @@ public class MainStrategy : Base.Strategy
             if (StraddleSettings != null)
             {
                 if (straddle.CheckUnclosuredProfitLevels(StraddleSettings, notifier))
-                    return StraddleStatus.UnClosureProfitLevelReached;
+                    return StraddleStatus.UnClosuredProfitLevelReached;
+                if (straddle.CheckClosuredProfitLevels(StraddleSettings, notifier))
+                    return StraddleStatus.ClosuredProfitLevelReached;
             }
 
             if (straddle.GetPnl() >= StraddleSettings?.StraddleTargetPnl)
@@ -76,12 +79,26 @@ public class MainStrategy : Base.Strategy
         {
             foreach (var straddle in Straddles)
             {
-                if (StraddleSettings == null || MainSettings == null)
+                if (StraddleSettings == null || 
+                    MainSettings == null || 
+                    ClosureSettings == null)
                 {
                     notifier.LogError("Некоторые настройки равны NULL работа страддла не возможно!");
                     break;
                 }
-                straddle.Work(connector, notifier, MainSettings, StraddleSettings, ClosureSettings);
+                if (straddle.Logic == Logic.Open)
+                {
+
+                    if (straddle.CheckPnlForClose(StraddleSettings))
+                    {
+                        notifier.LogInformation($"Reached Pnl!\n" +
+                            $"{Instrument.FullName} | {MainSettings.Account}\n" +
+                            $"{straddle.GetCurrencyPnl()}", toTelegram: true);
+                        straddle.Close(connector);
+                        continue;
+                    }
+                }
+                straddle.Work(connector, notifier, MainSettings, ClosureSettings);
             }
         }
     }

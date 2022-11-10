@@ -2,6 +2,7 @@
 using ContainerStore.Connectors;
 using IBApi;
 using Instruments;
+using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Enums;
 using Strategies.Helpers;
 using Strategies.Settings;
@@ -13,7 +14,6 @@ namespace Strategies.Depend;
 
 public class OptionStrategy : Base.TradableStrategy
 {
-
     private Transaction createOpenOrder( MainSettings settings, decimal orderPrice) => new Transaction(this, settings.Account)
     {
         Quantity = getTradableVolume(),
@@ -36,7 +36,7 @@ public class OptionStrategy : Base.TradableStrategy
         {
             Orders.Add(OpenOrder);
         }
-        connector.SendLimitOrder(Instrument, OpenOrder, settings.OrderPriceShift, orderPrice == 0);
+        connector.SendLimitOrder(Instrument, OpenOrder, settings.OrderPriceShift, true);
     }
 
     private int getTradableVolume()
@@ -47,8 +47,10 @@ public class OptionStrategy : Base.TradableStrategy
 
     private readonly object _transactionLock = new();
 
-    public List<Transaction> Orders { get; } = new();
+    public List<Transaction> Orders { get; set; } = new();
     public decimal OpenPrice { get; set; }
+
+    [BsonIgnore]
     public Transaction? OpenOrder { get; private set; }
     public int Volume { get; set; }
     public Logic Logic { get; set; }
@@ -111,16 +113,38 @@ public class OptionStrategy : Base.TradableStrategy
                 createAndSendOrder(true, connector, mainSettings, orderPrice);
                 break;
             case Logic.Open when OpenOrder != null:
+                if (!connector.IsOrderOpen(OpenOrder))
+                {
+                    OpenOrder = null;
+                    break;
+                }
                 if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                     connector.CancelOrder(OpenOrder);
                 break;
             case Logic.Close when OpenOrder == null:
-                if (IsDone()) break;
+                if (IsDone())
+                {
+                    if (Closure != null)
+                    {
+                        Closure.Work(connector, mainSettings);
+                    }
+                    break;
+                }
                 createAndSendOrder(false, connector, mainSettings, orderPrice);
+               
                 break;
             case Logic.Close when OpenOrder != null:
+                if (!connector.IsOrderOpen(OpenOrder))
+                {
+                    OpenOrder = null;
+                    break;
+                }
                 if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                     connector.CancelOrder(OpenOrder);
+                if (Closure != null)
+                {
+                    Closure.Work(connector, mainSettings);
+                }
                 break;
             default:
                 break;
@@ -146,6 +170,11 @@ public class OptionStrategy : Base.TradableStrategy
                 createAndSendOrder(true, connector, mainSettings, orderPrice);
                 break;
             case Logic.Open when OpenOrder != null:
+                if (!connector.IsOrderOpen(OpenOrder))
+                {
+                    OpenOrder = null;
+                    break;
+                }
                 if (orderPrice == 0) break;
                 if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                     connector.CancelOrder(OpenOrder);
@@ -161,6 +190,11 @@ public class OptionStrategy : Base.TradableStrategy
                 createAndSendOrder(false, connector, mainSettings);
                 break;
             case Logic.Close when OpenOrder != null:
+                if (!connector.IsOrderOpen(OpenOrder))
+                {
+                    OpenOrder = null;
+                    break;
+                }
                 if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                     connector.CancelOrder(OpenOrder);
                 break;
@@ -180,6 +214,7 @@ public class OptionStrategy : Base.TradableStrategy
         }
     }
     public decimal GetCurrencyPnl() => GetPnl() * Instrument.Multiplier;
+    public int GetPosition() => Strategy.GetPosition(Orders).pos;
     public decimal GetCurrencyPnlWithClosure()
     {
         var currency = GetCurrencyPnl();

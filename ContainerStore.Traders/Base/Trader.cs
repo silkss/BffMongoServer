@@ -66,6 +66,7 @@ public class Trader
 			{
 				_strategies.ForEach(s => s.Work(_connector, _logger));
 			}
+			Thread.Sleep(1000);
 		}
 	}
 	public void Start()
@@ -149,11 +150,9 @@ public class Trader
 			}
 		}
 		if (container == null) return removed;
-		
-		foreach (var straddle in container.Straddles)
-		{
-			OrdersHelper.CancelStraddleOrders(_connector, straddle);
-        }
+
+		container.Stop(_connector);
+
 		if (container.Id == null)
 		{
 			_logger.LogError("Cant save container. NO ID");

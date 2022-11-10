@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using ContainerStore.Connectors;
 using Instruments;
 using Strategies.Depend;
@@ -13,6 +13,9 @@ namespace Strategies.TradeUnions;
 
 public class Straddle
 {
+    private readonly TimeSpan _2days = new TimeSpan(days: 2, 0, 0, 0);
+    private readonly TimeSpan _4days = new TimeSpan(days: 4, 0, 0, 0);
+
     private bool checkProfitLevels(List<ProfitLevel>? levels, int daysAfterOpen, Notifier notifier)
     {
         if (levels == null)
@@ -60,8 +63,8 @@ public class Straddle
 
         CreatedTime = DateTime.Now;
     }
-    public Logic Logic { get; set; } = Logic.Open;
-    public List<OptionStrategy> Legs { get; } = new List<OptionStrategy>(2);
+    public Logic Logic { get; private set; } = Logic.Open;
+    public List<OptionStrategy> Legs { get; set; } = new List<OptionStrategy>(2);
 	public DateTime CreatedTime { get; set; }
     public void Start(IConnector connector)
     {
@@ -76,20 +79,15 @@ public class Straddle
         var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
         return checkProfitLevels(straddleSettings.UnClosuredProfitLevels, daysAfterCreation, notifier);
     }
+    public bool CheckClosuredProfitLevels(StraddleSettings straddleSettings, Notifier notifier)
+    {
+        if (!IsSomeLegIsClosured()) return false;
+        var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
+        return checkProfitLevels(straddleSettings.ClosuredProfitLevels, daysAfterCreation, notifier); ;
+    }
     public void Work(IConnector connector, Notifier notifier, MainSettings settings, 
-        StraddleSettings straddleSettings,
         ClosureSettings closureSettings)
     {
-        var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
-        if (Logic == Logic.Open)
-        {
-            if (IsSomeLegIsClosured())
-            {
-                if (checkProfitLevels(straddleSettings.ClosuredProfitLevels, daysAfterCreation, notifier))
-                    Close(connector);
-            }
-        } 
-        
         foreach (var leg in Legs)
         {
             if (IsSomeLegIsClosured())
@@ -101,6 +99,30 @@ public class Straddle
                 leg.WorkWithClosure(connector, settings, closureSettings);
             }
         }
+    }
+    /// <summary>
+    /// Вернет true если текущий ПиУ достиг необходимого уровня!
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <returns></returns>
+    public bool CheckPnlForClose(StraddleSettings settings)
+    {
+        var pnl = GetCurrencyPnl();
+        var now = DateTime.Now;
+        if (now.DayOfWeek == DayOfWeek.Friday && CreatedTime.Date == now.Date)
+        {
+            return pnl > (settings.StraddleTargetPnl / 3);
+        }
+        var daysPassed = now - CreatedTime;
+        if (daysPassed > _4days)
+        {
+            return pnl > (settings.StraddleTargetPnl / 4);
+        }
+        if (daysPassed > _2days)
+        {
+            return pnl > (settings.StraddleTargetPnl / 2);
+        }
+        return pnl > settings.StraddleTargetPnl;
     }
     public bool IsSomeLegIsClosured() => Legs.Any(leg => leg.IsClosured());
     public void Stop(IConnector connector)

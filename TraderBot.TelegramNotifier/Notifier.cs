@@ -48,10 +48,14 @@ public class Notifier
 	}
 	public Notifier(ILogger<Notifier> logger, bool withTelegram = true)
 	{
-		if (withTelegram)
+#if DEBUG
+        _telegram = null;
+#else
+        if (withTelegram)
 		{
 			_telegram = new();
 		}
+#endif
 		_logger = logger;
 	}
     public void LogInformation(string msg, bool toTelegram = false) =>

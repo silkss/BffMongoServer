@@ -1,5 +1,6 @@
 ﻿using GUI.Views.Dialogs;
 using Strategies.DTO;
+using System.Windows;
 
 namespace GUI.Infrastructure.Commands;
 
@@ -11,8 +12,10 @@ internal class DeleteStrategyCommand : Base.Command
     {
         if (parameter is MainStrategyDTO strategy)
         {
-            var dlg = new RemoveStrategyDialog(strategy);
-            if (dlg.ShowDialog() == true)
+            if (MessageBox.Show($"Уверен что хочешь УДАЛИТЬ стратегию?",
+                $"{strategy.Instrument?.FullName} | {strategy.MainSettings?.Account} | {strategy.PnlCurrency}",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 if(await Services.Get.RequesDeleteStrategy(strategy.Id))
                 {

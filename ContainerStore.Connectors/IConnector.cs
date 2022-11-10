@@ -37,7 +37,8 @@ public interface IConnector
     #endregion
 
     #region Transactions/ Orders
-    
+
+    bool IsOrderOpen(Transaction order);
     void SendLimitOrder(Instrument instrument, Transaction order, int priceShift = 0, bool needToRounds = true);
     IConnector CancelOrder(Transaction? transaction);
     #endregion

@@ -21,6 +21,8 @@ public class McAPIController : ControllerBase
 	private readonly StrategyService _strategyService;
 	private readonly Trader _trader;
 
+	private readonly TimeSpan _fridayDeadLine = new TimeSpan(hours: 12, minutes: 00, seconds: 00);
+
 	private string straddleWorkingMessage(MainStrategy strategy) =>
 		$"Straddle working:\n" +
 		$"OpenPnl: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}\n" +
@@ -39,6 +41,10 @@ public class McAPIController : ControllerBase
 			StraddleStatus.InProfit => closeAndOpenStraddle(strategy, price, $"InProfit:\n" +
 				$"target: {strategy.StraddleSettings?.StraddleTargetPnl}\n" +
 				$"opening: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}"),
+			StraddleStatus.ClosuredProfitLevelReached => closeAndOpenStraddle(strategy, price, $"Unclosured PL:\n" +
+                $"Pnl: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}"),
+			StraddleStatus.UnClosuredProfitLevelReached => closeAndOpenStraddle(strategy, price, $"Closured PNL:\n" +
+                $"Pnl: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}"),
 			StraddleStatus.NotOpen => closeAndOpenStraddle(strategy, price, "Не успел открыться"),
 			StraddleStatus.Working => straddleWorkingMessage(strategy),
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!")
@@ -47,6 +53,8 @@ public class McAPIController : ControllerBase
 		{
 			StraddleStatus.Expired => closeStraddle(strategy.GetOpenStraddle(), "Expired:"),
 			StraddleStatus.InProfit => closeStraddle(strategy.GetOpenStraddle(), "InProfit"),
+			StraddleStatus.ClosuredProfitLevelReached => closeStraddle(strategy.GetOpenStraddle(), "Closured PL"),
+			StraddleStatus.UnClosuredProfitLevelReached => closeStraddle(strategy.GetOpenStraddle(), "Unclosured PL"),
 			StraddleStatus.NotOpen => closeStraddle(strategy.GetOpenStraddle(), "Не успел открыться"),
 			StraddleStatus.Working => straddleWorkingMessage(strategy),
 			StraddleStatus.NotExist => "There is no open straddle in the container.",
@@ -68,6 +76,10 @@ public class McAPIController : ControllerBase
 
 	private string openStraddle(MainStrategy mainStrategy, double price)
 	{
+		if (DateTime.Now.DayOfWeek == DayOfWeek.Friday && DateTime.Now.TimeOfDay >= _fridayDeadLine) 
+		{
+			return $"Cant open straddle. Because: {DateTime.Now.DayOfWeek} {DateTime.Now.TimeOfDay}";
+		}
 		var optionclass = _connector
 			.GetOptionTradingClass(mainStrategy.Instrument.Id, mainStrategy.GetApproximateExpirationDate());
 		if (optionclass == null)

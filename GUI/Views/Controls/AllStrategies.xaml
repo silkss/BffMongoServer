@@ -27,7 +27,11 @@
                         <cmd:AddStrategyToTradeCommand/>
                     </MenuItem.Command>
                 </MenuItem>
-                <MenuItem Header="Modify" IsEnabled="False"/>
+                <MenuItem Header="Modify" CommandParameter="{Binding SelectedStrategy}">
+                    <MenuItem.Command>
+                        <cmd:OpenModifyDialogCommand/>
+                    </MenuItem.Command>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Header="Remove" CommandParameter="{Binding SelectedStrategy}">
                     <MenuItem.Command>
@@ -37,11 +41,29 @@
             </ContextMenu>
         </DataGrid.ContextMenu>
         <DataGrid.Columns>
-            <DataGridTextColumn Header="Instrumetn" 
-                                Binding="{Binding Instrument.FullName}" />
-            <DataGridTextColumn Header="Account" 
-                                Binding="{Binding MainSettings.Account}" />
-            <DataGridTextColumn Binding="{Binding Pnl}" Header="Pnl"/>
+            <DataGridTemplateColumn Header="Instrument">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Instrument.FullName}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+
+            <DataGridTemplateColumn Header="Account">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding MainSettings.Account}"/>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+
+            <DataGridTemplateColumn Header="Pnl">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding PnlCurrency, StringFormat={}{0:0.## $}}"/>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
         </DataGrid.Columns>
     </DataGrid>
 </UserControl>

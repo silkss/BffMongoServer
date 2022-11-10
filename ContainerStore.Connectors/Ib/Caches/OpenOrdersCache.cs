@@ -9,7 +9,6 @@ internal class OpenOrdersCache
     private readonly List<Transaction> _openOrders = new();
     private readonly object _ordersLock = new();
 
-
     public void Add(Transaction order)
     {
         lock (_ordersLock)
@@ -22,13 +21,21 @@ internal class OpenOrdersCache
     public Transaction? GetById(int id)
     {
         Transaction? order = null;
-        lock (_openOrders)
+        lock (_ordersLock)
         {
             order = _openOrders.FirstOrDefault(o => o.BrokerId == id);
         }
         return order;
     }
-
+    public bool Contains(Transaction order)
+    {
+        var isOpen = false;
+        lock(_ordersLock)
+        {
+            isOpen = _openOrders.Any(o => o.BrokerId == order.BrokerId);
+        }
+        return isOpen;
+    }
     public bool Remove(Transaction item)
     {
         var removed = false;
