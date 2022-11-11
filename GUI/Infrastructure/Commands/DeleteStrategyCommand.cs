@@ -17,9 +17,9 @@ internal class DeleteStrategyCommand : Base.Command
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                if(await Services.Get.RequesDeleteStrategy(strategy.Id))
+                if(await Services.Get.StrategiesRequests.RemoveAsync(strategy.Id))
                 {
-                    Services.Get.RequestAllStrategies();
+                    Services.Get.StrategiesRequests.RefreshAsync();
                 }
             }
         }

@@ -7,13 +7,16 @@
              xmlns:cmd="clr-namespace:GUI.Infrastructure.Commands"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
     <UserControl.DataContext>
         <vm:AllContainersViewModel/>
     </UserControl.DataContext>
-    <DataGrid ItemsSource="{Binding Strategies}" 
-              SelectedItem="{Binding SelectedStrategy}"
-              AutoGenerateColumns="False" IsReadOnly="True"
-              MouseDoubleClick="DataGrid_MouseDoubleClick">
+
+    <DataGrid ItemsSource="{Binding Strategies}" Grid.Row="1"
+                  SelectedItem="{Binding SelectedStrategy}"
+                  AutoGenerateColumns="False" IsReadOnly="True"
+                  MouseDoubleClick="DataGrid_MouseDoubleClick">
+
         <DataGrid.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="New">
@@ -24,7 +27,7 @@
                 <Separator/>
                 <MenuItem Header="Start Trade" CommandParameter="{Binding SelectedStrategy}">
                     <MenuItem.Command>
-                        <cmd:AddStrategyToTradeCommand/>
+                        <cmd:StartStrategyCommand/>
                     </MenuItem.Command>
                 </MenuItem>
                 <MenuItem Header="Modify" CommandParameter="{Binding SelectedStrategy}">
@@ -40,6 +43,7 @@
                 </MenuItem>
             </ContextMenu>
         </DataGrid.ContextMenu>
+
         <DataGrid.Columns>
             <DataGridTemplateColumn Header="Instrument">
                 <DataGridTemplateColumn.CellTemplate>
@@ -65,5 +69,6 @@
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
         </DataGrid.Columns>
+
     </DataGrid>
 </UserControl>

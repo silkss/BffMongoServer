@@ -14,6 +14,6 @@ public partial class AllStrategies : UserControl
 
     private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        Services.Get.RequestAllStrategies();
+        Services.Get.StrategiesRequests.RefreshAsync();
     }
 }

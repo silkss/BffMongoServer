@@ -10,85 +10,101 @@
     <UserControl.DataContext>
         <vm:StrategiesInTradeViewModel/>
     </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
-    <DataGrid ItemsSource="{Binding Strategies}" SelectedItem="{Binding SelectedStrategy}"
-              MouseDoubleClick="DataGrid_MouseDoubleClick">
-        <DataGrid.ContextMenu>
-            <ContextMenu>
-                <MenuItem Header="Stop" CommandParameter="{Binding SelectedStrategy}">
-                    <MenuItem.Command>
-                        <cmd:RemoveStrategyFromTradeCommand/>
-                    </MenuItem.Command>
-                </MenuItem>
-                <Separator />
-                <MenuItem Header="Show Info"/>
-            </ContextMenu>
-        </DataGrid.ContextMenu>
-        <DataGrid.Columns>
-            <DataGridTemplateColumn Header="Instrument" >
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Instrument.FullName}"/>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+            <StackPanel Grid.Row="0" Orientation="Horizontal"> 
+                <Button Content="CLOSE" CommandParameter="{Binding SelectedStrategy}">
+                    <Button.Command>
+                        <cmd:CloseCommand/>
+                    </Button.Command>
+                </Button>
+            </StackPanel>
 
-            <DataGridTemplateColumn Header="Account">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding MainSettings.Account}"/>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-                
-            <DataGridTemplateColumn Header="OpenStraddle">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <UniformGrid Rows="1">
-                                <TextBlock Text="Call"/>
-                                <TextBlock Text="{Binding OpenStraddle.Call.Instrument.FullName}"/>
-                                <TextBlock Text="{Binding OpenStraddle.Call.Position}"/>
-                                <TextBlock Text="{Binding OpenStraddle.Call.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
-                            </UniformGrid>
-                            <UniformGrid Rows="1">
-                                <TextBlock Text="Call Closure"/>
-                                <TextBlock Text="{Binding OpenStraddle.CallClosure.Instrument.FullName}"/>
-                                <TextBlock Text="{Binding OpenStraddle.CallClosure.Position}"/>
-                                <TextBlock Text="{Binding OpenStraddle.CallClosure.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
-                            </UniformGrid>
-                            <UniformGrid Rows="1">
-                                <TextBlock Text="Put"/>
-                                <TextBlock Text="{Binding OpenStraddle.Put.Instrument.FullName}"/>
-                                <TextBlock Text="{Binding OpenStraddle.Put.Position}"/>
-                                <TextBlock Text="{Binding OpenStraddle.Put.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
-                            </UniformGrid>
-                            <UniformGrid Rows="1">
-                                <TextBlock Text="Put Closure"/>
-                                <TextBlock Text="{Binding OpenStraddle.PutClosure.Instrument.FullName}"/>
-                                <TextBlock Text="{Binding OpenStraddle.PutClosure.Position}"/>
-                                <TextBlock Text="{Binding OpenStraddle.PutClosure.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
-                            </UniformGrid>
-                        </StackPanel>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            
-            <DataGridTemplateColumn Header="OpenPnl $">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding OpenPnlCurrency,  StringFormat={}{0:0.## $}}"/>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            
-            <DataGridTemplateColumn Header="PnL $" >
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding PnlCurrency, StringFormat={}{0:0.## $}}"/>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-        </DataGrid.Columns>
-    </DataGrid>
+        <DataGrid ItemsSource="{Binding Strategies}" 
+                  SelectedItem="{Binding SelectedStrategy}"
+                  Grid.Row="1"
+                  MouseDoubleClick="DataGrid_MouseDoubleClick">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Stop" CommandParameter="{Binding SelectedStrategy}">
+                        <MenuItem.Command>
+                            <cmd:StopStrategyCommand/>
+                        </MenuItem.Command>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Show Info"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Instrument" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Instrument.FullName}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Account">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding MainSettings.Account}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="OpenStraddle">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <UniformGrid Rows="1">
+                                    <TextBlock Text="Call"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Call.Instrument.FullName}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Call.Position}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Call.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
+                                </UniformGrid>
+                                <UniformGrid Rows="1">
+                                    <TextBlock Text="Call Closure"/>
+                                    <TextBlock Text="{Binding OpenStraddle.CallClosure.Instrument.FullName}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.CallClosure.Position}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.CallClosure.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
+                                </UniformGrid>
+                                <UniformGrid Rows="1">
+                                    <TextBlock Text="Put"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Put.Instrument.FullName}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Put.Position}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Put.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
+                                </UniformGrid>
+                                <UniformGrid Rows="1">
+                                    <TextBlock Text="Put Closure"/>
+                                    <TextBlock Text="{Binding OpenStraddle.PutClosure.Instrument.FullName}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.PutClosure.Position}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.PutClosure.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="OpenPnl $">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OpenPnlCurrency,  StringFormat={}{0:0.## $}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="PnL $" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding PnlCurrency, StringFormat={}{0:0.## $}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
 </UserControl>

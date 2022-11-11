@@ -1,10 +1,9 @@
-﻿using GUI.Views.Dialogs;
-using Strategies.DTO;
+﻿using Strategies.DTO;
 using System.Windows;
 
 namespace GUI.Infrastructure.Commands;
 
-internal class RemoveStrategyFromTradeCommand : Base.Command
+internal class StopStrategyCommand : Base.Command
 {
     public override bool CanExecute(object? parameter) => parameter is MainStrategyDTO;
 
@@ -17,10 +16,10 @@ internal class RemoveStrategyFromTradeCommand : Base.Command
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                if (await Services.Get.RequestRemoveFromTraade(strategy.Id))
+                if (await Services.Get.TradeRequests.StopTrategy(strategy.Id))
                 {
-                    Services.Get.RequestStrategiesInTrade();
-                    Services.Get.RequestAllStrategies();
+                    Services.Get.TradeRequests.RefreshAsync();
+                    Services.Get.StrategiesRequests.RefreshAsync();
                 }
             }
         }

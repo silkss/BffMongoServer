@@ -28,7 +28,7 @@ public partial class ConnectorDialog : Window
 
     private async void Connect(object sender, RoutedEventArgs e)
     {
-        if (await Services.Get.RequestConnectAsync())
+        if (await Services.Get.ConnectorRequests.ConnectAsync())
         {
             tbError.Text = "Connected!";
         }
@@ -40,7 +40,7 @@ public partial class ConnectorDialog : Window
 
     private async void Disconnet(object sender, RoutedEventArgs e)
     {
-        if (await Services.Get.RequestDisconnectAsync())
+        if (await Services.Get.ConnectorRequests.DisconnectAsync())
         {
             tbError.Text = "Disconnected!";
         }
@@ -52,6 +52,6 @@ public partial class ConnectorDialog : Window
 
     private async void ReqInfo_Click(object sender, RoutedEventArgs e)
     {
-        ConnectorInfo = await Services.Get.RequestConnectorInfo();
+        ConnectorInfo = await Services.Get.ConnectorRequests.GetConnectorInfo();
     }
 }

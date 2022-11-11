@@ -9,7 +9,7 @@ internal class StrategiesInTradeViewModel : ViewModel
 
 	public StrategiesInTradeViewModel()
 	{
-		Services.Get.RequestStrategiesInTrade();
+		Services.Get.TradeRequests.RefreshAsync();
 	}
     public ObservableCollection<MainStrategyDTO> Strategies => Services.Get.StrategiesInTrade;
 

@@ -34,13 +34,8 @@ public class Straddle
             {
                 return false;
             }
-            if (GetCurrencyPnl() > wantedProfit)
-            {
-                //Close(connector);
-                return true; ;
-            }
+            return GetCurrencyPnl() > wantedProfit;
         }
-        return false;
     }
 	public Straddle() { }
     public Straddle(Instrument call, Instrument put)

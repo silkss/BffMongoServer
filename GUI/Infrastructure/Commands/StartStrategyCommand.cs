@@ -2,7 +2,7 @@
 
 namespace GUI.Infrastructure.Commands;
 
-internal class AddStrategyToTradeCommand : Base.Command
+internal class StartStrategyCommand : Base.Command
 {
     public override bool CanExecute(object? parameter) => parameter is MainStrategyDTO;
 
@@ -10,10 +10,10 @@ internal class AddStrategyToTradeCommand : Base.Command
     {
         if (parameter is MainStrategyDTO strategy)
         {
-            var res = await Services.Get.RequestAddToTrader(strategy.Id);
+            var res = await Services.Get.TradeRequests.StartStrategy(strategy.Id);
             if (res)
             {
-                Services.Get.RequestStrategiesInTrade();
+                Services.Get.TradeRequests.RefreshAsync();
             }
         }
     }

@@ -24,7 +24,7 @@ internal class OpenCreateStrategyDialogCommand : Base.Command
                     MessageBoxImage.Error);
                 return;
             }
-            var instrument = await Services.Get.InstrumentAsync(dlg.tbLocalSymbol.Text, exchange);
+            var instrument = await Services.Get.InstrumentRequests.GetAsync(dlg.tbLocalSymbol.Text, exchange);
             if (instrument == null)
             {
                 MessageBox.Show("Неудалось запросить инструмент. Проверь настройки!", 
@@ -34,9 +34,9 @@ internal class OpenCreateStrategyDialogCommand : Base.Command
                 return;
             }
             strategy.Instrument = instrument;
-            if (await Services.Get.CreateStrategyAsync(strategy))
+            if (await Services.Get.StrategiesRequests.CreateAsync(strategy))
             {
-                Services.Get.RequestAllStrategies();
+                Services.Get.StrategiesRequests.RefreshAsync();
                 return;
             }
             MessageBox.Show("Неудалось создать стратегию. Проверь настройки!",

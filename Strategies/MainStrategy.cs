@@ -22,12 +22,9 @@ public class MainStrategy : Base.Strategy
     public MainSettings? MainSettings { get; set; }
     public StraddleSettings? StraddleSettings { get; set; }
     public ClosureSettings? ClosureSettings { get; set; }
-
     public List<Straddle> Straddles { get; set; } = new();
-
     public Straddle? GetOpenStraddle() =>
         Straddles.FirstOrDefault(s => s.IsOpen());
-
     public void AddStraddle(Straddle straddle, IConnector connector)
     {
         lock (straddleLock)
@@ -88,7 +85,6 @@ public class MainStrategy : Base.Strategy
                 }
                 if (straddle.Logic == Logic.Open)
                 {
-
                     if (straddle.CheckPnlForClose(StraddleSettings))
                     {
                         notifier.LogInformation($"Reached Pnl!\n" +

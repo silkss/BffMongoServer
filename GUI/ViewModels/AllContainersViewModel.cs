@@ -8,7 +8,7 @@ internal class AllContainersViewModel : Base.ViewModel
 {
 	public AllContainersViewModel()
 	{
-		Services.Get.RequestAllStrategies();
+		Services.Get.StrategiesRequests.RefreshAsync();
 	}
 	public ObservableCollection<MainStrategyDTO> Strategies => Services.Get.AllSatrategies;
 

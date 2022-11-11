@@ -14,7 +14,7 @@ internal class OpenModifyDialogCommand : Base.Command
             var dlg = new CreateStrategyDialog(strategy);
             if (dlg.ShowDialog() == true)
             {
-                await Services.Get.RequestModifyStrategy(dlg.Strategy);
+                await Services.Get.StrategiesRequests.UpdateAsync(dlg.Strategy);
             }
         }
     }

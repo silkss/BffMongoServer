@@ -14,6 +14,7 @@ namespace Strategies.Depend;
 
 public class OptionStrategy : Base.TradableStrategy
 {
+
     private Transaction createOpenOrder( MainSettings settings, decimal orderPrice) => new Transaction(this, settings.Account)
     {
         Quantity = getTradableVolume(),
