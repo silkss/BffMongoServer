@@ -12,7 +12,7 @@ internal class RequestInstrumentCache
 
     public RequestInstrumentCache Add(int key, Instrument? value)
     {
-        _instruments.Add(key, value);
+        _instruments[key] = value;
         ReceivedSignal();
         return this;
     }

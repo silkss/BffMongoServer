@@ -42,8 +42,9 @@ public class MainStrategy : Base.Strategy
             {
                 if (straddle.CheckUnclosuredProfitLevels(StraddleSettings, notifier))
                     return StraddleStatus.UnClosuredProfitLevelReached;
+
                 if (straddle.CheckClosuredProfitLevels(StraddleSettings, notifier))
-                    return StraddleStatus.ClosuredProfitLevelReached;
+                    return StraddleStatus.ClosuredProfitLevelReached;   
             }
 
             if (straddle.GetPnl() >= StraddleSettings?.StraddleTargetPnl)

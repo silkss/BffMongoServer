@@ -98,6 +98,7 @@ public class OptionStrategy : Base.TradableStrategy
     };
     public void Start(IConnector connector)
     {
+        if (Instrument.LastTradeDate < DateTime.Now) return;
         connector.RequestMarketData(Instrument);
         connector.ReqMarketRule(Instrument.MarketRuleId);
         if (Closure != null)
