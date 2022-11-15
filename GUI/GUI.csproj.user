@@ -5,6 +5,9 @@
     <Compile Update="Views\Controls\AllStrategies.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Controls\OrdersControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Controls\TradingStrategies.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -15,6 +18,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Dialogs\RemoveStrategyDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Dialogs\StrategyInfo.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -46,6 +52,9 @@
     <Page Update="Views\Controls\AllStrategies.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Controls\OrdersControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Controls\TradingStrategies.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -56,6 +65,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Dialogs\RemoveStrategyDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\StrategyInfo.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

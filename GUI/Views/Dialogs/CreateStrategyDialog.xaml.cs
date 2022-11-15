@@ -68,7 +68,7 @@ public partial class CreateStrategyDialog : Window
         set => SetValue(StrategyProperty, value);
     }
 
-    private async void OkButton_Click(object sender, RoutedEventArgs e)
+    private void OkButton_Click(object sender, RoutedEventArgs e)
     {
         DialogResult = true;
     }

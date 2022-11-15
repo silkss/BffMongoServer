@@ -41,7 +41,11 @@
                         </MenuItem.Command>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="Show Info"/>
+                    <MenuItem Header="Show Info" CommandParameter="{Binding SelectedStrategy}">
+                        <MenuItem.Command>
+                            <cmd:ShowInfoCommand/>
+                        </MenuItem.Command>
+                    </MenuItem>
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>

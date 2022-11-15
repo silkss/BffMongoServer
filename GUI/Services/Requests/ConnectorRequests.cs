@@ -1,5 +1,7 @@
 ﻿using ContainerStore.Connectors.Info;
 using IBApi;
+using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,11 +17,18 @@ internal class ConnectorRequests : Base.Requests
 
     public async Task<ConnectorInfo?> GetConnectorInfo()
     {
-        var resp = await _client.GetAsync(_endpoint);
-        if (resp.IsSuccessStatusCode)
+        try
         {
-            ConnectorInfo = await resp.Content.ReadAsAsync<ConnectorInfo>();
-            return ConnectorInfo;
+            var resp = await _client.GetAsync(_endpoint);
+            if (resp.IsSuccessStatusCode)
+            {
+                ConnectorInfo = await resp.Content.ReadAsAsync<ConnectorInfo>();
+                
+            }
+        }
+        catch(Exception)
+        {
+            Debug.WriteLine("Something wrong with requesting ConnectorInfo");
         }
         return ConnectorInfo;
     }

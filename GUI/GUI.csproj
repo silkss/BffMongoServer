@@ -14,5 +14,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\ContainerStore.Connectors\ContainerStore.Connectors.csproj" />
 	  <ProjectReference Include="..\Strategies\Strategies.csproj" />
+	  <ProjectReference Include="..\Transactions\Transactions.csproj" />
 	</ItemGroup>
 </Project>

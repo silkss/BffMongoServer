@@ -10,5 +10,11 @@ public partial class MainView : Window
     public MainView()
     {
         InitializeComponent();
+
+#if DEBUG
+        this.Topmost = false;
+#else
+        this.Topmost = true;
+#endif
     }
 }

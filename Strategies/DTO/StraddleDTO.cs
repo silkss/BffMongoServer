@@ -1,6 +1,7 @@
 ﻿using ContainerStore.Common.Enums;
 using Strategies.Depend;
 using Strategies.TradeUnions;
+using System;
 using System.Linq;
 
 namespace Strategies.DTO;
@@ -11,7 +12,7 @@ public class StraddleDTO
     public OptionStrategyDTO? Put { get; set; }
     public OptionStrategyDTO? CallClosure { get; set; }
     public OptionStrategyDTO? PutClosure { get; set; }
-    
+    public DateTime CreatedDate { get; set; }
 
 }
 public static class StraddleExtensions
@@ -24,6 +25,7 @@ public static class StraddleExtensions
         null :
         new StraddleDTO
         {
+            CreatedDate = straddle.CreatedTime,
             Call = get(OptionType.Call, straddle)?.ToDto(),
             CallClosure = getClosure(OptionType.Call, straddle)?.ToDto(),
             Put = get(OptionType.Put, straddle)?.ToDto(),

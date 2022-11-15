@@ -22,3 +22,17 @@ public class MainStrategyDTO : MainStrategySettingsDTO
         OpenStraddle = strategy.GetOpenStraddle()?.ToDto(),
     };
 }
+public static class MainStrategyExtensions
+{
+    public static MainStrategyDTO ToDto(this MainStrategy strategy) => new MainStrategyDTO
+    {
+        Id = strategy.Id,
+        Instrument = strategy.Instrument,
+        PnlCurrency = strategy.GetAllPnlCurrency(),
+        MainSettings = strategy.MainSettings,
+        ClosureSettings = strategy.ClosureSettings,
+        StraddleSettings = strategy.StraddleSettings,
+        OpenPnlCurrency = strategy.GetOpenPnlCurrency(),
+        OpenStraddle = strategy.GetOpenStraddle()?.ToDto(),
+    };
+}

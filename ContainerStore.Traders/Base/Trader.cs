@@ -137,6 +137,15 @@ public class Trader
 		}
 		return strategy;
 	}
+	public MainStrategy? GetStrategyById(string id)
+	{
+		MainStrategy? strategy = null;
+		lock(_strategyLocker)
+		{
+			strategy = _strategies.FirstOrDefault(s => s.Id == id);
+		}
+		return strategy;
+	}
 	public async Task<bool> StopContainerAsync(string id)
 	{
 		bool removed = false;

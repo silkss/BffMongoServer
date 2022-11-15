@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:cmd="clr-namespace:GUI.Infrastructure.Commands"
         xmlns:controls="clr-namespace:GUI.Views.Controls"
-        mc:Ignorable="d" Topmost="True"
+        mc:Ignorable="d" 
+       
         Title="MainWindow" MinHeight="450" Height="450" 
         MinWidth="700" Width="700">
     <DockPanel LastChildFill="True">

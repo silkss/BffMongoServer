@@ -1,0 +1,101 @@
+﻿<Window x:Class="GUI.Views.Dialogs.StrategyInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        xmlns:transactions="clr-namespace:Transactions;assembly=Transactions"
+        xmlns:strategies="clr-namespace:Strategies.DTO;assembly=Strategies"
+        mc:Ignorable="d"
+        Title="StrategyInfo" Height="450" MinWidth="400" Width="400">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type strategies:OptionStrategyDTO}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Logic}"/>
+                <TextBlock Text="{Binding Instrument.FullName}"/>
+                <TextBlock Text="{Binding Position}"/>
+                <TextBlock Text="{Binding CurrencyPnL}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type transactions:Transaction}">
+            <WrapPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Status}"/>
+                <TextBlock Text="{Binding CreatedTime}"/>
+                <TextBlock Text="{Binding AvgFilledPrice}"/>
+                <TextBlock Text="{Binding Commission}"/>
+                <TextBlock Text="{Binding FilledQuantity}"/>
+                <TextBlock Text="{Binding Direction}"/>
+            </WrapPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <TabControl>
+        <TabItem Header="Общее">
+            <StackPanel>
+                
+                <UniformGrid Rows="1">
+                    <TextBlock Text="Open straddle created at"/>
+                    <TextBlock Style="{StaticResource LeftAlignment}" 
+                               Text="{Binding Strategy.OpenStraddle.CreatedDate}"/>
+                </UniformGrid>
+                <UniformGrid Rows="1">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="Account:"/>
+                    <TextBlock Style="{StaticResource LeftAlignment}"
+                               Text="{Binding Strategy.MainSettings.Account}"/>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="Order price shift:"/>
+                    <TextBlock Style="{StaticResource LeftAlignment}"
+                               Text="{Binding Strategy.MainSettings.OrderPriceShift}"/>
+                </UniformGrid>
+                <Separator/>
+                <UniformGrid Rows="1">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="Total Pnl:"/>
+                    <TextBlock Style="{StaticResource LeftAlignment}"
+                               Text="{Binding  Strategy.PnlCurrency}"/>
+                </UniformGrid>
+                <UniformGrid Rows="1">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="Open Pnl:"/>
+                    <TextBlock Style="{StaticResource LeftAlignment}"
+                               Text="{Binding Strategy.OpenPnlCurrency}"/>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="Target Pnl:"/>
+                    <TextBlock Style="{StaticResource LeftAlignment}"
+                               Text="{Binding Strategy.StraddleSettings.StraddleTargetPnl}"/>
+                </UniformGrid>
+                
+                <Separator/>
+                
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Ордера">
+            <TreeView>
+                <TreeViewItem Header="{Binding Strategy.OpenStraddle.CallClosure}" 
+                              ItemsSource="{Binding Strategy.OpenStraddle.CallClosure.Orders}"/>
+                
+                <TreeViewItem Header="{Binding Strategy.OpenStraddle.Call}" 
+                              ItemsSource="{Binding Strategy.OpenStraddle.Call.Orders}"/>
+
+                <TreeViewItem Header="{Binding Strategy.OpenStraddle.Put}" 
+                              ItemsSource="{Binding Strategy.OpenStraddle.Put.Orders}"/>
+
+                <TreeViewItem Header="{Binding Strategy.OpenStraddle.PutClosure}"
+                              ItemsSource="{Binding Strategy.OpenStraddle.PutClosure.Orders}"/>
+            </TreeView>
+        </TabItem>
+        <TabItem Header="Инструменты">
+            <StackPanel>
+                <GroupBox Header="Base">
+                
+                </GroupBox>
+                <GroupBox Header="Leg">
+                    
+                </GroupBox>
+                <GroupBox Header="Leg">
+                    
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
+</Window>

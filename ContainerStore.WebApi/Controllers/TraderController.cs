@@ -28,6 +28,9 @@ public class TraderController : ControllerBase
         var dto = strategies.Select(s => MainStrategyDTO.GetFrom(s));
         return dto;
     }
+    [HttpGet("{id:length(24)}")]
+    public MainStrategyDTO? Get(string id) => _trader.GetStrategyById(id)?.ToDto();
+
     [HttpGet("admin/")]
     public IEnumerable<MainStrategy> AdminGet() => _trader.GetStrategies();
 

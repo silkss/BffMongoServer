@@ -1,5 +1,6 @@
 ﻿using IBApi;
 using Strategies.DTO;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -51,6 +52,26 @@ internal class TradeRequests : Base.Requests
         var res = await _client.PostAsync(_endpoint + strategyId, null);
         Debug.WriteLine(res.StatusCode);
         return res.IsSuccessStatusCode;
+    }
+    public async Task<MainStrategyDTO?> GetStrategy(string? strategyId)
+    {
+        if (strategyId == null) return null;
+
+        MainStrategyDTO? strategy = null;
+        try
+        {
+            var resp = await _client.GetAsync(_endpoint + strategyId);
+
+            if (resp.IsSuccessStatusCode)
+            {
+                strategy = await resp.Content.ReadAsAsync<MainStrategyDTO>();
+            }
+        }
+        catch (Exception)
+        {
+            Debug.WriteLine("Something wrong with requesting details");
+        }
+        return strategy;
     }
     public async Task<bool> StopTrategy(string? strategyId)
     {
