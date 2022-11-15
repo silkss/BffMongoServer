@@ -8,6 +8,7 @@ using Strategies.Helpers;
 using Strategies.Settings;
 using System;
 using System.Collections.Generic;
+using TraderBot.Notifier;
 using Transactions;
 
 namespace Strategies.Depend;
@@ -37,7 +38,14 @@ public class OptionStrategy : Base.TradableStrategy
         {
             Orders.Add(OpenOrder);
         }
-        connector.SendLimitOrder(Instrument, OpenOrder, settings.OrderPriceShift, true);
+        if (orderPrice == 0)
+        {
+            connector.SendLimitOrder(Instrument, OpenOrder, settings.OrderPriceShift, true);
+        }
+        else
+        {
+            connector.SendLimitOrder(Instrument, OpenOrder, 0, true);
+        }
     }
 
     private int getTradableVolume()
@@ -106,7 +114,7 @@ public class OptionStrategy : Base.TradableStrategy
             Closure.Start(connector);
         }
     }
-    public void Work(IConnector connector, MainSettings mainSettings, decimal orderPrice = 0m) 
+    public void Work(IConnector connector, Notifier notifier, MainSettings mainSettings, decimal orderPrice = 0m) 
     {
         switch(Logic)
         {
@@ -128,7 +136,7 @@ public class OptionStrategy : Base.TradableStrategy
                 {
                     if (Closure != null)
                     {
-                        Closure.Work(connector, mainSettings);
+                        Closure.Work(connector, notifier, mainSettings);
                     }
                     break;
                 }
@@ -145,7 +153,7 @@ public class OptionStrategy : Base.TradableStrategy
                     connector.CancelOrder(OpenOrder);
                 if (Closure != null)
                 {
-                    Closure.Work(connector, mainSettings);
+                    Closure.Work(connector, notifier, mainSettings);
                 }
                 break;
             default:
@@ -153,7 +161,7 @@ public class OptionStrategy : Base.TradableStrategy
             
         }
     }
-    public void WorkWithClosure(IConnector connector, 
+    public void WorkWithClosure(IConnector connector, Notifier notifier,
         MainSettings mainSettings, 
         ClosureSettings closureSettings, decimal orderPrice = 0m)
     {
@@ -164,7 +172,7 @@ public class OptionStrategy : Base.TradableStrategy
                 if (IsDone() && Closure != null)
                 {
                     if (OpenPrice != 0m)
-                        Closure.WorkWithClosure(connector, mainSettings,closureSettings, OpenPrice);
+                        Closure.WorkWithClosure(connector, notifier, mainSettings, closureSettings, OpenPrice);
                     break;
                 }
                 if (Instrument.TradablePrice(Direction) == 0) break;
@@ -175,17 +183,23 @@ public class OptionStrategy : Base.TradableStrategy
                 if (!connector.IsOrderOpen(OpenOrder))
                 {
                     OpenOrder = null;
+                    var msg = $"{this.Instrument.FullName} | {mainSettings.Account}. Cant find open order";
+                    notifier.LogInformation(msg, toTelegram: false);
                     break;
                 }
-                if (orderPrice == 0) break;
+                if (orderPrice != 0) break;
                 if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                {
+                    var msg = $"{this.Instrument.FullName} | {mainSettings.Account}. Order out of bound.";
+                    notifier.LogInformation(msg, toTelegram: false);
                     connector.CancelOrder(OpenOrder);
+                }
                 break;
             case Logic.Close when OpenOrder == null:
                 if (IsClosured()) break;
                 if (IsDone() && Closure != null)
                 {
-                    Closure.WorkWithClosure(connector, mainSettings, closureSettings);
+                    Closure.WorkWithClosure(connector, notifier, mainSettings, closureSettings);
                     break;
                 }
                 if (Instrument.TradablePrice(Direction) == 0) break;

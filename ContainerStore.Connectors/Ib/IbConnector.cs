@@ -30,7 +30,14 @@ public class IbConnector : IConnector
     private Timer? _timer;
     private Instrument? reqContract(Contract contract)
     {
-        var reqid = _callbacks.NextOrderId; ;
+
+        var msg = contract.SecType == "FUT" ?
+            $"Requested {contract.SecType}: {contract.LocalSymbol}" :
+            $"Requested {contract.SecType}: {contract.Strike} {contract.Symbol} {contract.Right}";
+
+        _logger.LogInformation(msg, toTelegram: false);
+
+        var reqid = _callbacks.NextOrderId; 
         _client.reqContractDetails(reqid, contract);
 
         while (!_requestInstrument.ContainsKey(reqid))

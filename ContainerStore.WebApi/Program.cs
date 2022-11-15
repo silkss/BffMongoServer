@@ -14,7 +14,11 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 builder.Services.Configure<StrategyDatabaseSettings>(
+#if DEBUG
+    builder.Configuration.GetSection("DatabaseDev"));
+#else
     builder.Configuration.GetSection("StrategiesStoreDb"));
+#endif
 builder.Services.AddSingleton<StrategyService>();
 
 builder.Services.AddSingleton<IConnector, IbConnector>();

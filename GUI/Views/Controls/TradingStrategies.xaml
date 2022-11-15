@@ -22,7 +22,12 @@
                         <cmd:CloseCommand/>
                     </Button.Command>
                 </Button>
-            </StackPanel>
+            <Button Content="Refresh">
+                <Button.Command>
+                    <cmd:RefreshCommand/>
+                </Button.Command>
+            </Button>
+        </StackPanel>
 
         <DataGrid ItemsSource="{Binding Strategies}" 
                   SelectedItem="{Binding SelectedStrategy}"
@@ -61,16 +66,16 @@
                         <DataTemplate>
                             <StackPanel>
                                 <UniformGrid Rows="1">
-                                    <TextBlock Text="Call"/>
-                                    <TextBlock Text="{Binding OpenStraddle.Call.Instrument.FullName}"/>
-                                    <TextBlock Text="{Binding OpenStraddle.Call.Position}"/>
-                                    <TextBlock Text="{Binding OpenStraddle.Call.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
-                                </UniformGrid>
-                                <UniformGrid Rows="1">
                                     <TextBlock Text="Call Closure"/>
                                     <TextBlock Text="{Binding OpenStraddle.CallClosure.Instrument.FullName}"/>
                                     <TextBlock Text="{Binding OpenStraddle.CallClosure.Position}"/>
                                     <TextBlock Text="{Binding OpenStraddle.CallClosure.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
+                                </UniformGrid>
+                                <UniformGrid Rows="1">
+                                    <TextBlock Text="Call"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Call.Instrument.FullName}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Call.Position}"/>
+                                    <TextBlock Text="{Binding OpenStraddle.Call.CurrencyPnL, StringFormat={}{0:0.## $}}"/>
                                 </UniformGrid>
                                 <UniformGrid Rows="1">
                                     <TextBlock Text="Put"/>

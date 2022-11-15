@@ -87,11 +87,11 @@ public class Straddle
         {
             if (IsSomeLegIsClosured())
             {
-                leg.Work(connector, settings);
+                leg.Work(connector, notifier, settings);
             }
             else
             {
-                leg.WorkWithClosure(connector, settings, closureSettings);
+                leg.WorkWithClosure(connector, notifier, settings, closureSettings);
             }
         }
     }

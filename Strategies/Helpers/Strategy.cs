@@ -1,5 +1,4 @@
 ﻿using ContainerStore.Common.Enums;
-using Strategies.Depend;
 using Strategies.Settings;
 using System;
 using System.Collections.Generic;
@@ -38,5 +37,5 @@ public static class Strategy
     public static bool Opened(IEnumerable<Transaction> orders, int volume) => Math.Abs(GetPosition(orders).pos) == volume;
     public static bool Closed(IEnumerable<Transaction> orders) => GetPosition(orders).pos == 0;
     public static bool OrderPriceOutBound(Transaction order, decimal actualPrice, MainSettings settings) =>
-        Math.Abs(order.LimitPrice - actualPrice) > settings.OrderPriceShift * 2 * actualPrice;
+        Math.Abs(order.LimitPrice - actualPrice) > settings.OrderPriceShift * 4;
 }   

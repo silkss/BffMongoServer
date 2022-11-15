@@ -56,7 +56,6 @@ internal class IbCallbacks : DefaultEWrapper
 
 	public override void contractDetails(int reqId, ContractDetails contractDetails)
 	{
-		Console.WriteLine(contractDetails.MarketRuleIds);
 		_requestInstrument.Add(reqId, contractDetails.ToInstrument());
 	}
 	public override void marketRule(int marketRuleId, PriceIncrement[] priceIncrements)
@@ -203,7 +202,8 @@ internal class IbCallbacks : DefaultEWrapper
 				_connectionInfo.IsConnected = true;
 				ConnectionChanged?.Invoke(true);
 				break;
-            case 504:   // NotCOnnected
+            case 504:   // NotConnected
+				_requestInstrument.ReceivedSignal(); // если вдруг ктото ждет инструмент.
 #if DEBUG
 				_logger.LogError("NOT CONNECTED!", toTelegram: false);
 #else

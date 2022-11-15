@@ -22,6 +22,7 @@ internal class RequestInstrumentCache
         _instruments.Remove(key);
         return instrument;
     }
+
     public bool ContainsKey(int key) => _instruments.ContainsKey(key);
     public void WaitForResponce()
     {

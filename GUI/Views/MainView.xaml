@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:cmd="clr-namespace:GUI.Infrastructure.Commands"
         xmlns:controls="clr-namespace:GUI.Views.Controls"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="400">
+        mc:Ignorable="d" Topmost="True"
+        Title="MainWindow" MinHeight="450" Height="450" 
+        MinWidth="700" Width="700">
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Connector">
