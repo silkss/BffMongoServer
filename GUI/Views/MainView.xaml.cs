@@ -14,7 +14,7 @@ public partial class MainView : Window
 #if DEBUG
         this.Topmost = false;
 #else
-        this.Topmost = true;
+        this.Topmost = false;
 #endif
     }
 }
