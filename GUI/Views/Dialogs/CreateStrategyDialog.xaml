@@ -42,8 +42,8 @@
 
         <GroupBox Header="Straddle Settings">
             <StackPanel>
-                <UniformGrid Rows="1">
-                    <TextBlock Text="Straddle Target Pnl $:"/>
+                <UniformGrid Rows="1" ToolTip="Каждую секунду проверяет достиг ли стрэддл указанного ПиУ.">
+                    <TextBlock Text="NO SIGNAL Target Pnl $:"/>
                     <TextBox Text="{Binding Strategy.StraddleSettings.StraddleTargetPnl}"/>
                 </UniformGrid>
 
@@ -56,7 +56,7 @@
                     <TextBox Text="{Binding Strategy.StraddleSettings.StraddleExpirationDays}"/>
                 </UniformGrid>
                 <UniformGrid Rows="1">
-                    <GroupBox Header="UnClosured PL">
+                    <GroupBox Header="UnClosured PL + SIGNAL">
                         <DataGrid ItemsSource="{Binding Strategy.StraddleSettings.UnClosuredProfitLevels}"
                                   CanUserAddRows="True"
                                   AutoGenerateColumns="False" IsReadOnly="False"
@@ -71,7 +71,7 @@
                             </DataGrid.Columns>
                         </DataGrid>
                     </GroupBox>
-                    <GroupBox Header="Closured Pl">
+                    <GroupBox Header="Closured Pl + SIGNAL">
                         <DataGrid ItemsSource="{Binding Strategy.StraddleSettings.ClosuredProfitLevels}"
                                   CanUserAddRows="True"
                                   AutoGenerateColumns="False" IsReadOnly="False"

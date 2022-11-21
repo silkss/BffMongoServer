@@ -25,8 +25,7 @@ public class TraderController : ControllerBase
     public IEnumerable<MainStrategyDTO> Get()
     {
         var strategies = _trader.GetStrategies();
-        var dto = strategies.Select(s => MainStrategyDTO.GetFrom(s));
-        return dto;
+        return strategies.Select(s => s.ToDto()); 
     }
     [HttpGet("{id:length(24)}")]
     public MainStrategyDTO? Get(string id) => _trader.GetStrategyById(id)?.ToDto();

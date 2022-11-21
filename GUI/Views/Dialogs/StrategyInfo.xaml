@@ -7,7 +7,7 @@
         xmlns:transactions="clr-namespace:Transactions;assembly=Transactions"
         xmlns:strategies="clr-namespace:Strategies.DTO;assembly=Strategies"
         mc:Ignorable="d"
-        Title="StrategyInfo" Height="450" MinWidth="400" Width="400">
+        Title="StrategyInfo" Height="450" MinHeight="450"  MinWidth="490" Width="490">
     <Window.Resources>
         <DataTemplate DataType="{x:Type strategies:OptionStrategyDTO}">
             <StackPanel Orientation="Horizontal">
@@ -33,9 +33,9 @@
             <StackPanel>
                 
                 <UniformGrid Rows="1">
-                    <TextBlock Text="Open straddle created at"/>
+                    <TextBlock Text="Open straddle created at:"/>
                     <TextBlock Style="{StaticResource LeftAlignment}" 
-                               Text="{Binding Strategy.OpenStraddle.CreatedDate}"/>
+                               Text="{Binding Strategy.OpenStraddle.CreatedDate, StringFormat={}{0:dd MMM yyyy hh:mm}}"/>
                 </UniformGrid>
                 <UniformGrid Rows="1">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}"
@@ -53,16 +53,28 @@
                                Text="Total Pnl:"/>
                     <TextBlock Style="{StaticResource LeftAlignment}"
                                Text="{Binding  Strategy.PnlCurrency}"/>
-                </UniformGrid>
-                <UniformGrid Rows="1">
+
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}"
                                Text="Open Pnl:"/>
                     <TextBlock Style="{StaticResource LeftAlignment}"
                                Text="{Binding Strategy.OpenPnlCurrency}"/>
+                </UniformGrid>
+                
+                <UniformGrid Rows="1">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}"
-                               Text="Target Pnl:"/>
+                               Text="Base Target Pnl:"/>
                     <TextBlock Style="{StaticResource LeftAlignment}"
                                Text="{Binding Strategy.StraddleSettings.StraddleTargetPnl}"/>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="Cur. Target Pnl:"/>
+                    <TextBlock Style="{StaticResource LeftAlignment}"
+                               Text="{Binding Strategy.CurrentTargetPnl}"/>
+                </UniformGrid>
+                <UniformGrid Rows="1">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="Days after opening:"/>
+                    <TextBlock Style="{StaticResource LeftAlignment}"
+                               Text="{Binding Strategy.OpenStraddle.DaysAfterOpening, StringFormat={}{0:dd}}"/>
                 </UniformGrid>
                 
                 <Separator/>
@@ -73,7 +85,7 @@
             <TreeView>
                 <TreeViewItem Header="{Binding Strategy.OpenStraddle.CallClosure}" 
                               ItemsSource="{Binding Strategy.OpenStraddle.CallClosure.Orders}"/>
-                
+
                 <TreeViewItem Header="{Binding Strategy.OpenStraddle.Call}" 
                               ItemsSource="{Binding Strategy.OpenStraddle.Call.Orders}"/>
 

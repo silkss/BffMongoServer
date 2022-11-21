@@ -12,22 +12,34 @@
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="38"/>
             <RowDefinition />
         </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal"> 
+        <UniformGrid Grid.Row="0" Rows="1">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Refresh">
+                    <Button.Command>
+                        <cmd:RefreshCommand/>
+                    </Button.Command>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Stop" CommandParameter="{Binding SelectedStrategy}">
+                    <Button.Command>
+                        <cmd:StopStrategyCommand/>
+                    </Button.Command>
+                </Button>
+            </StackPanel>
+            <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal">
                 <Button Content="CLOSE" CommandParameter="{Binding SelectedStrategy}">
                     <Button.Command>
                         <cmd:CloseCommand/>
                     </Button.Command>
                 </Button>
-            <Button Content="Refresh">
-                <Button.Command>
-                    <cmd:RefreshCommand/>
-                </Button.Command>
-            </Button>
-        </StackPanel>
+            </StackPanel>
+                
+        </UniformGrid>
 
         <DataGrid ItemsSource="{Binding Strategies}" 
                   SelectedItem="{Binding SelectedStrategy}"
@@ -44,6 +56,11 @@
                     <MenuItem Header="Show Info" CommandParameter="{Binding SelectedStrategy}">
                         <MenuItem.Command>
                             <cmd:ShowInfoCommand/>
+                        </MenuItem.Command>
+                    </MenuItem>
+                    <MenuItem Header="ShowPlot" CommandParameter="{Binding SelectedStrategy}">
+                        <MenuItem.Command>
+                            <cmd:ShowPlotViewCommand/>
                         </MenuItem.Command>
                     </MenuItem>
                 </ContextMenu>

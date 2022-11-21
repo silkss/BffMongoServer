@@ -26,8 +26,7 @@ public class ContainersController : ControllerBase
     public async Task<IEnumerable<MainStrategyDTO>> Get()
     {
         var strategies = await _strategyService.GetAsync();
-        var dto = strategies.Select(s => MainStrategyDTO.GetFrom(s));
-        return dto;
+        return strategies.Select(s => s.ToDto()); 
     }
     [HttpGet("admin/")]
     public async Task<IEnumerable<MainStrategy>> AdminGet() => await _strategyService.GetAsync();

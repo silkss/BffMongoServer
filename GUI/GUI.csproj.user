@@ -17,6 +17,9 @@
     <Compile Update="Views\Dialogs\CreateStrategyDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Dialogs\PlotViewDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Dialogs\RemoveStrategyDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -62,6 +65,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Dialogs\CreateStrategyDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Dialogs\PlotViewDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Dialogs\RemoveStrategyDialog.xaml">

@@ -9,18 +9,7 @@ public class MainStrategyDTO : MainStrategySettingsDTO
     public decimal PnlCurrency { get; set; }
     public decimal? OpenPnlCurrency { get; set; }
     public StraddleDTO? OpenStraddle { get; set; }
-
-    public static MainStrategyDTO GetFrom(MainStrategy strategy) => new MainStrategyDTO
-    {
-        Id = strategy.Id,
-        Instrument = strategy.Instrument,
-        PnlCurrency = strategy.GetAllPnlCurrency(),
-        MainSettings = strategy.MainSettings,
-        ClosureSettings = strategy.ClosureSettings,
-        StraddleSettings = strategy.StraddleSettings,
-        OpenPnlCurrency = strategy.GetOpenPnlCurrency(),
-        OpenStraddle = strategy.GetOpenStraddle()?.ToDto(),
-    };
+    public decimal? CurrentTargetPnl { get; set; }
 }
 public static class MainStrategyExtensions
 {
@@ -34,5 +23,6 @@ public static class MainStrategyExtensions
         StraddleSettings = strategy.StraddleSettings,
         OpenPnlCurrency = strategy.GetOpenPnlCurrency(),
         OpenStraddle = strategy.GetOpenStraddle()?.ToDto(),
+        CurrentTargetPnl = strategy.GetOpenStraddle()?.GetCurrentTargetPnl(strategy.StraddleSettings)
     };
 }

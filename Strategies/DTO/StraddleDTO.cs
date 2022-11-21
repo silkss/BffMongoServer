@@ -13,7 +13,7 @@ public class StraddleDTO
     public OptionStrategyDTO? CallClosure { get; set; }
     public OptionStrategyDTO? PutClosure { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public TimeSpan DaysAfterOpening { get; set; }
 }
 public static class StraddleExtensions
 {
@@ -26,6 +26,7 @@ public static class StraddleExtensions
         new StraddleDTO
         {
             CreatedDate = straddle.CreatedTime,
+            DaysAfterOpening = straddle.GetDaysAfterOpening(),
             Call = get(OptionType.Call, straddle)?.ToDto(),
             CallClosure = getClosure(OptionType.Call, straddle)?.ToDto(),
             Put = get(OptionType.Put, straddle)?.ToDto(),

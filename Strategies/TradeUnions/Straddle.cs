@@ -95,6 +95,32 @@ public class Straddle
             }
         }
     }
+    public TimeSpan GetDaysAfterOpening() => DateTime.Now - CreatedTime;
+
+    public decimal GetCurrentTargetPnl(StraddleSettings? straddleSettings)
+    {
+        if (straddleSettings == null)
+            throw new ArgumentNullException("Straddle settings cant be null!");
+        var now = DateTime.Now;
+        if (now.DayOfWeek == DayOfWeek.Friday && CreatedTime.Date == now.Date)
+        {
+            return straddleSettings.StraddleTargetPnl / 3;
+        }
+        if (!IsSomeLegIsClosured())
+        {
+            var daysPassed = GetDaysAfterOpening();
+            if (daysPassed > _4days)
+            {
+                return straddleSettings.StraddleTargetPnl / 4;
+            }
+            if (daysPassed > _2days)
+            {
+                return straddleSettings.StraddleTargetPnl / 2;
+            }
+        } 
+        return straddleSettings.StraddleTargetPnl;
+    }
+    
     /// <summary>
     /// Вернет true если текущий ПиУ достиг необходимого уровня!
     /// </summary>
@@ -104,20 +130,7 @@ public class Straddle
     {
         var pnl = GetCurrencyPnl();
         var now = DateTime.Now;
-        if (now.DayOfWeek == DayOfWeek.Friday && CreatedTime.Date == now.Date)
-        {
-            return pnl > (settings.StraddleTargetPnl / 3);
-        }
-        var daysPassed = now - CreatedTime;
-        if (daysPassed > _4days)
-        {
-            return pnl > (settings.StraddleTargetPnl / 4);
-        }
-        if (daysPassed > _2days)
-        {
-            return pnl > (settings.StraddleTargetPnl / 2);
-        }
-        return pnl > settings.StraddleTargetPnl;
+        return pnl >= GetCurrentTargetPnl(settings);
     }
     public bool IsSomeLegIsClosured() => Legs.Any(leg => leg.IsClosured());
     public void Stop(IConnector connector)

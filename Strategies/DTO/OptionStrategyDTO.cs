@@ -10,6 +10,7 @@ public class OptionStrategyDTO
 {
     public Instrument? Instrument { get; set; }
     public decimal CurrencyPnL { get; set; }
+    public decimal OpenPrice { get; set; }
     public int Position { get; set; }
     public Logic Logic { get; set; }
     public List<Transaction>? Orders { get; set; }
@@ -19,10 +20,11 @@ public static class OptionStrategyDtoExtension
 {
     public static OptionStrategyDTO ToDto(this OptionStrategy strategy) => new OptionStrategyDTO
     {
-        Instrument = strategy.Instrument,
         CurrencyPnL = strategy.GetCurrencyPnl(),
         Position = strategy.GetPosition(),
-        Logic = strategy.Logic,
+        Instrument = strategy.Instrument,
+        OpenPrice = strategy.OpenPrice,
         Orders = strategy.Orders,
+        Logic = strategy.Logic,
     };
 }
