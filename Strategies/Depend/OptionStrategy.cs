@@ -1,5 +1,5 @@
-﻿using ContainerStore.Common.Enums;
-using ContainerStore.Connectors;
+﻿using Common.Enums;
+using Connectors;
 using IBApi;
 using Instruments;
 using MongoDB.Bson.Serialization.Attributes;
@@ -8,7 +8,7 @@ using Strategies.Helpers;
 using Strategies.Settings;
 using System;
 using System.Collections.Generic;
-using TraderBot.Notifier;
+using Notifier;
 using Transactions;
 
 namespace Strategies.Depend;
@@ -114,7 +114,7 @@ public class OptionStrategy : Base.TradableStrategy
             Closure.Start(connector);
         }
     }
-    public void Work(IConnector connector, Notifier notifier, MainSettings mainSettings, decimal orderPrice = 0m) 
+    public void Work(IConnector connector, BaseNotifier notifier, MainSettings mainSettings, decimal orderPrice = 0m) 
     {
         switch(Logic)
         {
@@ -161,7 +161,7 @@ public class OptionStrategy : Base.TradableStrategy
             
         }
     }
-    public void WorkWithClosure(IConnector connector, Notifier notifier,
+    public void WorkWithClosure(IConnector connector, BaseNotifier notifier,
         MainSettings mainSettings, 
         ClosureSettings closureSettings, decimal orderPrice = 0m)
     {

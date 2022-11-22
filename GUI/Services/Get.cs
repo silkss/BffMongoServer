@@ -8,7 +8,7 @@ using Strategies.DTO;
 using Instruments;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using ContainerStore.Connectors.Info;
+using Connectors.Info;
 using GUI.Services.Requests;
 
 namespace GUI.Services;

@@ -1,4 +1,4 @@
-﻿using ContainerStore.Connectors.Info;
+﻿using Connectors.Info;
 using System.Windows;
 
 namespace GUI.Views.Dialogs;

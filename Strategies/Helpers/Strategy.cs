@@ -1,4 +1,4 @@
-﻿using ContainerStore.Common.Enums;
+﻿using Common.Enums;
 using Strategies.Settings;
 using System;
 using System.Collections.Generic;

@@ -8,6 +8,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\IBApi\IBApi.csproj" />
+    <ProjectReference Include="..\Instruments\Instruments.csproj" />
+    <ProjectReference Include="..\Notifier\Notifier.csproj" />
+    <ProjectReference Include="..\Transactions\Transactions.csproj" />
   </ItemGroup>
 
 </Project>

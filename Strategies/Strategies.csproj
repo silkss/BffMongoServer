@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ContainerStore.Connectors\ContainerStore.Connectors.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Connectors\Connectors.csproj" />
     <ProjectReference Include="..\Instruments\Instruments.csproj" />
     <ProjectReference Include="..\Transactions\Transactions.csproj" />
   </ItemGroup>

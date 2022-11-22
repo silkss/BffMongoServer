@@ -1,4 +1,6 @@
-﻿using ContainerStore.Connectors;
+﻿using Connectors;
+using Common.Enums;
+using Notifier;
 using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Enums;
 using Strategies.Settings;
@@ -7,7 +9,6 @@ using Strategies.TradeUnions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TraderBot.Notifier;
 
 namespace Strategies;
 
@@ -33,7 +34,7 @@ public class MainStrategy : Base.Strategy
             Straddles.Add(straddle);
         }
     }
-    public StraddleStatus GetOpenStraddleStatus(Notifier notifier)
+    public StraddleStatus GetOpenStraddleStatus(BaseNotifier notifier)
     {
         if (GetOpenStraddle() is Straddle straddle)
         {
@@ -71,7 +72,7 @@ public class MainStrategy : Base.Strategy
         foreach (var straddle in Straddles)
             straddle.Start(connector);
     }
-    public void Work(IConnector connector, Notifier notifier)
+    public void Work(IConnector connector, BaseNotifier notifier)
     {
         lock (straddleLock)
         {

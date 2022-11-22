@@ -1,5 +1,5 @@
-﻿using ContainerStore.Common.Enums;
-using ContainerStore.Common.Helpers;
+﻿using Common.Enums;
+using Common.Helpers;
 using Instruments.Events;
 using MongoDB.Bson.Serialization.Attributes;
 using System;

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using ContainerStore.Connectors;
 using Instruments;
 using Strategies.Depend;
 using Strategies.Enums;
 using Strategies.Settings;
 using Strategies.Settings.Straddle;
-using TraderBot.Notifier;
+using Notifier;
+using Connectors;
 
 namespace Strategies.TradeUnions;
 
@@ -16,7 +16,7 @@ public class Straddle
     private readonly TimeSpan _2days = new TimeSpan(days: 2, 0, 0, 0);
     private readonly TimeSpan _4days = new TimeSpan(days: 4, 0, 0, 0);
 
-    private bool checkProfitLevels(List<ProfitLevel>? levels, int daysAfterOpen, Notifier notifier)
+    private bool checkProfitLevels(List<ProfitLevel>? levels, int daysAfterOpen, BaseNotifier notifier)
     {
         if (levels == null)
         {
@@ -68,19 +68,19 @@ public class Straddle
             leg.Start(connector);
         }
     }
-    public bool CheckUnclosuredProfitLevels(StraddleSettings straddleSettings, Notifier notifier)
+    public bool CheckUnclosuredProfitLevels(StraddleSettings straddleSettings, BaseNotifier notifier)
     {
         if (IsSomeLegIsClosured()) return false;
         var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
         return checkProfitLevels(straddleSettings.UnClosuredProfitLevels, daysAfterCreation, notifier);
     }
-    public bool CheckClosuredProfitLevels(StraddleSettings straddleSettings, Notifier notifier)
+    public bool CheckClosuredProfitLevels(StraddleSettings straddleSettings, BaseNotifier notifier)
     {
         if (!IsSomeLegIsClosured()) return false;
         var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
         return checkProfitLevels(straddleSettings.ClosuredProfitLevels, daysAfterCreation, notifier); ;
     }
-    public void Work(IConnector connector, Notifier notifier, MainSettings settings, 
+    public void Work(IConnector connector, BaseNotifier notifier, MainSettings settings, 
         ClosureSettings closureSettings)
     {
         foreach (var leg in Legs)
