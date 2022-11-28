@@ -3,6 +3,8 @@ using Connectors.Ib;
 using MongoDbSettings;
 using Notifier;
 using Notifier.Implemintations;
+using Strategies;
+using System.Collections.ObjectModel;
 
 namespace GuiStandAlone.Services;
 
