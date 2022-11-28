@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "..\WebApi\WebApi.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifier", "..\Notifier\Notifier.csproj", "{5F2B834E-6983-418E-BBC7-94F12C1A3F3D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiStandAlone", "..\GuiStandAlone\GuiStandAlone.csproj", "{CB5833C5-0503-4198-9B67-F27F3F5B84A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{5F2B834E-6983-418E-BBC7-94F12C1A3F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F2B834E-6983-418E-BBC7-94F12C1A3F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F2B834E-6983-418E-BBC7-94F12C1A3F3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB5833C5-0503-4198-9B67-F27F3F5B84A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB5833C5-0503-4198-9B67-F27F3F5B84A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB5833C5-0503-4198-9B67-F27F3F5B84A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB5833C5-0503-4198-9B67-F27F3F5B84A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

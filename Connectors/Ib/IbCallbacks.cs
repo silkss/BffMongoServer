@@ -19,7 +19,7 @@ namespace Connectors.Ib;
 
 internal class IbCallbacks : DefaultEWrapper
 {
-	private readonly BaseNotifier _logger;
+	private readonly IBffLogger _logger;
 	private readonly RequestInstrumentCache _requestInstrument;
 	private readonly Dictionary<int, OptionChain> _optionChains;
 	private readonly OpenOrdersCache _openOrdersCache;
@@ -43,7 +43,7 @@ internal class IbCallbacks : DefaultEWrapper
 		private set => _nextOrderId = value;
 	}
     public IbCallbacks(
-        BaseNotifier logger, RequestInstrumentCache requestInstrument, 
+        IBffLogger logger, RequestInstrumentCache requestInstrument, 
 		Dictionary<int, OptionChain> optionChains, OpenOrdersCache openOrdersCache,
 		Dictionary<int, List<PriceBorder>> marketRules, ConnectorInfo connectionInfo)
 	{

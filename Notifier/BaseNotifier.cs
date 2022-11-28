@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace Notifier;
 
-public class BaseNotifier
+public class BaseNotifier : IBffLogger
 {
 	private TelegramNotifier? _telegram;
 	private readonly ILogger<BaseNotifier> _logger;

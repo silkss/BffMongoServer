@@ -23,7 +23,7 @@ builder.Services.AddSingleton<StrategyService>();
 
 builder.Services.AddSingleton<IConnector, IbConnector>();
 builder.Services.AddSingleton<Trader>();
-builder.Services.AddSingleton<BaseNotifier>();
+builder.Services.AddSingleton<IBffLogger, BaseNotifier>();
 
 var app = builder.Build();
 

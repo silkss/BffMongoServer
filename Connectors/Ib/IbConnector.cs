@@ -24,7 +24,7 @@ public class IbConnector : IConnector
     private readonly EClientSocket _client;
     private readonly IbCallbacks _callbacks;
     private readonly EReaderSignal _signalMonitor = new EReaderMonitorSignal();
-    private readonly BaseNotifier _logger;
+    private readonly IBffLogger _logger;
     private readonly Dictionary<int, List<PriceBorder>> _marketRules = new();
     private readonly Dictionary<int, OptionChain> _optionChains = new();
     private Timer? _timer;
@@ -64,7 +64,7 @@ public class IbConnector : IConnector
             Connect(_connectionInfo.Host, _connectionInfo.Port, _connectionInfo.ClientId);
         }
     }
-    public IbConnector(BaseNotifier logger)
+    public IbConnector(IBffLogger logger)
 	{
         _logger = logger;
 

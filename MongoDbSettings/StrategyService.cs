@@ -21,6 +21,12 @@ public class StrategyService
         _strategiesCollection = mongoDatabase.GetCollection<MainStrategy>(
             strategiesDatabase.Value.CollectionName);
     }
+    public StrategyService(StrategyDatabaseSettings sds)
+    {
+        var mongoClient = new MongoClient(sds.ConnectionString);
+        var mongoDataBase = mongoClient.GetDatabase(sds.DatabaseName);
+        _strategiesCollection = mongoDataBase.GetCollection<MainStrategy>(sds.CollectionName);
+    }
     public async Task<List<MainStrategy>> GetAsync() =>
         await _strategiesCollection.Find(_ => true).ToListAsync();
     public async Task<MainStrategy?> GetAsync(string id) =>
