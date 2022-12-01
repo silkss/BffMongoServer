@@ -13,10 +13,10 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 public class ContainersController : ControllerBase
 {
-    private readonly BaseNotifier _logger;
+    private readonly IBffLogger _logger;
     private readonly StrategyService _strategyService;
 
-    public ContainersController(BaseNotifier logger, StrategyService strategyService)
+    public ContainersController(IBffLogger logger, StrategyService strategyService)
     {
         _logger = logger;
         _strategyService = strategyService;

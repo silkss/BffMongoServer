@@ -23,7 +23,7 @@ public class Trader
 	private readonly object _strategyLocker = new();
     private readonly List<MainStrategy> _strategies = new();
 	private readonly IConnector _connector;
-	private readonly BaseNotifier _logger;
+	private readonly IBffLogger _logger;
 	private readonly StrategyService _strategyService;
     private readonly IHostApplicationLifetime _lifetime;
 	private bool _strated = true;
@@ -46,7 +46,7 @@ public class Trader
 		}
 	}
 
-	public Trader(IConnector connector, BaseNotifier logger, StrategyService strategyService, IHostApplicationLifetime lifetime)
+	public Trader(IConnector connector, IBffLogger logger, StrategyService strategyService, IHostApplicationLifetime lifetime)
 	{
 		_connector = connector;
 		_logger = logger;

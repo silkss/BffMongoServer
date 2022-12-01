@@ -16,7 +16,7 @@ public class Straddle
     private readonly TimeSpan _2days = new TimeSpan(days: 2, 0, 0, 0);
     private readonly TimeSpan _4days = new TimeSpan(days: 4, 0, 0, 0);
 
-    private bool checkProfitLevels(List<ProfitLevel>? levels, int daysAfterOpen, BaseNotifier notifier)
+    private bool checkProfitLevels(List<ProfitLevel>? levels, int daysAfterOpen, IBffLogger notifier)
     {
         if (levels == null)
         {
@@ -68,19 +68,19 @@ public class Straddle
             leg.Start(connector);
         }
     }
-    public bool CheckUnclosuredProfitLevels(StraddleSettings straddleSettings, BaseNotifier notifier)
+    public bool CheckUnclosuredProfitLevels(StraddleSettings straddleSettings, IBffLogger notifier)
     {
         if (IsSomeLegIsClosured()) return false;
         var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
         return checkProfitLevels(straddleSettings.UnClosuredProfitLevels, daysAfterCreation, notifier);
     }
-    public bool CheckClosuredProfitLevels(StraddleSettings straddleSettings, BaseNotifier notifier)
+    public bool CheckClosuredProfitLevels(StraddleSettings straddleSettings, IBffLogger notifier)
     {
         if (!IsSomeLegIsClosured()) return false;
         var daysAfterCreation = (DateTime.Now - CreatedTime).Days;
         return checkProfitLevels(straddleSettings.ClosuredProfitLevels, daysAfterCreation, notifier); ;
     }
-    public void Work(IConnector connector, BaseNotifier notifier, MainSettings settings, 
+    public void Work(IConnector connector, IBffLogger notifier, MainSettings settings, 
         ClosureSettings closureSettings)
     {
         foreach (var leg in Legs)

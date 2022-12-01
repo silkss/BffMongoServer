@@ -16,7 +16,7 @@ namespace WebApi.Controllers;
 [ApiController]
 public class McAPIController : ControllerBase
 {
-	private readonly BaseNotifier _logger;
+	private readonly IBffLogger _logger;
 	private readonly IConnector _connector;
 	private readonly StrategyService _strategyService;
 	private readonly Trader _trader;
@@ -31,7 +31,7 @@ public class McAPIController : ControllerBase
 		$"CloseDate: ~{strategy.GetApproximateCloseDate()}\n" +
 		$"CreatedDate: {strategy.GetOpenStraddle()?.CreatedTime}";
 
-	private string parseSignal(string signal, MainStrategy strategy, double price, BaseNotifier notifier) => signal.Trim().ToLower() switch
+	private string parseSignal(string signal, MainStrategy strategy, double price, IBffLogger notifier) => signal.Trim().ToLower() switch
 	{
 		"open" => strategy.GetOpenStraddleStatus(notifier) switch
 		{
@@ -138,7 +138,7 @@ public class McAPIController : ControllerBase
 			.AppendLine(openStraddle(mainStrategy, price))
 			.ToString();
 
-	public McAPIController(BaseNotifier logger, IConnector connector, StrategyService strategyService , Trader trader)
+	public McAPIController(IBffLogger logger, IConnector connector, StrategyService strategyService , Trader trader)
 	{
 		_logger = logger;
 		_connector = connector;

@@ -114,7 +114,7 @@ public class OptionStrategy : Base.TradableStrategy
             Closure.Start(connector);
         }
     }
-    public void Work(IConnector connector, BaseNotifier notifier, MainSettings mainSettings, decimal orderPrice = 0m) 
+    public void Work(IConnector connector, IBffLogger notifier, MainSettings mainSettings, decimal orderPrice = 0m) 
     {
         switch(Logic)
         {
@@ -161,7 +161,7 @@ public class OptionStrategy : Base.TradableStrategy
             
         }
     }
-    public void WorkWithClosure(IConnector connector, BaseNotifier notifier,
+    public void WorkWithClosure(IConnector connector, IBffLogger notifier,
         MainSettings mainSettings, 
         ClosureSettings closureSettings, decimal orderPrice = 0m)
     {

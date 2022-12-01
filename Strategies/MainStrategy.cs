@@ -34,7 +34,7 @@ public class MainStrategy : Base.Strategy
             Straddles.Add(straddle);
         }
     }
-    public StraddleStatus GetOpenStraddleStatus(BaseNotifier notifier)
+    public StraddleStatus GetOpenStraddleStatus(IBffLogger notifier)
     {
         if (GetOpenStraddle() is Straddle straddle)
         {
@@ -72,7 +72,7 @@ public class MainStrategy : Base.Strategy
         foreach (var straddle in Straddles)
             straddle.Start(connector);
     }
-    public void Work(IConnector connector, BaseNotifier notifier)
+    public void Work(IConnector connector, IBffLogger notifier)
     {
         lock (straddleLock)
         {
