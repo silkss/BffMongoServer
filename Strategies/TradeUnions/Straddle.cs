@@ -8,6 +8,7 @@ using Strategies.Settings;
 using Strategies.Settings.Straddle;
 using Notifier;
 using Connectors;
+using System.Text;
 
 namespace Strategies.TradeUnions;
 
@@ -96,7 +97,6 @@ public class Straddle
         }
     }
     public TimeSpan GetDaysAfterOpening() => DateTime.Now - CreatedTime;
-
     public decimal GetCurrentTargetPnl(StraddleSettings? straddleSettings)
     {
         if (straddleSettings == null)

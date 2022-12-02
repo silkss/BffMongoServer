@@ -3,16 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Connectors;
-using Traders.Helpers;
 using Notifier;
-using Microsoft.Extensions.Hosting;
-using Strategies.Enums;
-using Instruments;
-using Transactions;
-using Strategies.Depend;
-using MongoDbSettings;
 using Strategies;
+using Connectors;
+using MongoDbSettings;
+using Microsoft.Extensions.Hosting;
 
 namespace Traders.Base;
 

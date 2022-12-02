@@ -66,6 +66,7 @@ public class MainStrategy : Base.Strategy
     public decimal GetAllPnlCurrency() => Straddles.Sum(s => s.GetCurrencyPnl());
     public DateTime? GetApproximateCloseDate() => GetOpenStraddle()?
         .GetCloseDate(StraddleSettings?.StraddleLiveDays);
+    public decimal? GetCurrentTargetPnl() => GetOpenStraddle()?.GetCurrentTargetPnl(StraddleSettings);
     public void Start(IConnector connector)
     {
         connector.RequestMarketData(Instrument);
