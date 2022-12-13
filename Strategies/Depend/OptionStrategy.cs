@@ -163,7 +163,8 @@ public class OptionStrategy : Base.TradableStrategy
     }
     public void WorkWithClosure(IConnector connector, IBffLogger notifier,
         MainSettings mainSettings, 
-        ClosureSettings closureSettings, decimal orderPrice = 0m)
+        ClosureSettings closureSettings, 
+        decimal orderPrice = 0m)
     {
         switch (Logic)
         {

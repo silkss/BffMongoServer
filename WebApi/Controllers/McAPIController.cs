@@ -1,12 +1,11 @@
-﻿using Connectors;
-using Traders.Base;
+﻿using Notifier;
+using Connectors;
 using Microsoft.AspNetCore.Mvc;
-using MongoDbSettings;
 using Strategies;
 using Strategies.Enums;
 using System;
 using System.Text;
-using Notifier;
+using Traders.Base;
 using Traders.Helpers;
 
 namespace WebApi.Controllers;

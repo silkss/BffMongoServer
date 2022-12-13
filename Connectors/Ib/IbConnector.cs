@@ -78,10 +78,11 @@ public class IbConnector : IConnector
     public IEnumerable<string> GetAccounts() => _connectionInfo.Accounts;
     #endregion
     #region Connect / Disconnect
-    public void Connect()
-    {
-        Connect(_connectionInfo.Host, _connectionInfo.Port, _connectionInfo.ClientId);
-    }
+    public void Connect() =>
+        Connect(
+            _connectionInfo.Host, 
+            _connectionInfo.Port, 
+            _connectionInfo.ClientId);
     public void Connect(string host, int port, int clientId)
     {
         _connectionInfo.SetSettings(host, port, clientId);
@@ -198,10 +199,7 @@ public class IbConnector : IConnector
         _logger.LogError($"Нет цепочки опционов для инструмента с ID = {parentId}");
         return null;
     }
-    public void ReqMarketRule(int id)
-    {
-        _client.reqMarketRule(id);
-    }
+    public void ReqMarketRule(int id) => _client.reqMarketRule(id);
     #endregion
     #region Transaction/Orders
     /// <summary>

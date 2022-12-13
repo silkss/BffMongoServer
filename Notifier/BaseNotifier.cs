@@ -68,7 +68,7 @@ public class BaseNotifier : IBffLogger
         Log(LogLevel.Criticl, msg, toTelegram);		
 }
 
-internal enum LogLevel
+public enum LogLevel
 {
     Criticl,
     Warning,

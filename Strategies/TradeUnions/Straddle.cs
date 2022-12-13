@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Instruments;
-using Strategies.Depend;
 using Strategies.Enums;
+using Strategies.Depend;
 using Strategies.Settings;
 using Strategies.Settings.Straddle;
 using Notifier;
 using Connectors;
-using System.Text;
+using Instruments;
 
 namespace Strategies.TradeUnions;
 
@@ -129,7 +128,6 @@ public class Straddle
     public bool CheckPnlForClose(StraddleSettings settings)
     {
         var pnl = GetCurrencyPnl();
-        var now = DateTime.Now;
         return pnl >= GetCurrentTargetPnl(settings);
     }
     public bool IsSomeLegIsClosured() => Legs.Any(leg => leg.IsClosured());
