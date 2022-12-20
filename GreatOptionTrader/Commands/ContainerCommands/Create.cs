@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 
-namespace GreatOptionTrader.Commands.StrategiesCommands;
+namespace GreatOptionTrader.Commands.ContainerCommands;
 
-internal class ShowCreateStrategyDialog : Base.Command
+internal class Create : Base.Command
 {
     public override bool CanExecute(object? parameter) => parameter is Window;
 
@@ -10,7 +10,7 @@ internal class ShowCreateStrategyDialog : Base.Command
     {
         if (parameter is Window parent)
         {
-            new Views.Strategies.CreateStrategy()
+            new Views.Containers.CreateContainer()
             {
                 Owner = parent
             }.Show();

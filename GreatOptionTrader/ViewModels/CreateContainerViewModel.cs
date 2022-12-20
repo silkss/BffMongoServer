@@ -5,10 +5,10 @@ using System.Collections.ObjectModel;
 
 namespace GreatOptionTrader.ViewModels;
 
-internal class CreateStrategyViewModel : Base.ViewModel
+internal class CreateContainerViewModel : Base.ViewModel
 {
 	private readonly IConnector _connector;
-	public CreateStrategyViewModel()
+	public CreateContainerViewModel()
 	{
 		_connector = Services.Get.Connector;
 		Accounts = new(_connector.GetAccounts());

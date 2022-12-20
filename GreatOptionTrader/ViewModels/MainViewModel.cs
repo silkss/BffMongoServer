@@ -1,9 +1,9 @@
-﻿using Strategies.Strategies;
+﻿using GreatOptionTraderStrategies.Strategies.Base;
 using System.Collections.ObjectModel;
 
 namespace GreatOptionTrader.ViewModels;
 
 internal class MainViewModel 
 {
-    public ObservableCollection<MainStrategy> Strategies => Services.Get.Strategies;
+    public ObservableCollection<Container> Containers => Services.Get.Containers;
 }

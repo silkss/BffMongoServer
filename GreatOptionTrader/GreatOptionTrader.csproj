@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Connectors\Connectors.csproj" />
-    <ProjectReference Include="..\Strategies\Strategies.csproj" />
+    <ProjectReference Include="..\GreatOptionTraderStrategies\GreatOptionTraderStrategies.csproj" />
   </ItemGroup>
 
 </Project>

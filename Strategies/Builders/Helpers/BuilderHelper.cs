@@ -15,7 +15,7 @@ internal static class BuilderHelper
     {
         connector
             .RequestPut(parent, strike, expiration, out Instrument? put)
-            .RequestPut(parent, strike, expiration, out Instrument? call)
+            .RequestPut(parent, strike, expiration, out Instrument? call);
         if (put == null || call == null) throw new Exception("Cant request put or call");
 
         connector
