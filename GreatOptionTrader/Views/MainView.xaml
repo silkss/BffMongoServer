@@ -38,6 +38,8 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Instrument"
                                     Binding="{Binding Instrument.FullName}"/>
+                <DataGridTextColumn Header="Account"
+                                    Binding="{Binding ContainerSettings.Account}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

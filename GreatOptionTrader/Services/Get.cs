@@ -12,4 +12,12 @@ internal static class Get
     public static IBffLogger Logger = new ConsoleLogger();
     public static IConnector Connector = new IbConnector(Logger);
     public static ObservableCollection<Container> Containers = new();
+
+    public static void AddContainer(Container container)
+    {
+        App.Current.Dispatcher.Invoke(() =>
+        {
+            Containers.Add(container);
+        });
+    }
 }

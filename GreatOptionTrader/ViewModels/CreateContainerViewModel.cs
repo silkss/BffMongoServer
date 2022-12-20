@@ -1,5 +1,8 @@
-﻿using Connectors;
+﻿using Common.Enums;
+using Connectors;
 using GreatOptionTrader.Commands.Base;
+using GreatOptionTraderStrategies.Strategies.Base;
+using GreatOptionTraderStrategies.Strategies.Base.Settings;
 using Instruments;
 using System.Collections.ObjectModel;
 
@@ -14,6 +17,7 @@ internal class CreateContainerViewModel : Base.ViewModel
 		Accounts = new(_connector.GetAccounts());
 
 		RequestInstrument = new(onRequestInstrument, canRequestInstrument);
+		CreateContainer = new(onCreateContainer, canCreateContainer);
 	}
 
 	public ObservableCollection<string> Accounts { get; }
@@ -53,15 +57,64 @@ internal class CreateContainerViewModel : Base.ViewModel
 		set => Set(ref _instrument, value);
 	}
 
-	public LambdaCommand RequestInstrument { get; }
+	private Directions _straddleDirection;
+	public Directions StraddleDirection
+	{
+		get => _straddleDirection;
+		set => Set(ref _straddleDirection, value);
+	}
+
+	private int _minDaysToExpiration;
+    public int MinDaysToExpiration
+	{
+		get => _minDaysToExpiration;
+		set => Set(ref _minDaysToExpiration, value);
+	}
+	private string? _tradingOptionClass;
+    public string? TradingOptionClass
+	{
+		get => _tradingOptionClass; 
+		set => Set(ref _tradingOptionClass, value);
+	}
+
+    public LambdaCommand RequestInstrument { get; }
 	private void onRequestInstrument(object? p)
 	{
 		if (string.IsNullOrEmpty(InstrumentName) || string.IsNullOrEmpty(Exchange)) return;
 
 		Instrument = _connector.RequestInstrument(InstrumentName, Exchange);
-			 
     }
 	private bool canRequestInstrument(object? p) => 
 		!string.IsNullOrEmpty(InstrumentName) || 
 		!string.IsNullOrEmpty(Exchange);
+
+	public LambdaCommand CreateContainer { get; }
+	private void onCreateContainer(object? p) 
+	{
+		if (Instrument == null || 
+			string.IsNullOrEmpty(TradingOptionClass) ||
+			Account == null) return;
+
+		var container = new Container
+		{
+			Instrument = Instrument,
+			ContainerSettings = new ContainerSettings
+			{
+				Account = Account,
+				OrderShift = OrderPriceShift,
+			},
+			StraddleSettings = new StraddleSettings
+			{
+				BaseDirections = StraddleDirection,
+				MinDaysToExpiration = MinDaysToExpiration,
+				TradingOptionClass = TradingOptionClass
+			},
+		};
+		Services.Get.AddContainer(container);
+	}
+	private bool canCreateContainer(object? p) =>
+		Instrument != null ||
+		!string.IsNullOrEmpty(TradingOptionClass) || 
+		Account != null;
+
 }
