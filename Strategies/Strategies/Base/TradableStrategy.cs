@@ -1,6 +1,6 @@
 ﻿using Transactions.Asbstractions;
 
-namespace Strategies.Base;
+namespace Strategies.Strategies.Base;
 
 public abstract class TradableStrategy : Strategy, IOrderHolder
 {

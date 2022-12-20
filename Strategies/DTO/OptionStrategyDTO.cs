@@ -1,6 +1,6 @@
 ﻿using Instruments;
-using Strategies.Depend;
 using Strategies.Enums;
+using Strategies.Strategies.Depend;
 using System.Collections.Generic;
 using Transactions;
 

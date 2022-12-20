@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Notifier;
-using Strategies;
 using Connectors;
 using MongoDbSettings;
 using Microsoft.Extensions.Hosting;
+using Strategies.Strategies;
 
 namespace Traders.Base;
 

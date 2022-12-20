@@ -1,4 +1,5 @@
 ﻿using Instruments;
+using Strategies.Strategies;
 
 namespace Strategies.DTO;
 

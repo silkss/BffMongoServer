@@ -1,6 +1,6 @@
 ﻿using Connectors;
-using Strategies;
-using Strategies.TradeUnions;
+using Strategies.Strategies;
+using Strategies.Strategies.TradeUnions;
 using System;
 using System.Linq;
 using System.Text;

@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Notifier;
-using Strategies;
 using Strategies.DTO;
 using MongoDbSettings;
 using System.Linq;
+using Strategies.Strategies;
 
 namespace WebApi.Controllers;
 

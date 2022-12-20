@@ -1,6 +1,5 @@
 ﻿using Common.Enums;
 using Connectors;
-using IBApi;
 using Instruments;
 using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Enums;
@@ -11,12 +10,12 @@ using System.Collections.Generic;
 using Notifier;
 using Transactions;
 
-namespace Strategies.Depend;
+namespace Strategies.Strategies.Depend;
 
 public class OptionStrategy : Base.TradableStrategy
 {
 
-    private Transaction createOpenOrder( MainSettings settings, decimal orderPrice) => new Transaction(this, settings.Account)
+    private Transaction createOpenOrder(MainSettings settings, decimal orderPrice) => new Transaction(this, settings.Account)
     {
         Quantity = getTradableVolume(),
         LimitPrice = orderPrice == 0 ? Instrument.TradablePrice(Direction) : orderPrice,
@@ -28,7 +27,7 @@ public class OptionStrategy : Base.TradableStrategy
         LimitPrice = Instrument.TradablePrice(GetCloseDirection()),
         Direction = GetCloseDirection(),
     };
-    private void createAndSendOrder(bool isOpen, IConnector connector, MainSettings settings, decimal orderPrice=0)
+    private void createAndSendOrder(bool isOpen, IConnector connector, MainSettings settings, decimal orderPrice = 0)
     {
         if (isOpen)
             OpenOrder = createOpenOrder(settings, orderPrice);
@@ -74,7 +73,7 @@ public class OptionStrategy : Base.TradableStrategy
         ? Directions.Sell
         : Directions.Buy;
     public OptionStrategy? Closure { get; set; }
-    
+
     public decimal LimitPrice { get; set; }
     public void Close(IConnector connector)
     {
@@ -84,7 +83,7 @@ public class OptionStrategy : Base.TradableStrategy
         }
         Logic = Logic.Close;
 
-        if (Closure!= null)
+        if (Closure != null)
         {
             Closure.Close(connector);
         }
@@ -94,7 +93,7 @@ public class OptionStrategy : Base.TradableStrategy
     {
         Logic.Open => Strategy.Opened(Orders, Volume),
         Logic.Close => Strategy.Closed(Orders),
-        _ => throw new System.ArgumentException("Неизвестная логика работы стратегии!", Logic.ToString()),
+        _ => throw new ArgumentException("Неизвестная логика работы стратегии!", Logic.ToString()),
     };
     public bool IsClosured() => Logic switch
     {
@@ -102,7 +101,7 @@ public class OptionStrategy : Base.TradableStrategy
         Logic.Open when Closure != null => IsDone() && Closure.IsClosured(),
         Logic.Close when Closure == null => IsDone(),
         Logic.Close when Closure != null => IsDone() && Closure.IsClosured(),
-        _ => throw new System.ArgumentException("Неизвестное состояние для стратегии!")
+        _ => throw new ArgumentException("Неизвестное состояние для стратегии!")
     };
     public void Start(IConnector connector)
     {
@@ -114,9 +113,9 @@ public class OptionStrategy : Base.TradableStrategy
             Closure.Start(connector);
         }
     }
-    public void Work(IConnector connector, IBffLogger notifier, MainSettings mainSettings, decimal orderPrice = 0m) 
+    public void Work(IConnector connector, IBffLogger notifier, MainSettings mainSettings, decimal orderPrice = 0m)
     {
-        switch(Logic)
+        switch (Logic)
         {
             case Logic.Open when OpenOrder == null:
                 if (IsDone()) break;
@@ -141,7 +140,7 @@ public class OptionStrategy : Base.TradableStrategy
                     break;
                 }
                 createAndSendOrder(false, connector, mainSettings, orderPrice);
-               
+
                 break;
             case Logic.Close when OpenOrder != null:
                 if (!connector.IsOrderOpen(OpenOrder))
@@ -158,12 +157,12 @@ public class OptionStrategy : Base.TradableStrategy
                 break;
             default:
                 break;
-            
+
         }
     }
     public void WorkWithClosure(IConnector connector, IBffLogger notifier,
-        MainSettings mainSettings, 
-        ClosureSettings closureSettings, 
+        MainSettings mainSettings,
+        ClosureSettings closureSettings,
         decimal orderPrice = 0m)
     {
         switch (Logic)
@@ -177,7 +176,7 @@ public class OptionStrategy : Base.TradableStrategy
                     break;
                 }
                 if (Instrument.TradablePrice(Direction) == 0) break;
-                orderPrice = (orderPrice * closureSettings.ClosurePriceGapProcent) / 100;
+                orderPrice = orderPrice * closureSettings.ClosurePriceGapProcent / 100;
                 createAndSendOrder(true, connector, mainSettings, orderPrice);
                 break;
             case Logic.Open when OpenOrder != null:
@@ -244,7 +243,7 @@ public class OptionStrategy : Base.TradableStrategy
     public decimal GetPnlWithClosure()
     {
         var pnl = GetPnl();
-        if (Closure!=null)
+        if (Closure != null)
         {
             pnl += Closure.GetPnlWithClosure();
         }
@@ -274,8 +273,8 @@ public class OptionStrategy : Base.TradableStrategy
         OpenOrder = null;
     }
 
-    public override void OnSubmitted(int brokerId) 
-    { 
+    public override void OnSubmitted(int brokerId)
+    {
         if (OpenOrder == null) return;
         if (OpenOrder.BrokerId != brokerId) return;
     }
@@ -283,7 +282,7 @@ public class OptionStrategy : Base.TradableStrategy
 
     #region Creating of depending strategies
     public static OptionStrategy CreateStraddleLeg(
-        Instrument instrument, int volume = 1, 
+        Instrument instrument, int volume = 1,
         Directions direction = Directions.Buy) => new OptionStrategy
         {
             Instrument = instrument,
@@ -301,6 +300,6 @@ public class OptionStrategy : Base.TradableStrategy
             Direction = direction
         };
 
-   
+
     #endregion
 }

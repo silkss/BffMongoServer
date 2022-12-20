@@ -1,6 +1,6 @@
 ﻿using Common.Enums;
-using Strategies.Depend;
-using Strategies.TradeUnions;
+using Strategies.Strategies.Depend;
+using Strategies.Strategies.TradeUnions;
 using System;
 using System.Linq;
 

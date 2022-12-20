@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Strategies;
+using Strategies.Strategies;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -1,16 +1,15 @@
 ﻿using Connectors;
-using Common.Enums;
 using Notifier;
 using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Enums;
 using Strategies.Settings;
 using Strategies.Settings.Straddle;
-using Strategies.TradeUnions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Strategies.Strategies.TradeUnions;
 
-namespace Strategies;
+namespace Strategies.Strategies;
 
 public class MainStrategy : Base.Strategy
 {
@@ -45,7 +44,7 @@ public class MainStrategy : Base.Strategy
                     return StraddleStatus.UnClosuredProfitLevelReached;
 
                 if (straddle.CheckClosuredProfitLevels(StraddleSettings, notifier))
-                    return StraddleStatus.ClosuredProfitLevelReached;   
+                    return StraddleStatus.ClosuredProfitLevelReached;
             }
 
             if (straddle.GetPnl() >= StraddleSettings?.StraddleTargetPnl)
@@ -79,8 +78,8 @@ public class MainStrategy : Base.Strategy
         {
             foreach (var straddle in Straddles)
             {
-                if (StraddleSettings == null || 
-                    MainSettings == null || 
+                if (StraddleSettings == null ||
+                    MainSettings == null ||
                     ClosureSettings == null)
                 {
                     notifier.LogError("Некоторые настройки равны NULL работа страддла не возможно!");

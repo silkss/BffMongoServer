@@ -1,11 +1,11 @@
 ﻿using Traders.Base;
 using Microsoft.AspNetCore.Mvc;
 using MongoDbSettings;
-using Strategies;
 using Strategies.DTO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Strategies.Strategies;
 
 namespace WebApi.Controllers;
 

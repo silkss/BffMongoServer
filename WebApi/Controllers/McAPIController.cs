@@ -1,12 +1,12 @@
 ﻿using Notifier;
 using Connectors;
 using Microsoft.AspNetCore.Mvc;
-using Strategies;
 using Strategies.Enums;
 using System;
 using System.Text;
 using Traders.Base;
 using Traders.Helpers;
+using Strategies.Strategies;
 
 namespace WebApi.Controllers;
 

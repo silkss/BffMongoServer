@@ -108,15 +108,12 @@ public class IbConnector : IConnector
         _connectionInfo.IsConnected = true;
         _client.reqMarketDataType(3);
 
-        if (_timer == null)
-            _timer = new Timer(reqServerTime, null,
-                TimeSpan.FromMinutes(CHECK_CONNECTION_INTERVAL),
-                TimeSpan.FromMinutes(CHECK_CONNECTION_INTERVAL));
+        _timer ??= new Timer(reqServerTime, null,
+            TimeSpan.FromMinutes(CHECK_CONNECTION_INTERVAL),
+            TimeSpan.FromMinutes(CHECK_CONNECTION_INTERVAL));
     }
-    public void Disconnect()
-    {
-        _client.eDisconnect();
-    }
+    public void Disconnect() => _client.eDisconnect();
+
     public void AddConnectionChangedCallback(Action<bool> callback)
     {
         _callbacks.ConnectionChanged += callback;
@@ -197,6 +194,16 @@ public class IbConnector : IConnector
             return chain.GetTradingClass(approximateDate);
         }
         _logger.LogError($"Нет цепочки опционов для инструмента с ID = {parentId}");
+        return null;
+    }
+    public IEnumerable<OptionTradingClass>? GetOptionTradingClasses(Instrument parent, string tradingClass)
+    {
+        var id = parent.Id;
+        if (_optionChains.GetValueOrDefault(id) is OptionChain chain)
+        {
+            return chain.GetTradingClasses(tradingClass);
+        }
+        _logger.LogError($"Нет цепочки опционов для инструмента с ID = {parent.Id} {parent.FullName}");
         return null;
     }
     public void ReqMarketRule(int id) => _client.reqMarketRule(id);
