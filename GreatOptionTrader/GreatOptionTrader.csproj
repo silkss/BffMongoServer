@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <ProjectReference Include="..\Connectors\Connectors.csproj" />
+    <ProjectReference Include="..\Strategies\Strategies.csproj" />
   </ItemGroup>
 
 </Project>

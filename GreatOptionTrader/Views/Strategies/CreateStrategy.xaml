@@ -1,0 +1,53 @@
+﻿<Window x:Class="GreatOptionTrader.Views.Strategies.CreateStrategy"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:GreatOptionTrader.ViewModels"
+        mc:Ignorable="d"
+        Title="CreateStrategy" 
+        MinHeight="450" MinWidth="300"
+        Height="450" Width="300">
+    <Window.DataContext>
+        <vm:CreateStrategyViewModel/>
+    </Window.DataContext>
+    <StackPanel>
+        <GroupBox Header="Instrument">
+            <StackPanel>
+                <UniformGrid Rows="1">
+                    <TextBlock Text="Instrument name"/>
+                    <TextBox Text="{Binding InstrumentName}"/>
+                </UniformGrid>
+                <UniformGrid Rows="1">
+                    <TextBlock Text="Exchange"/>
+                    <TextBox Text="{Binding Exchange}"/>
+                </UniformGrid>
+                <Button Content="Request" Command="{Binding RequestInstrument}"/>
+                <TextBlock>
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} - {1:d}">
+                            <Binding Path="Instrument.FullName" />
+                            <Binding Path="Instrument.LastTradeDate" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="MainSettings">
+            <StackPanel>
+                <UniformGrid Rows="1">
+                    <TextBlock Text="Account"/>
+                    <ComboBox ItemsSource="{Binding Accounts}" SelectedItem="{Binding Account}"/>
+                </UniformGrid>
+                <UniformGrid Rows="1">
+                    <TextBlock Text="Order price shift"/>
+                    <TextBox Text="{Binding OrderPriceShift}"/>
+                </UniformGrid>
+            </StackPanel>
+        </GroupBox>
+        <UniformGrid Rows="1">
+            <Button Content="Ok"/>
+            <Button Content="Cancel"/>
+        </UniformGrid>
+    </StackPanel>
+</Window>
