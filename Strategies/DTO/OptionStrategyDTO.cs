@@ -1,7 +1,6 @@
 ﻿using Common.Types.Base;
 using Common.Types.Orders;
 using Common.Types.Instruments;
-using Strategies.Strategies.Depend;
 using System.Collections.Generic;
 
 namespace Strategies.DTO;
@@ -18,7 +17,7 @@ public class OptionStrategyDTO
 
 public static class OptionStrategyDtoExtension
 {
-    public static OptionStrategyDTO ToDto(this OptionStrategy strategy) => new OptionStrategyDTO
+    public static OptionStrategyDTO ToDto(this Strategies.Depend.OptionStrategy strategy) => new OptionStrategyDTO
     {
         CurrencyPnL = strategy.GetCurrencyPnl(),
         Position = strategy.GetPosition(),

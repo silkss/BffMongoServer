@@ -1,17 +1,17 @@
-﻿using Common.Types.Base;
-using Common.Types.Orders;
-using Common.Types.Instruments;
+﻿using Notifier;
 using Connectors;
-using Notifier;
 using Strategies.Helpers;
 using Strategies.Settings;
+using Common.Types.Base;
+using Common.Types.Orders;
+using Common.Types.Instruments;
+using Common.Types.Orders.Asbstractions;
 using System;
 using System.Collections.Generic;
-using Common.Types.Orders.Asbstractions;
 
-namespace Strategies.Strategies.Depend.Base;
+namespace Strategies.TradeUnits;
 
-public abstract class OptionStrategy : IOrderHolder
+public abstract class OptionTradeUnit : IOrderHolder
 {
     protected Directions getCloseDirection() => Direction == Directions.Buy
         ? Directions.Sell
@@ -94,7 +94,7 @@ public abstract class OptionStrategy : IOrderHolder
                 }
                 if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                     connector.CancelOrder(OpenOrder);
-  
+
                 break;
             default:
                 break;
@@ -105,17 +105,17 @@ public abstract class OptionStrategy : IOrderHolder
     #region IOrderHolder
     public virtual void OnOrderCancelled(int brokerId)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public virtual void OnOrderFilled(int brokerId)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public virtual void OnSubmitted(int brokerId)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
     #endregion
 }

@@ -40,33 +40,33 @@ public class Straddle
     public Straddle() { }
     public Straddle(Instrument call, Instrument put)
     {
-        Legs.Add(OptionStrategy.CreateStraddleLeg(call, volume: 1));
-        Legs.Add(OptionStrategy.CreateStraddleLeg(put, volume: 1));
+        Legs.Add(Depend.OptionStrategy.CreateStraddleLeg(call, volume: 1));
+        Legs.Add(Depend.OptionStrategy.CreateStraddleLeg(put, volume: 1));
 
         CreatedTime = DateTime.Now;
     }
     public Straddle(Instrument call, Instrument put, Directions direction)
     {
-        Legs.Add(OptionStrategy.CreateStraddleLeg(call, volume: 1, direction));
-        Legs.Add(OptionStrategy.CreateStraddleLeg(put, volume: 1, direction));
+        Legs.Add(Depend.OptionStrategy.CreateStraddleLeg(call, volume: 1, direction));
+        Legs.Add(Depend.OptionStrategy.CreateStraddleLeg(put, volume: 1, direction));
 
         CreatedTime = DateTime.Now;
     }
 
     public Straddle(Instrument call, Instrument closureCall, Instrument put, Instrument closurePut)
     {
-        var callLeg = OptionStrategy.CreateStraddleLeg(call);
-        callLeg.Closure = OptionStrategy.CreateClosure(closureCall);
+        var callLeg = Depend.OptionStrategy.CreateStraddleLeg(call);
+        callLeg.Closure = Depend.OptionStrategy.CreateClosure(closureCall);
         Legs.Add(callLeg);
 
-        var putLeg = OptionStrategy.CreateStraddleLeg(put);
-        putLeg.Closure = OptionStrategy.CreateClosure(closurePut);
+        var putLeg = Depend.OptionStrategy.CreateStraddleLeg(put);
+        putLeg.Closure = Depend.OptionStrategy.CreateClosure(closurePut);
         Legs.Add(putLeg);
 
         CreatedTime = DateTime.Now;
     }
     public TradeLogic Logic { get; private set; } = TradeLogic.Open;
-    public List<OptionStrategy> Legs { get; set; } = new List<OptionStrategy>(2);
+    public List<Depend.OptionStrategy> Legs { get; set; } = new List<Depend.OptionStrategy>(2);
     public DateTime CreatedTime { get; set; }
     public void Start(IConnector connector)
     {

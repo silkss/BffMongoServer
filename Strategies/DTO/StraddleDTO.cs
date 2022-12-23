@@ -1,5 +1,4 @@
 ﻿using Common.Types.Base;
-using Strategies.Strategies.Depend;
 using Strategies.Strategies.TradeUnions;
 using System;
 using System.Linq;
@@ -17,9 +16,9 @@ public class StraddleDTO
 }
 public static class StraddleExtensions
 {
-    private static OptionStrategy? get(OptionType type, Straddle straddle) => straddle.Legs
+    private static Strategies.Depend.OptionStrategy? get(OptionType type, Straddle straddle) => straddle.Legs
         .FirstOrDefault(l => l.Instrument.OptionType == type);
-    private static OptionStrategy? getClosure(OptionType type, Straddle straddle) => get(type, straddle)?.Closure;
+    private static Strategies.Depend.OptionStrategy? getClosure(OptionType type, Straddle straddle) => get(type, straddle)?.Closure;
 
     public static StraddleDTO? ToDto(this Straddle? straddle) => straddle == null ?
         null :
