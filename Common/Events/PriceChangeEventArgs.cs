@@ -1,7 +1,7 @@
 using System;
-using Common.Enums;
+using Common.Types.Base;
 
-namespace Instruments.Events;
+namespace Common.Events;
 
 public class PriceChangedEventArgs : EventArgs
 {

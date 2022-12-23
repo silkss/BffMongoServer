@@ -1,4 +1,4 @@
-﻿using Common.Enums;
+﻿using Common.Types.Base;
 using Strategies.Strategies.Depend;
 using Strategies.Strategies.TradeUnions;
 using System;

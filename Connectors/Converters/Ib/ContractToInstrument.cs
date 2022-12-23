@@ -1,7 +1,7 @@
-﻿using Common.Enums;
-using Common.Helpers;
+﻿using Common.Helpers;
+using Common.Types.Base;
+using Common.Types.Instruments;
 using IBApi;
-using Instruments;
 using System;
 using System.Globalization;
 using System.Linq;

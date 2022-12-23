@@ -1,12 +1,11 @@
-﻿using Common.Enums;
-using IBApi;
-using Transactions;
+﻿using Common.Types.Base;
 
 namespace Connectors.Converters.Ib;
 
 internal static class ToIbOrders
 {
-    public static Order ToIbOrder(this Transaction order, bool market = false) => new Order
+    public static IBApi.Order ToIbOrder(this Common.Types.Orders.Order order, 
+        bool market = false) => new IBApi.Order
     {
         TotalQuantity = order.Quantity,
         Account = order.Account,

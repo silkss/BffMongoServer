@@ -1,8 +1,8 @@
-﻿using Instruments;
-using Strategies.Enums;
+﻿using Common.Types.Base;
+using Common.Types.Orders;
+using Common.Types.Instruments;
 using Strategies.Strategies.Depend;
 using System.Collections.Generic;
-using Transactions;
 
 namespace Strategies.DTO;
 
@@ -12,8 +12,8 @@ public class OptionStrategyDTO
     public decimal CurrencyPnL { get; set; }
     public decimal OpenPrice { get; set; }
     public int Position { get; set; }
-    public Logic Logic { get; set; }
-    public List<Transaction>? Orders { get; set; }
+    public TradeLogic Logic { get; set; }
+    public List<Order>? Orders { get; set; }
 }
 
 public static class OptionStrategyDtoExtension

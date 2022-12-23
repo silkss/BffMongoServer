@@ -1,10 +1,10 @@
-﻿using Common.Enums;
+﻿using Common.Events;
 using Common.Helpers;
-using Instruments.Events;
+using Common.Types.Base;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 
-namespace Instruments;
+namespace Common.Types.Instruments;
 
 public class Instrument
 {

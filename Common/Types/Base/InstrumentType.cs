@@ -1,4 +1,4 @@
-﻿namespace Common.Enums;
+﻿namespace Common.Types.Base;
 
 public enum InstrumentType
 {

@@ -1,4 +1,4 @@
-namespace Instruments.Enums;
+namespace Common.Types.Base;
 
 public enum Tick
 {

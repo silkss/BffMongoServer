@@ -1,8 +1,8 @@
-﻿using Instruments.PriceRules;
+﻿using Common.Types.Instruments;
 using System;
 using System.Collections.Generic;
 
-namespace Instruments.Events;
+namespace Common.Events;
 
 public class PriceRuleEventArgs : EventArgs
 {

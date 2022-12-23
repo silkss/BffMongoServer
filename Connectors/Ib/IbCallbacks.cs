@@ -1,23 +1,19 @@
-﻿using Common.Enums;
+﻿using Common.Events;
 using Common.Helpers;
-using Common.Enums;
-using Common.Helpers;
-using Connectors.Converters.Ib;
-using Connectors.Ib.Caches;
+using Common.Types.Instruments;
 using Connectors.Info;
+using Connectors.Ib.Caches;
+using Connectors.Converters.Ib;
 using IBApi;
-using Instruments;
-using Instruments.Events;
-using Instruments.PriceRules;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Notifier;
-using Transactions;
+using Common.Types.Base;
 
 namespace Connectors.Ib;
 
-internal class IbCallbacks : DefaultEWrapper
+internal class IbCallbacks : IBApi.DefaultEWrapper
 {
 	private readonly IBffLogger _logger;
 	private readonly RequestInstrumentCache _requestInstrument;
@@ -56,11 +52,11 @@ internal class IbCallbacks : DefaultEWrapper
 	}
     public event Action LostConnection = delegate { };
 
-	public override void contractDetails(int reqId, ContractDetails contractDetails)
+	public override void contractDetails(int reqId, IBApi.ContractDetails contractDetails)
 	{
 		_requestInstrument.Add(reqId, contractDetails.ToInstrument());
 	}
-	public override void marketRule(int marketRuleId, PriceIncrement[] priceIncrements)
+	public override void marketRule(int marketRuleId, IBApi.PriceIncrement[] priceIncrements)
 	{
 		if (_marketRules.ContainsKey(marketRuleId))
 		{
@@ -100,30 +96,30 @@ internal class IbCallbacks : DefaultEWrapper
 		//_logger.LogInformation($"{tickerId}:{TickType.getField(field)}:\t{price}");
 		switch (field)
         {
-            case TickType.ASK:
-            case TickType.ASK_OPTION:
-            case TickType.DELAYED_ASK:
-            case TickType.DELAYED_ASK_OPTION:
+            case IBApi.TickType.ASK:
+            case IBApi.TickType.ASK_OPTION:
+            case IBApi.TickType.DELAYED_ASK:
+            case IBApi.TickType.DELAYED_ASK_OPTION:
                 var ask = new PriceChangedEventArgs();
                 ask.TickerId = tickerId;
                 ask.Price = Convert.ToDecimal(price);
                 ask.Tick = Tick.Ask;
                 onPriceChanged(ask);
                 break;
-            case TickType.BID:
-            case TickType.DELAYED_BID:
-            case TickType.BID_OPTION:
-            case TickType.DELAYED_BID_OPTION:
+            case IBApi.TickType.BID:
+            case IBApi.TickType.DELAYED_BID:
+            case IBApi.TickType.BID_OPTION:
+            case IBApi.TickType.DELAYED_BID_OPTION:
                 var bid = new PriceChangedEventArgs();
                 bid.TickerId = tickerId;
                 bid.Price = Convert.ToDecimal(price);
                 bid.Tick = Tick.Bid;
                 onPriceChanged(bid);
                 break;
-            case TickType.LAST:
-            case TickType.DELAYED_LAST:
-            case TickType.LAST_OPTION:
-            case TickType.DELAYED_LAST_OPTION:
+            case IBApi.TickType.LAST:
+            case IBApi.TickType.DELAYED_LAST:
+            case IBApi.TickType.LAST_OPTION:
+            case IBApi.TickType.DELAYED_LAST_OPTION:
                 var last = new PriceChangedEventArgs();
                 last.TickerId = tickerId;
                 last.Price = Convert.ToDecimal(price);
@@ -134,8 +130,8 @@ internal class IbCallbacks : DefaultEWrapper
 	}
 	public override void tickOptionComputation(int tickerId, int field, int tickAttrib, double impliedVolatility, double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice)
 	{
-		if (field != TickType.MODEL_OPTION &&
-			field != TickType.DELAYED_MODEL_OPTION)
+		if (field != IBApi.TickType.MODEL_OPTION &&
+			field != IBApi.TickType.DELAYED_MODEL_OPTION)
 			return;
 
 		if (optPrice != double.MaxValue)
@@ -161,10 +157,10 @@ internal class IbCallbacks : DefaultEWrapper
             _connectionInfo.Accounts.Add(account);
 		}
 	}
-	public override void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
+	public override void openOrder(int orderId, IBApi.Contract contract, IBApi.Order order, IBApi.OrderState orderState)
 	{
 		if (orderState.Commission == double.MaxValue) return;
-		if (_openOrdersCache.GetById(orderId) is Transaction openorder)
+		if (_openOrdersCache.GetById(orderId) is Common.Types.Orders.Order openorder)
 		{
 			if (openorder.FilledQuantity == openorder.Quantity)
 			{
@@ -176,7 +172,7 @@ internal class IbCallbacks : DefaultEWrapper
     }
 	public override void orderStatus(int orderId, string status, decimal filled, decimal remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld, double mktCapPrice)
 	{
-        if (_openOrdersCache.GetById(orderId) is Transaction openorder)
+        if (_openOrdersCache.GetById(orderId) is Common.Types.Orders.Order openorder)
         {
             openorder.AvgFilledPrice = Helper.ConvertDoubleToDecimal(avgFillPrice);
             openorder.FilledQuantity = (int)filled;
@@ -222,7 +218,7 @@ internal class IbCallbacks : DefaultEWrapper
             case 202:	// someone cancelled order
             case 512:
 			case 321: // Зачемто послан ордер с нулевым объемом!
-                if (_openOrdersCache.GetById(id) is Transaction canceledorder)
+                if (_openOrdersCache.GetById(id) is Common.Types.Orders.Order canceledorder)
                 {
 					_logger.LogError($"Something wrong with order: {errorMsg}");
 

@@ -1,19 +1,22 @@
-﻿using Connectors;
-using Notifier;
+﻿using Notifier;
+using Connectors;
 using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Enums;
 using Strategies.Settings;
 using Strategies.Settings.Straddle;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Strategies.Strategies.TradeUnions;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using Common.Types.Base;
+using Common.Types.Instruments;
 
 namespace Strategies.Strategies;
 
-public class MainStrategy : Base.Strategy
+public class MainStrategy 
 {
     private readonly object straddleLock = new();
+    public Instrument Instrument { get; set; }
 
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
@@ -37,7 +40,6 @@ public class MainStrategy : Base.Strategy
     {
         if (GetOpenStraddle() is Straddle straddle)
         {
-
             if (StraddleSettings != null)
             {
                 if (straddle.CheckUnclosuredProfitLevels(StraddleSettings, notifier))
@@ -46,7 +48,6 @@ public class MainStrategy : Base.Strategy
                 if (straddle.CheckClosuredProfitLevels(StraddleSettings, notifier))
                     return StraddleStatus.ClosuredProfitLevelReached;
             }
-
             if (straddle.GetPnl() >= StraddleSettings?.StraddleTargetPnl)
                 return StraddleStatus.InProfit;
 
@@ -85,7 +86,7 @@ public class MainStrategy : Base.Strategy
                     notifier.LogError("Некоторые настройки равны NULL работа страддла не возможно!");
                     break;
                 }
-                if (straddle.Logic == Logic.Open)
+                if (straddle.Logic == TradeLogic.Open)
                 {
                     if (straddle.CheckPnlForClose(StraddleSettings))
                     {

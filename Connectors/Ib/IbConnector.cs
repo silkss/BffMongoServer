@@ -4,14 +4,12 @@ using System.Threading;
 using System.Collections.Generic;
 using IBApi;
 using System;
-using Common.Enums;
 using System.Linq;
 using Common.Helpers;
 using Notifier;
 using Connectors.Info;
-using Instruments.PriceRules;
-using Instruments;
-using Transactions;
+using Common.Types.Instruments;
+using Common.Types.Base;
 
 namespace Connectors.Ib;
 
@@ -216,7 +214,8 @@ public class IbConnector : IConnector
     /// <param name="order"></param>
     /// <param name="priceShift"> сдвиг цены </param>
     /// <param name="needToRound"> округли цену до минимального тика, если необходимо. </param>
-    public void SendLimitOrder(Instrument instrument, Transaction order, int priceShift = 0, bool needToRound = true)
+    public void SendLimitOrder(Instrument instrument, 
+        Common.Types.Orders.Order order, int priceShift = 0, bool needToRound = true)
     {
         order.BrokerId = _callbacks.NextOrderId;
         _openOrdersCache.Add(order);
@@ -257,11 +256,11 @@ public class IbConnector : IConnector
             _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
         }
     }
-    public bool IsOrderOpen(Transaction order) => _openOrdersCache.Contains(order);
-    public IConnector CancelOrder(Transaction? transaction)
+    public bool IsOrderOpen(Common.Types.Orders.Order order) => _openOrdersCache.Contains(order);
+    public IConnector CancelOrder(Common.Types.Orders.Order? order)
     {
-        if (transaction == null) return this;
-        _client.cancelOrder(transaction.BrokerId, "");
+        if (order == null) return this;
+        _client.cancelOrder(order.BrokerId, "");
         return this;
     }
     #endregion

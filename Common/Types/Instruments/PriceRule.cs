@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Instruments.PriceRules;
+namespace Common.Types.Instruments;
 
 public class PriceRule
 {

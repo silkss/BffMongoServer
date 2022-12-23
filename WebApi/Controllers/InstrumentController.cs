@@ -1,5 +1,5 @@
 ﻿using Connectors;
-using Instruments;
+using Common.Types.Instruments;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;

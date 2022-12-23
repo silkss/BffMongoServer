@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Strategies.DTO;
-using Instruments;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Connectors.Info;
 using GUI.Services.Requests;
 

@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Collections.Generic;
-using Transactions;
+﻿using System.Windows.Controls;
 
 namespace GUI.Views.Controls;
 

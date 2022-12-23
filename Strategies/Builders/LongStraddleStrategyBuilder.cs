@@ -1,9 +1,9 @@
 ﻿using Connectors;
-using Strategies.Strategies;
-using Strategies.Strategies.TradeUnions;
 using System;
 using System.Linq;
 using System.Text;
+using Strategies.Strategies;
+using Strategies.Strategies.TradeUnions;
 
 namespace Strategies.Builders;
 

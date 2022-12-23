@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        xmlns:transactions="clr-namespace:Transactions;assembly=Transactions"
+        xmlns:orders="clr-namespace:Common.Types.Orders;assembly=Common"
         xmlns:strategies="clr-namespace:Strategies.DTO;assembly=Strategies"
         mc:Ignorable="d"
         Title="StrategyInfo" Height="450" MinHeight="450"  MinWidth="490" Width="490">
@@ -17,7 +17,7 @@
                 <TextBlock Text="{Binding CurrencyPnL}"/>
             </StackPanel>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type transactions:Transaction}">
+        <DataTemplate DataType="{x:Type orders:Order}">
             <WrapPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding Status}"/>
                 <TextBlock Text="{Binding CreatedTime}"/>

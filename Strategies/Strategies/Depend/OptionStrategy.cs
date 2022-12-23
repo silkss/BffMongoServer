@@ -1,29 +1,29 @@
-﻿using Common.Enums;
+﻿using Notifier;
 using Connectors;
-using Instruments;
 using MongoDB.Bson.Serialization.Attributes;
-using Strategies.Enums;
-using Strategies.Helpers;
-using Strategies.Settings;
 using System;
 using System.Collections.Generic;
-using Notifier;
-using Transactions;
+using Strategies.Helpers;
+using Strategies.Settings;
+using Strategies.Strategies.Base;
+using Common.Types.Base;
+using Common.Types.Orders;
+using Common.Types.Instruments;
 
 namespace Strategies.Strategies.Depend;
 
-public class OptionStrategy : Base.TradableStrategy
+public class OptionStrategy : TradableStrategy
 {
-
-    private Transaction createOpenOrder(MainSettings settings, decimal orderPrice) => new Transaction(this, settings.Account)
+    public Instrument Instrument { get; set; }
+    private Order createOpenOrder(MainSettings settings, decimal orderPrice) => new Order(this, settings.Account)
     {
         Quantity = getTradableVolume(),
         LimitPrice = orderPrice == 0 ? Instrument.TradablePrice(Direction) : orderPrice,
         Direction = Direction,
     };
-    private Transaction createCloseOrder(MainSettings settings) => new Transaction(this, settings.Account)
+    private Order createCloseOrder(MainSettings settings) => new Order(this, settings.Account)
     {
-        Quantity = Math.Abs(Strategy.GetPosition(Orders).pos),
+        Quantity = Math.Abs(StrategyHelper.GetPosition(Orders).pos),
         LimitPrice = Instrument.TradablePrice(GetCloseDirection()),
         Direction = GetCloseDirection(),
     };
@@ -49,23 +49,23 @@ public class OptionStrategy : Base.TradableStrategy
 
     private int getTradableVolume()
     {
-        (var pos, _) = Strategy.GetPosition(Orders);
+        (var pos, _) = StrategyHelper.GetPosition(Orders);
         return Volume - Math.Abs(pos);
     }
 
     private readonly object _transactionLock = new();
 
-    public List<Transaction> Orders { get; set; } = new();
+    public List<Order> Orders { get; set; } = new();
     public decimal OpenPrice { get; set; }
 
     [BsonIgnore]
-    public Transaction? OpenOrder { get; private set; }
+    public Order? OpenOrder { get; private set; }
     public int Volume { get; set; }
-    public Logic Logic { get; set; }
+    public TradeLogic Logic { get; set; }
     public Directions Direction { get; private set; }
     public decimal GetPnl()
     {
-        (var pos, var pnl) = Strategy.GetPosition(Orders);
+        (var pos, var pnl) = StrategyHelper.GetPosition(Orders);
         pnl += Instrument.TradablePrice(GetCloseDirection()) * pos;
         return pnl;
     }
@@ -78,29 +78,25 @@ public class OptionStrategy : Base.TradableStrategy
     public void Close(IConnector connector)
     {
         if (OpenOrder != null)
-        {
             connector.CancelOrder(OpenOrder);
-        }
-        Logic = Logic.Close;
+        Logic = TradeLogic.Close;
 
         if (Closure != null)
-        {
             Closure.Close(connector);
-        }
     }
 
     public bool IsDone() => Logic switch
     {
-        Logic.Open => Strategy.Opened(Orders, Volume),
-        Logic.Close => Strategy.Closed(Orders),
-        _ => throw new ArgumentException("Неизвестная логика работы стратегии!", Logic.ToString()),
+        TradeLogic.Open => StrategyHelper.Opened(Orders, Volume),
+        TradeLogic.Close => StrategyHelper.Closed(Orders),
+        _ => throw new ArgumentException($"Неизвестная логика работы стратегии! {Logic}"),
     };
     public bool IsClosured() => Logic switch
     {
-        Logic.Open when Closure == null => IsDone(),
-        Logic.Open when Closure != null => IsDone() && Closure.IsClosured(),
-        Logic.Close when Closure == null => IsDone(),
-        Logic.Close when Closure != null => IsDone() && Closure.IsClosured(),
+        TradeLogic.Open when Closure == null => IsDone(),
+        TradeLogic.Open when Closure != null => IsDone() && Closure.IsClosured(),
+        TradeLogic.Close when Closure == null => IsDone(),
+        TradeLogic.Close when Closure != null => IsDone() && Closure.IsClosured(),
         _ => throw new ArgumentException("Неизвестное состояние для стратегии!")
     };
     public void Start(IConnector connector)
@@ -117,20 +113,20 @@ public class OptionStrategy : Base.TradableStrategy
     {
         switch (Logic)
         {
-            case Logic.Open when OpenOrder == null:
+            case TradeLogic.Open when OpenOrder == null:
                 if (IsDone()) break;
                 createAndSendOrder(true, connector, mainSettings, orderPrice);
                 break;
-            case Logic.Open when OpenOrder != null:
+            case TradeLogic.Open when OpenOrder != null:
                 if (!connector.IsOrderOpen(OpenOrder))
                 {
                     OpenOrder = null;
                     break;
                 }
-                if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                     connector.CancelOrder(OpenOrder);
                 break;
-            case Logic.Close when OpenOrder == null:
+            case TradeLogic.Close when OpenOrder == null:
                 if (IsDone())
                 {
                     if (Closure != null)
@@ -142,13 +138,13 @@ public class OptionStrategy : Base.TradableStrategy
                 createAndSendOrder(false, connector, mainSettings, orderPrice);
 
                 break;
-            case Logic.Close when OpenOrder != null:
+            case TradeLogic.Close when OpenOrder != null:
                 if (!connector.IsOrderOpen(OpenOrder))
                 {
                     OpenOrder = null;
                     break;
                 }
-                if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                     connector.CancelOrder(OpenOrder);
                 if (Closure != null)
                 {
@@ -167,7 +163,7 @@ public class OptionStrategy : Base.TradableStrategy
     {
         switch (Logic)
         {
-            case Logic.Open when OpenOrder == null:
+            case TradeLogic.Open when OpenOrder == null:
                 if (IsClosured()) break;
                 if (IsDone() && Closure != null)
                 {
@@ -179,7 +175,7 @@ public class OptionStrategy : Base.TradableStrategy
                 orderPrice = orderPrice * closureSettings.ClosurePriceGapProcent / 100;
                 createAndSendOrder(true, connector, mainSettings, orderPrice);
                 break;
-            case Logic.Open when OpenOrder != null:
+            case TradeLogic.Open when OpenOrder != null:
                 if (!connector.IsOrderOpen(OpenOrder))
                 {
                     OpenOrder = null;
@@ -188,14 +184,14 @@ public class OptionStrategy : Base.TradableStrategy
                     break;
                 }
                 if (orderPrice != 0) break;
-                if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                 {
                     var msg = $"{this.Instrument.FullName} | {mainSettings.Account}. Order out of bound.";
                     notifier.LogInformation(msg, toTelegram: false);
                     connector.CancelOrder(OpenOrder);
                 }
                 break;
-            case Logic.Close when OpenOrder == null:
+            case TradeLogic.Close when OpenOrder == null:
                 if (IsClosured()) break;
                 if (IsDone() && Closure != null)
                 {
@@ -205,13 +201,13 @@ public class OptionStrategy : Base.TradableStrategy
                 if (Instrument.TradablePrice(Direction) == 0) break;
                 createAndSendOrder(false, connector, mainSettings);
                 break;
-            case Logic.Close when OpenOrder != null:
+            case TradeLogic.Close when OpenOrder != null:
                 if (!connector.IsOrderOpen(OpenOrder))
                 {
                     OpenOrder = null;
                     break;
                 }
-                if (Strategy.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
                     connector.CancelOrder(OpenOrder);
                 break;
             default:
@@ -230,7 +226,7 @@ public class OptionStrategy : Base.TradableStrategy
         }
     }
     public decimal GetCurrencyPnl() => GetPnl() * Instrument.Multiplier;
-    public int GetPosition() => Strategy.GetPosition(Orders).pos;
+    public int GetPosition() => StrategyHelper.GetPosition(Orders).pos;
     public decimal GetCurrencyPnlWithClosure()
     {
         var currency = GetCurrencyPnl();
@@ -267,7 +263,7 @@ public class OptionStrategy : Base.TradableStrategy
             OpenPrice = OpenOrder.AvgFilledPrice;
             if (Closure != null)
             {
-                Closure.Logic = Logic.Open;
+                Closure.Logic = TradeLogic.Open;
             }
         }
         OpenOrder = null;
@@ -286,7 +282,7 @@ public class OptionStrategy : Base.TradableStrategy
         Directions direction = Directions.Buy) => new OptionStrategy
         {
             Instrument = instrument,
-            Logic = Logic.Open,
+            Logic = TradeLogic.Open,
             Volume = volume,
             Direction = direction,
         };
@@ -295,7 +291,7 @@ public class OptionStrategy : Base.TradableStrategy
         Directions direction = Directions.Sell) => new OptionStrategy
         {
             Instrument = instrument,
-            Logic = Logic.Close,
+            Logic = TradeLogic.Close,
             Volume = volume,
             Direction = direction
         };

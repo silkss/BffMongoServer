@@ -1,9 +1,8 @@
-﻿using Common.Enums;
+﻿using Common.Types.Base;
+using Common.Types.Instruments;
 using Connectors.Info;
-using Instruments;
 using System;
 using System.Collections.Generic;
-using Transactions;
 
 namespace Connectors;
 
@@ -39,8 +38,8 @@ public interface IConnector
 
     #region Transactions/ Orders
 
-    bool IsOrderOpen(Transaction order);
-    void SendLimitOrder(Instrument instrument, Transaction order, int priceShift = 0, bool needToRounds = true);
-    IConnector CancelOrder(Transaction? transaction);
+    bool IsOrderOpen(Common.Types.Orders.Order order);
+    void SendLimitOrder(Instrument instrument, Common.Types.Orders.Order order, int priceShift = 0, bool needToRounds = true);
+    IConnector CancelOrder(Common.Types.Orders.Order? order);
     #endregion
 }

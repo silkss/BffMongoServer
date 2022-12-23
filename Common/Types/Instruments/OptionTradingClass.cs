@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Instruments;
+namespace Common.Types.Instruments;
 
 public class OptionTradingClass
 {
     public OptionTradingClass(
-        int underlyingConId, string exchange, string tradingClass, int multiplier, 
+        int underlyingConId, string exchange, string tradingClass, int multiplier,
         DateTime expirationDate, IEnumerable<double> strikes)
     {
         UnderlyingConId = underlyingConId;

@@ -1,6 +1,6 @@
-﻿using Instruments;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Common.Types.Instruments;
 
 namespace GUI.Services.Requests;
 

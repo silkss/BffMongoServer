@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Transactions;
 
 namespace Connectors.Ib.Caches;
 
 internal class OpenOrdersCache
 {
-    private readonly List<Transaction> _openOrders = new();
+    private readonly List<Common.Types.Orders.Order> _openOrders = new();
     private readonly object _ordersLock = new();
 
-    public void Add(Transaction order)
+    public void Add(Common.Types.Orders.Order order)
     {
         lock (_ordersLock)
         {
@@ -18,16 +17,16 @@ internal class OpenOrdersCache
         order.CreatedTime = System.DateTime.Now;
         order.Status = "Sent";
     }
-    public Transaction? GetById(int id)
+    public Common.Types.Orders.Order? GetById(int id)
     {
-        Transaction? order = null;
+        Common.Types.Orders.Order? order = null;
         lock (_ordersLock)
         {
             order = _openOrders.FirstOrDefault(o => o.BrokerId == id);
         }
         return order;
     }
-    public bool Contains(Transaction order)
+    public bool Contains(Common.Types.Orders.Order order)
     {
         var isOpen = false;
         lock(_ordersLock)
@@ -36,7 +35,7 @@ internal class OpenOrdersCache
         }
         return isOpen;
     }
-    public bool Remove(Transaction item)
+    public bool Remove(Common.Types.Orders.Order item)
     {
         var removed = false;
         lock (_ordersLock)

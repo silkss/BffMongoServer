@@ -1,4 +1,4 @@
-﻿using Common.Enums;
+﻿using Common.Types.Base;
 using System;
 
 namespace Common.Helpers;

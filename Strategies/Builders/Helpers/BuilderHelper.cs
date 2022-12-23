@@ -1,7 +1,8 @@
-﻿using Connectors;
-using Instruments;
+﻿using System;
+using Connectors;
+using Common.Types.Base;
+using Common.Types.Instruments;
 using Strategies.Strategies.TradeUnions;
-using System;
 
 namespace Strategies.Builders.Helpers;
 
@@ -21,6 +22,6 @@ internal static class BuilderHelper
         connector
             .RequestMarketData(call)
             .RequestMarketData(put);
-        return new Straddle(call, put, Common.Enums.Directions.Sell);
+        return new Straddle(call, put, Directions.Sell);
     }
 }

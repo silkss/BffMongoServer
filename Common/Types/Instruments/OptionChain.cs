@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Instruments;
+namespace Common.Types.Instruments;
 
 public class OptionChain
 {

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Strategies.Enums;
 using Strategies.Settings;
 using Strategies.Settings.Straddle;
 using Notifier;
 using Connectors;
-using Instruments;
 using Strategies.Strategies.Depend;
-using Common.Enums;
+using Common.Types.Instruments;
+using Common.Types.Base;
 
 namespace Strategies.Strategies.TradeUnions;
 
@@ -66,7 +65,7 @@ public class Straddle
 
         CreatedTime = DateTime.Now;
     }
-    public Logic Logic { get; private set; } = Logic.Open;
+    public TradeLogic Logic { get; private set; } = TradeLogic.Open;
     public List<OptionStrategy> Legs { get; set; } = new List<OptionStrategy>(2);
     public DateTime CreatedTime { get; set; }
     public void Start(IConnector connector)
@@ -148,7 +147,7 @@ public class Straddle
     }
     public void Close(IConnector connector)
     {
-        Logic = Logic.Close;
+        Logic = TradeLogic.Close;
         Legs.ForEach(l => l.Close(connector));
     }
     public DateTime GetCloseDate(int? days) => days is null
@@ -158,5 +157,5 @@ public class Straddle
     public decimal GetCurrencyPnl() => Legs.Sum(leg => leg.GetCurrencyPnlWithClosure());
     public bool IsDone() => Legs.All(leg => leg.IsClosured());
     public bool IsStartedWork() => Legs.Any(s => s.IsDone());
-    public bool IsOpen() => Legs.All(leg => leg.Logic == Logic.Open);
+    public bool IsOpen() => Legs.All(leg => leg.Logic == TradeLogic.Open);
 }
