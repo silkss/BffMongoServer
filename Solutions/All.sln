@@ -29,12 +29,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommonProjects", "CommonPro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApiAndGui", "WebApiAndGui", "{75FA7F99-3B01-480B-B03E-46A93D31BEA5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreatOptionTrader", "..\GreatOptionTrader\GreatOptionTrader.csproj", "{965A824D-C6EE-4CA0-B709-481BC5C6F0D9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GreateOptionTraderWithOwnStrategies", "GreateOptionTraderWithOwnStrategies", "{F1F5FDBF-350F-46E7-9311-551CF58E48A7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreatOptionTraderStrategies", "..\GreatOptionTraderStrategies\GreatOptionTraderStrategies.csproj", "{AD3273D3-3203-4FD6-97FE-0B53B8CE2148}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,14 +75,6 @@ Global
 		{5F2B834E-6983-418E-BBC7-94F12C1A3F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F2B834E-6983-418E-BBC7-94F12C1A3F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F2B834E-6983-418E-BBC7-94F12C1A3F3D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{965A824D-C6EE-4CA0-B709-481BC5C6F0D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{965A824D-C6EE-4CA0-B709-481BC5C6F0D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{965A824D-C6EE-4CA0-B709-481BC5C6F0D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{965A824D-C6EE-4CA0-B709-481BC5C6F0D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD3273D3-3203-4FD6-97FE-0B53B8CE2148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD3273D3-3203-4FD6-97FE-0B53B8CE2148}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD3273D3-3203-4FD6-97FE-0B53B8CE2148}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD3273D3-3203-4FD6-97FE-0B53B8CE2148}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,8 +90,6 @@ Global
 		{C52858E6-3F26-4633-8AB0-3B494C935D3D} = {75FA7F99-3B01-480B-B03E-46A93D31BEA5}
 		{AF44DA9D-5FAA-4031-AEFF-14B0B3FF94C1} = {75FA7F99-3B01-480B-B03E-46A93D31BEA5}
 		{5F2B834E-6983-418E-BBC7-94F12C1A3F3D} = {B5168D7C-7CB1-4D10-832F-3D2A93403E30}
-		{965A824D-C6EE-4CA0-B709-481BC5C6F0D9} = {F1F5FDBF-350F-46E7-9311-551CF58E48A7}
-		{AD3273D3-3203-4FD6-97FE-0B53B8CE2148} = {F1F5FDBF-350F-46E7-9311-551CF58E48A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D80C3F59-520D-470B-94C5-93E178173BA0}

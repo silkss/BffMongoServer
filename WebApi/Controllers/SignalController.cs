@@ -1,15 +1,12 @@
 ﻿using Connectors;
-using ContainerStore.Traders.Helpers;
-using Instruments.PriceRules;
 using Microsoft.AspNetCore.Mvc;
 using Notifier;
+using Strategies.Builders;
 using Strategies.Enums;
 using Strategies.Strategies;
-using Strategies.TradeUnions;
 using System;
 using System.Text;
 using Traders.Base;
-using Traders.Helpers;
 
 namespace WebApi.Controllers;
 
@@ -23,9 +20,9 @@ public class SignalController : ControllerBase
 
     private string closeAndOpen(int direction, MainStrategy strategy, double price, string message) => direction switch
     {
-        -1 => StraddleBuyerHelper.CloseAndOpenStraddle(_connector, strategy, price, "Straddle expired"),
-        0 => StraddleBuyerHelper.CloseStraddle(_connector, strategy.GetOpenStraddle(), "Straddle expired"),
-        1 => StraddleBuyerHelper.CloseAndOpenStraddle(_connector, strategy, price, "Straddle expired"),
+        -1 => LongStraddleStrategyBuilder.CloseAndOpenStraddle(_connector, strategy, price, "Straddle expired"),
+        0 => LongStraddleStrategyBuilder.CloseStraddle(_connector, strategy.GetOpenStraddle(), "Straddle expired"),
+        1 => LongStraddleStrategyBuilder.CloseAndOpenStraddle(_connector, strategy, price, "Straddle expired"),
         _ => throw new ArgumentException($"Неизвестное направление сигнала! {direction}")
     };
 
@@ -42,9 +39,9 @@ public class SignalController : ControllerBase
         {
             StraddleStatus.NotExist => direction switch
             {
-                -1 => StraddleBuyerHelper.OpenStraddle(_connector, strategy, price),
+                -1 => LongStraddleStrategyBuilder.OpenStraddle(_connector, strategy, price),
                 0 => "No straddles for close",
-                1 => StraddleBuyerHelper.OpenStraddle(_connector, strategy, price),
+                1 => LongStraddleStrategyBuilder.OpenStraddle(_connector, strategy, price),
                 _ => throw new ArgumentException($"Неизвестное направление сигнала! {direction}")
             },
             StraddleStatus.Expired => closeAndOpen(direction, strategy, price, "Straddle Expired"),

@@ -5,9 +5,9 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace Traders.Helpers;
+namespace Strategies.Builders;
 
-public static class StraddleBuyerHelper
+public static class LongStraddleStrategyBuilder
 {
     /// <summary>
     /// Время, после которого в пятницу ничего не происходит.
