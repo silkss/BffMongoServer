@@ -7,12 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.18" />
-  </ItemGroup>
+        <PackageReference Include="MongoDB.Bson" Version="2.18" />
 
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Connectors\Connectors.csproj" />
+        <ProjectReference Include="..\Common\Common.csproj" />
+        <ProjectReference Include="..\Connectors\Connectors.csproj" />
   </ItemGroup>
 
 </Project>

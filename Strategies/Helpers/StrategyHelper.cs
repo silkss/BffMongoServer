@@ -37,6 +37,6 @@ public static class StrategyHelper
         Math.Abs(GetPosition(orders).pos) == volume;
     public static bool Closed(IEnumerable<Order> orders) => 
         GetPosition(orders).pos == 0;
-    public static bool OrderPriceOutBound(Order order, decimal actualPrice, MainSettings settings) =>
-        Math.Abs(order.LimitPrice - actualPrice) > settings.OrderPriceShift * 4;
+    public static bool OrderPriceOutBound(Order order, decimal actualPrice, ContainerSettings settings) =>
+        Math.Abs(order.LimitPrice - actualPrice) > 5;// settings.OrderPriceShift * 4;
 }   

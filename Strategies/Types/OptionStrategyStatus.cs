@@ -1,6 +1,6 @@
-﻿namespace Strategies.Enums;
+﻿namespace Strategies.Types;
 
-public enum StraddleStatus
+public enum OptionStrategyStatus
 {
     Working, // Все хорошо, еще может продолжать работать
     Expired, // Время жизни стрэддла истекло.

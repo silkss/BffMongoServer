@@ -11,6 +11,7 @@
             <th>InTrade</th>
             <th>Instrument</th>
             <th>Account</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,9 @@
                 <td>@container.InTrade</td>
                 <td>@container.Instrument.FullName</td>
                 <td>@container.ContainerSettings.Account</td>
+                <td>
+                    <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>
+                </td>
             </tr>
         }
     }

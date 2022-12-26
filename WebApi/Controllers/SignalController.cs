@@ -1,10 +1,6 @@
 ﻿using Connectors;
 using Microsoft.AspNetCore.Mvc;
 using Notifier;
-using Strategies.Builders;
-using Strategies.Enums;
-using Strategies.Strategies;
-using System;
 using System.Text;
 using Traders.Base;
 using WebApi.SignalParsers;

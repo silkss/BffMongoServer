@@ -13,7 +13,7 @@ using Common.Types.Base;
 
 namespace Connectors.Ib;
 
-internal class IbCallbacks : IBApi.DefaultEWrapper
+internal class IbCallbacks : DefaultEWrapper
 {
 	private readonly IBffLogger _logger;
 	private readonly RequestInstrumentCache _requestInstrument;

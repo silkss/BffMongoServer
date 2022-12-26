@@ -1,8 +1,8 @@
 ﻿using Connectors;
 using Notifier;
 using Strategies.Builders;
-using Strategies.Enums;
 using Strategies.Strategies;
+using Strategies.Types;
 using System;
 
 namespace WebApi.SignalParsers;
@@ -30,29 +30,29 @@ internal static class LongStraddleSignalParser
         MainStrategy strategy, IConnector connector, 
         IBffLogger logger) => strategy.GetOpenStraddleStatus(logger) switch
     {
-        StraddleStatus.NotExist => direction switch
+        OptionStrategyStatus.NotExist => direction switch
         {
             -1 => LongStraddleStrategyBuilder.OpenStraddle(connector, strategy, price),
             0 => "No straddles for close",
             1 => LongStraddleStrategyBuilder.OpenStraddle(connector, strategy, price),
             _ => throw new ArgumentException($"Неизвестное направление сигнала! {direction}")
         },
-        StraddleStatus.Expired => closeAndOpen(direction, strategy, price, "Straddle Expired", connector),
-        StraddleStatus.InProfit => closeAndOpen(
+        OptionStrategyStatus.Expired => closeAndOpen(direction, strategy, price, "Straddle Expired", connector),
+        OptionStrategyStatus.InProfit => closeAndOpen(
             direction, strategy, price,
             $"In Profit {strategy.GetOpenPnlCurrency()} - {strategy.GetCurrentTargetPnl()}",
             connector),
-        StraddleStatus.ClosuredProfitLevelReached => closeAndOpen(
+        OptionStrategyStatus.ClosuredProfitLevelReached => closeAndOpen(
             direction, strategy, price,
             $"Closured PL {strategy.GetOpenPnlCurrency()} - {strategy.GetCurrentTargetPnl()}",
             connector),
-        StraddleStatus.UnClosuredProfitLevelReached => closeAndOpen(
+        OptionStrategyStatus.UnClosuredProfitLevelReached => closeAndOpen(
             direction, strategy, price,
             $"UnClosured PL {strategy.GetOpenPnlCurrency()} - {strategy.GetCurrentTargetPnl()}",
             connector),
-        StraddleStatus.NotOpen => closeAndOpen(
+        OptionStrategyStatus.NotOpen => closeAndOpen(
             direction, strategy, price, "Not opened!", connector),
-        StraddleStatus.Working => straddleWorkingMessage(strategy),
+        OptionStrategyStatus.Working => straddleWorkingMessage(strategy),
         _ => throw new ArgumentException("Неизвестный статус стрэддла!")
     };
 }

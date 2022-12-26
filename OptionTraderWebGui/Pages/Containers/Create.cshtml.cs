@@ -17,6 +17,14 @@ public class CreateModel : PageModel
     private readonly IConnector _connector;
     private readonly ContainerTrader _trader;
 
+    #region BindProperty
+    [BindProperty] public InstrumentRequestSettings? Instrument { get; set; }
+
+    [BindProperty] public ContainerSettings? ContainerSettings { get; set; }
+
+    [BindProperty] public OptionStrategySettings? OptionStrategySettings { get; set; }
+    #endregion
+
     public CreateModel(IConnector connector, ContainerTrader trader)
 	{
         _connector = connector;
@@ -26,11 +34,7 @@ public class CreateModel : PageModel
     public ConnectorInfo? Info { get; set; }
     public SelectList AccountsSL { get; set; }
 
-    [BindProperty]
-    public InstrumentRequestSettings? Instrument { get; set; }
-
-    [BindProperty]
-    public ContainerSettings? ContainerSettings { get; set; }
+    
     public void OnGet()
     {
         Info = _connector.GetConnectionInfo();
@@ -46,6 +50,7 @@ public class CreateModel : PageModel
             {
                 Instrument = sec,
                 ContainerSettings = ContainerSettings,
+                OptionStrategySettings = OptionStrategySettings,
             };
             await _trader.AddContainerAsync(container);
         }

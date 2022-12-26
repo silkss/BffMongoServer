@@ -1,12 +1,12 @@
 ﻿using Notifier;
 using Connectors;
 using Microsoft.AspNetCore.Mvc;
-using Strategies.Enums;
 using System;
 using System.Text;
 using Traders.Base;
 using Strategies.Strategies;
 using Strategies.Builders;
+using Strategies.Types;
 
 namespace WebApi.Controllers;
 
@@ -30,41 +30,41 @@ public class McAPIController : ControllerBase
 	{
 		"open" => strategy.GetOpenStraddleStatus(notifier) switch
 		{
-			StraddleStatus.NotExist => LongStraddleStrategyBuilder.OpenStraddle(_connector,strategy, price),
-			StraddleStatus.Expired => LongStraddleStrategyBuilder.CloseAndOpenStraddle(_connector, strategy, price, $"Expired:" +
+            OptionStrategyStatus.NotExist => LongStraddleStrategyBuilder.OpenStraddle(_connector,strategy, price),
+            OptionStrategyStatus.Expired => LongStraddleStrategyBuilder.CloseAndOpenStraddle(_connector, strategy, price, $"Expired:" +
 				$"opening: {strategy.GetOpenStraddle()?.CreatedTime}"),
-			StraddleStatus.InProfit => LongStraddleStrategyBuilder.CloseAndOpenStraddle(_connector, strategy, price, $"InProfit:\n" +
+            OptionStrategyStatus.InProfit => LongStraddleStrategyBuilder.CloseAndOpenStraddle(_connector, strategy, price, $"InProfit:\n" +
 				$"target: {strategy.StraddleSettings?.StraddleTargetPnl}\n" +
 				$"opening: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}"),
-			StraddleStatus.ClosuredProfitLevelReached => LongStraddleStrategyBuilder
+            OptionStrategyStatus.ClosuredProfitLevelReached => LongStraddleStrategyBuilder
                 .CloseAndOpenStraddle(_connector, strategy, price, $"Unclosured PL:\n" +
 					$"Pnl: {strategy.GetOpenStraddle()?.GetCurrencyPnl()}"),
-			StraddleStatus.UnClosuredProfitLevelReached => LongStraddleStrategyBuilder
+            OptionStrategyStatus.UnClosuredProfitLevelReached => LongStraddleStrategyBuilder
                 .CloseAndOpenStraddle(_connector, strategy, price, $"Closured PNL:\n" +
 					$"Pnl: {strategy.GetOpenPnlCurrency()}"),
-			StraddleStatus.NotOpen => LongStraddleStrategyBuilder
+            OptionStrategyStatus.NotOpen => LongStraddleStrategyBuilder
                 .CloseAndOpenStraddle(_connector, strategy, price, "Не успел открыться"),
-			StraddleStatus.Working => straddleWorkingMessage(strategy),
+            OptionStrategyStatus.Working => straddleWorkingMessage(strategy),
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!")
 		},
 		"close" => strategy.GetOpenStraddleStatus(notifier) switch
 		{
-			StraddleStatus.Expired => LongStraddleStrategyBuilder.CloseStraddle(_connector, strategy.GetOpenStraddle(), "Expired:"),
-			StraddleStatus.InProfit => LongStraddleStrategyBuilder
+            OptionStrategyStatus.Expired => LongStraddleStrategyBuilder.CloseStraddle(_connector, strategy.GetOpenStraddle(), "Expired:"),
+            OptionStrategyStatus.InProfit => LongStraddleStrategyBuilder
                 .CloseStraddle(_connector, strategy.GetOpenStraddle(), "InProfit"),
-			StraddleStatus.ClosuredProfitLevelReached => LongStraddleStrategyBuilder
+            OptionStrategyStatus.ClosuredProfitLevelReached => LongStraddleStrategyBuilder
                 .CloseStraddle(_connector, strategy.GetOpenStraddle(), "Closured PL"),
-			StraddleStatus.UnClosuredProfitLevelReached => LongStraddleStrategyBuilder
+            OptionStrategyStatus.UnClosuredProfitLevelReached => LongStraddleStrategyBuilder
 				.CloseStraddle(_connector, strategy.GetOpenStraddle(), "Unclosured PL"),
-			StraddleStatus.NotOpen => LongStraddleStrategyBuilder
+            OptionStrategyStatus.NotOpen => LongStraddleStrategyBuilder
                 .CloseStraddle(_connector, strategy.GetOpenStraddle(), "Не успел открыться"),
-			StraddleStatus.Working => straddleWorkingMessage(strategy),
-			StraddleStatus.NotExist => "There is no open straddle in the container.",
+            OptionStrategyStatus.Working => straddleWorkingMessage(strategy),
+            OptionStrategyStatus.NotExist => "There is no open straddle in the container.",
 			_ => throw new ArgumentException("Неизвестный статус контейнера!!"),
 		},
 		"alarmclose" => strategy.GetOpenStraddleStatus(notifier) switch
 		{
-			StraddleStatus.NotExist => "There is no open straddle in the container.",
+            OptionStrategyStatus.NotExist => "There is no open straddle in the container.",
 			_ => LongStraddleStrategyBuilder.CloseStraddle(_connector, strategy.GetOpenStraddle(), "Alarm stop."),
 		},
 		_ => $"unknow signal: {signal}."

@@ -1,7 +1,7 @@
 ﻿using Notifier;
 using Connectors;
 using MongoDB.Bson.Serialization.Attributes;
-using Strategies.Enums;
+using Strategies.Types;
 using Strategies.Settings;
 using Strategies.Settings.Straddle;
 using Strategies.Strategies.TradeUnions;
@@ -36,30 +36,30 @@ public class MainStrategy
             Straddles.Add(straddle);
         }
     }
-    public StraddleStatus GetOpenStraddleStatus(IBffLogger notifier)
+    public OptionStrategyStatus GetOpenStraddleStatus(IBffLogger notifier)
     {
         if (GetOpenStraddle() is Straddle straddle)
         {
             if (StraddleSettings != null)
             {
                 if (straddle.CheckUnclosuredProfitLevels(StraddleSettings, notifier))
-                    return StraddleStatus.UnClosuredProfitLevelReached;
+                    return OptionStrategyStatus.UnClosuredProfitLevelReached;
 
                 if (straddle.CheckClosuredProfitLevels(StraddleSettings, notifier))
-                    return StraddleStatus.ClosuredProfitLevelReached;
+                    return OptionStrategyStatus.ClosuredProfitLevelReached;
             }
             if (straddle.GetPnl() >= StraddleSettings?.StraddleTargetPnl)
-                return StraddleStatus.InProfit;
+                return OptionStrategyStatus.InProfit;
 
             if (straddle.GetCloseDate(StraddleSettings?.StraddleLiveDays) <= DateTime.Now)
-                return StraddleStatus.Expired;
+                return OptionStrategyStatus.Expired;
 
             if (straddle.IsStartedWork() is false)
-                return StraddleStatus.NotOpen;
+                return OptionStrategyStatus.NotOpen;
 
-            return StraddleStatus.Working;
+            return OptionStrategyStatus.Working;
         }
-        return StraddleStatus.NotExist;
+        return OptionStrategyStatus.NotExist;
     }
     public decimal GetAllPnl() => Straddles.Sum(s => s.GetPnl());
     public decimal? GetOpenPnlCurrency() => GetOpenStraddle()?.GetCurrencyPnl();

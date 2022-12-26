@@ -15,9 +15,23 @@
             <label asp-for="Instrument!.Name">Биржа:</label><br />
             <input asp-for="Instrument!.Exchange" />
         </p>
+
         <p>
             <label sp-for="ContainerSettings!.Account">Аккаунт</label><br/>
             <select asp-for="ContainerSettings!.Account"  asp-items="Model.AccountsSL"></select>
+        </p>
+
+        <p>
+            <label sp-for="OptionStrategySettings!.Volume">Объем</lable><br/>
+            <input asp-for="OptionStrategySettings!.Volume" />
+        </p>
+        <p>
+           <label sp-for="OptionStrategySettings!.StrategyTargetPnl">Target PnL</lable><br/> 
+           <input asp-for="OptionStrategySettings!.StrategyTargetPnl" />
+        </p>
+        <p>
+           <label sp-for="OptionStrategySettings!.MinDaysToExpiration">MinDaysToExpiration</lable><br/> 
+           <input asp-for="OptionStrategySettings!.MinDaysToExpiration" />
         </p>
         <input type="submit" />
     </form>

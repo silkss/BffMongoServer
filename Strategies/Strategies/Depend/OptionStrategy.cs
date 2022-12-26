@@ -111,108 +111,108 @@ public class OptionStrategy : TradableStrategy
     }
     public void Work(IConnector connector, IBffLogger notifier, MainSettings mainSettings, decimal orderPrice = 0m)
     {
-        switch (Logic)
-        {
-            case TradeLogic.Open when OpenOrder == null:
-                if (IsDone()) break;
-                createAndSendOrder(true, connector, mainSettings, orderPrice);
-                break;
-            case TradeLogic.Open when OpenOrder != null:
-                if (!connector.IsOrderOpen(OpenOrder))
-                {
-                    OpenOrder = null;
-                    break;
-                }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
-                    connector.CancelOrder(OpenOrder);
-                break;
-            case TradeLogic.Close when OpenOrder == null:
-                if (IsDone())
-                {
-                    if (Closure != null)
-                    {
-                        Closure.Work(connector, notifier, mainSettings);
-                    }
-                    break;
-                }
-                createAndSendOrder(false, connector, mainSettings, orderPrice);
+        //switch (Logic)
+        //{
+        //    case TradeLogic.Open when OpenOrder == null:
+        //        if (IsDone()) break;
+        //        createAndSendOrder(true, connector, mainSettings, orderPrice);
+        //        break;
+        //    case TradeLogic.Open when OpenOrder != null:
+        //        if (!connector.IsOrderOpen(OpenOrder))
+        //        {
+        //            OpenOrder = null;
+        //            break;
+        //        }
+        //        if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+        //            connector.CancelOrder(OpenOrder);
+        //        break;
+        //    case TradeLogic.Close when OpenOrder == null:
+        //        if (IsDone())
+        //        {
+        //            if (Closure != null)
+        //            {
+        //                Closure.Work(connector, notifier, mainSettings);
+        //            }
+        //            break;
+        //        }
+        //        createAndSendOrder(false, connector, mainSettings, orderPrice);
 
-                break;
-            case TradeLogic.Close when OpenOrder != null:
-                if (!connector.IsOrderOpen(OpenOrder))
-                {
-                    OpenOrder = null;
-                    break;
-                }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
-                    connector.CancelOrder(OpenOrder);
-                if (Closure != null)
-                {
-                    Closure.Work(connector, notifier, mainSettings);
-                }
-                break;
-            default:
-                break;
+        //        break;
+        //    case TradeLogic.Close when OpenOrder != null:
+        //        if (!connector.IsOrderOpen(OpenOrder))
+        //        {
+        //            OpenOrder = null;
+        //            break;
+        //        }
+        //        if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+        //            connector.CancelOrder(OpenOrder);
+        //        if (Closure != null)
+        //        {
+        //            Closure.Work(connector, notifier, mainSettings);
+        //        }
+        //        break;
+        //    default:
+        //        break;
 
-        }
+        //}
     }
     public void WorkWithClosure(IConnector connector, IBffLogger notifier,
         MainSettings mainSettings,
         ClosureSettings closureSettings,
         decimal orderPrice = 0m)
     {
-        switch (Logic)
-        {
-            case TradeLogic.Open when OpenOrder == null:
-                if (IsClosured()) break;
-                if (IsDone() && Closure != null)
-                {
-                    if (OpenPrice != 0m)
-                        Closure.WorkWithClosure(connector, notifier, mainSettings, closureSettings, OpenPrice);
-                    break;
-                }
-                if (Instrument.TradablePrice(Direction) == 0) break;
-                orderPrice = orderPrice * closureSettings.ClosurePriceGapProcent / 100;
-                createAndSendOrder(true, connector, mainSettings, orderPrice);
-                break;
-            case TradeLogic.Open when OpenOrder != null:
-                if (!connector.IsOrderOpen(OpenOrder))
-                {
-                    OpenOrder = null;
-                    var msg = $"{this.Instrument.FullName} | {mainSettings.Account}. Cant find open order";
-                    notifier.LogInformation(msg, toTelegram: false);
-                    break;
-                }
-                if (orderPrice != 0) break;
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
-                {
-                    var msg = $"{this.Instrument.FullName} | {mainSettings.Account}. Order out of bound.";
-                    notifier.LogInformation(msg, toTelegram: false);
-                    connector.CancelOrder(OpenOrder);
-                }
-                break;
-            case TradeLogic.Close when OpenOrder == null:
-                if (IsClosured()) break;
-                if (IsDone() && Closure != null)
-                {
-                    Closure.WorkWithClosure(connector, notifier, mainSettings, closureSettings);
-                    break;
-                }
-                if (Instrument.TradablePrice(Direction) == 0) break;
-                createAndSendOrder(false, connector, mainSettings);
-                break;
-            case TradeLogic.Close when OpenOrder != null:
-                if (!connector.IsOrderOpen(OpenOrder))
-                {
-                    OpenOrder = null;
-                    break;
-                }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
-                    connector.CancelOrder(OpenOrder);
-                break;
-            default:
-                break;
-        }
+        //switch (Logic)
+        //{
+        //    case TradeLogic.Open when OpenOrder == null:
+        //        if (IsClosured()) break;
+        //        if (IsDone() && Closure != null)
+        //        {
+        //            if (OpenPrice != 0m)
+        //                Closure.WorkWithClosure(connector, notifier, mainSettings, closureSettings, OpenPrice);
+        //            break;
+        //        }
+        //        if (Instrument.TradablePrice(Direction) == 0) break;
+        //        orderPrice = orderPrice * closureSettings.ClosurePriceGapProcent / 100;
+        //        createAndSendOrder(true, connector, mainSettings, orderPrice);
+        //        break;
+        //    case TradeLogic.Open when OpenOrder != null:
+        //        if (!connector.IsOrderOpen(OpenOrder))
+        //        {
+        //            OpenOrder = null;
+        //            var msg = $"{this.Instrument.FullName} | {mainSettings.Account}. Cant find open order";
+        //            notifier.LogInformation(msg, toTelegram: false);
+        //            break;
+        //        }
+        //        if (orderPrice != 0) break;
+        //        if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), mainSettings))
+        //        {
+        //            var msg = $"{this.Instrument.FullName} | {mainSettings.Account}. Order out of bound.";
+        //            notifier.LogInformation(msg, toTelegram: false);
+        //            connector.CancelOrder(OpenOrder);
+        //        }
+        //        break;
+        //    case TradeLogic.Close when OpenOrder == null:
+        //        if (IsClosured()) break;
+        //        if (IsDone() && Closure != null)
+        //        {
+        //            Closure.WorkWithClosure(connector, notifier, containerSettings, closureSettings);
+        //            break;
+        //        }
+        //        if (Instrument.TradablePrice(Direction) == 0) break;
+        //        createAndSendOrder(false, connector, mainSettings);
+        //        break;
+        //    case TradeLogic.Close when OpenOrder != null:
+        //        if (!connector.IsOrderOpen(OpenOrder))
+        //        {
+        //            OpenOrder = null;
+        //            break;
+        //        }
+        //        if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), containerSettings))
+        //            connector.CancelOrder(OpenOrder);
+        //        break;
+        //    default:
+        //        break;
+        //}
     }
     public void Stop(IConnector connector)
     {
