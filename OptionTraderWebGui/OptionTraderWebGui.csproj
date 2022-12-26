@@ -6,4 +6,9 @@
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Connectors\Connectors.csproj" />
+    <ProjectReference Include="..\Traders\Traders.csproj" />
+  </ItemGroup>
+
 </Project>

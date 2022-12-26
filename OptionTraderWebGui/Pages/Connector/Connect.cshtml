@@ -1,0 +1,15 @@
+﻿@page
+@model ConnectModel
+@{
+    ViewData["Title"] = "Connect";
+}
+
+<div>
+    <h1>@ViewData["Title"]</h1>
+    <form method="post">
+        <input asp-for="Settings!.Host" />
+        <input asp-for="Settings!.Port" />
+        <input asp-for="Settings!.ClientId" />
+        <input type="submit" />
+    </form>
+</div>
