@@ -88,7 +88,7 @@ public class Trader
 			}
 			if (strategy.Instrument == null)
 			{
-                _logger.LogError("У контейнера не родительского инструмента!");
+                _logger.LogError("У контейнера нет родительского инструмента!");
                 return false;
 			}
 

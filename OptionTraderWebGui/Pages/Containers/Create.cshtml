@@ -1,0 +1,24 @@
+﻿@page
+@model CreateModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div>
+    <h1>@ViewData["Title"]</h1>
+    <form method="post">
+        <p>
+            <label asp-for="Instrument!.Name">Имя инструмента:</label><br />
+            <input asp-for="Instrument!.Name" />
+        </p>
+        <p>
+            <label asp-for="Instrument!.Name">Биржа:</label><br />
+            <input asp-for="Instrument!.Exchange" />
+        </p>
+        <p>
+            <label sp-for="ContainerSettings!.Account">Аккаунт</label><br/>
+            <select asp-for="ContainerSettings!.Account"  asp-items="Model.AccountsSL"></select>
+        </p>
+        <input type="submit" />
+    </form>
+</div>

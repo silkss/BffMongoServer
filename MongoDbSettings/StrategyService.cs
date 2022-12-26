@@ -33,8 +33,8 @@ public class StrategyService
         await _strategiesCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
     public async Task CreateAsync(MainStrategy newContainer) =>
         await _strategiesCollection.InsertOneAsync(newContainer);
-    public async Task UpdateAsync(string id, MainStrategy updatedBook) =>
-        await _strategiesCollection.ReplaceOneAsync(x => x.Id == id, updatedBook);
+    public async Task UpdateAsync(string id, MainStrategy updatedContainer) =>
+        await _strategiesCollection.ReplaceOneAsync(x => x.Id == id, updatedContainer);
     public async Task RemoveAsync(string id) =>
         await _strategiesCollection.DeleteOneAsync(x => x.Id == id);
 }

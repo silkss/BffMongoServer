@@ -3,6 +3,7 @@ using Common.Types.Instruments;
 using Connectors.Info;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Connectors;
 
@@ -20,6 +21,7 @@ public interface IConnector
     #endregion
     #region Instruments Requests
     Instrument? RequestInstrument(string fullname, string exchange);
+    Task<Instrument?> RequestInstrumentAsync(string fullname, string exchange);
     IConnector RequestDependentInstrument(
         InstrumentType type, 
         OptionType optionType, 
@@ -37,7 +39,6 @@ public interface IConnector
     #endregion
 
     #region Transactions/ Orders
-
     bool IsOrderOpen(Common.Types.Orders.Order order);
     void SendLimitOrder(Instrument instrument, Common.Types.Orders.Order order, int priceShift = 0, bool needToRounds = true);
     IConnector CancelOrder(Common.Types.Orders.Order? order);

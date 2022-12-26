@@ -10,6 +10,7 @@ using Notifier;
 using Connectors.Info;
 using Common.Types.Instruments;
 using Common.Types.Base;
+using System.Threading.Tasks;
 
 namespace Connectors.Ib;
 
@@ -128,6 +129,17 @@ public class IbConnector : IConnector
             Currency = "USD",
         };
         return reqContract(contract);
+    }
+    public Task<Instrument?> RequestInstrumentAsync(string fullname, string exchange)
+    {
+        var contract = new Contract
+        {
+            LocalSymbol = fullname.Trim().ToUpper(),
+            Exchange = exchange.Trim().ToUpper(),
+            SecType = "FUT",
+            Currency = "USD",
+        };
+        return Task.Run(() => reqContract(contract));
     }
     public IConnector RequestDependentInstrument(InstrumentType type, OptionType optionType, Instrument parent, 
         double strike, DateTime expDate, out Instrument? instrument)
