@@ -9,7 +9,7 @@ namespace Strategies;
 
 public class OptionStrategy
 {
-    public List<OptionTradeUnit> OptionsTradeUnits { get; } = new();
+    public List<OptionTradeUnit> OptionsTradeUnits { get; set; } = new();
     public TradeLogic Logic { get; set; }
     public void Start(IConnector connector)
     {
@@ -28,5 +28,10 @@ public class OptionStrategy
         lock (OptionsTradeUnits)
             foreach (var otu in OptionsTradeUnits)
                 otu.Work(connector, containerSettings);
+    }
+    public void Stop(IConnector connector)
+    {
+        lock (OptionsTradeUnits)
+            OptionsTradeUnits.ForEach(otu => otu.Stop(connector));
     }
 }

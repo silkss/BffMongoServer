@@ -5,18 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         xmlns:orders="clr-namespace:Common.Types.Orders;assembly=Common"
-        xmlns:strategies="clr-namespace:Strategies.DTO;assembly=Strategies"
         mc:Ignorable="d"
         Title="StrategyInfo" Height="450" MinHeight="450"  MinWidth="490" Width="490">
     <Window.Resources>
-        <DataTemplate DataType="{x:Type strategies:OptionStrategyDTO}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding Logic}"/>
-                <TextBlock Text="{Binding Instrument.FullName}"/>
-                <TextBlock Text="{Binding Position}"/>
-                <TextBlock Text="{Binding CurrencyPnL}"/>
-            </StackPanel>
-        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type orders:Order}">
             <WrapPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding Status}"/>

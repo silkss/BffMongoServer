@@ -11,28 +11,46 @@
             <label asp-for="Instrument!.Name">Имя инструмента:</label><br />
             <input asp-for="Instrument!.Name" />
         </p>
+
         <p>
             <label asp-for="Instrument!.Name">Биржа:</label><br />
             <input asp-for="Instrument!.Exchange" />
         </p>
 
         <p>
-            <label sp-for="ContainerSettings!.Account">Аккаунт</label><br/>
+            <label asp-for="ContainerSettings!.Account">Аккаунт</label><br/>
             <select asp-for="ContainerSettings!.Account"  asp-items="Model.AccountsSL"></select>
         </p>
 
         <p>
-            <label sp-for="OptionStrategySettings!.Volume">Объем</lable><br/>
+            <label asp-for="ContainerSettings!.OrderPriceShift">Сдвиг цены ордеров (в пунктах)</label><br/>
+            <select asp-for="ContainerSettings!.OrderPriceShift" />
+
+        <p>
+            <label asp-for="OptionStrategySettings!.Volume">Объем</label><br/>
             <input asp-for="OptionStrategySettings!.Volume" />
         </p>
+
         <p>
-           <label sp-for="OptionStrategySettings!.StrategyTargetPnl">Target PnL</lable><br/> 
+           <label asp-for="OptionStrategySettings!.StrategyTargetPnl">Target PnL</label><br/> 
            <input asp-for="OptionStrategySettings!.StrategyTargetPnl" />
         </p>
+
         <p>
-           <label sp-for="OptionStrategySettings!.MinDaysToExpiration">MinDaysToExpiration</lable><br/> 
+           <label asp-for="OptionStrategySettings!.MinDaysToExpiration">MinDaysToExpiration</label><br/> 
            <input asp-for="OptionStrategySettings!.MinDaysToExpiration" />
         </p>
+
+        <p>
+            <label asp-for="SpreadSettings!.BuyStrikeShift">Buy strike shift</label><br/>
+            <input asp-for="SpreadSettings!.BuyStrikeShift" />
+        </p>
+
+        <p>
+            <label asp-for="SpreadSettings!.SellStrikeShift">Sell strike shift</label><br/>
+            <input asp-for="SpreadSettings!.SellStrikeShift" />
+        </p>
+
         <input type="submit" />
     </form>
 </div>

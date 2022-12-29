@@ -1,11 +1,10 @@
-﻿using Connectors;
-using Microsoft.Net.Http.Headers;
+﻿namespace OptionTraderWebGui.SignalParsers;
+
+using Connectors;
 using Notifier;
 using Strategies;
 using Strategies.Types;
 using Traders.Builders;
-
-namespace OptionTraderWebGui.SignalParsers;
 
 internal class SpreadSignalParser
 {
@@ -16,7 +15,8 @@ internal class SpreadSignalParser
     private static string openSpread(int direction, double price, Container container, IConnector connector)
         => direction switch
         {
-            -1 => SpreadBuilder.OpenShortSpread(container, price, connector),
+            -1 => SpreadBuilder.OpenSpread(container, price, connector,isLong:false),
+            1 => SpreadBuilder.OpenSpread(container, price, connector,isLong:true),
             _ => "OK"
         };
     //    switch (direction)

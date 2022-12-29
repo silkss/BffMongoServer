@@ -1,13 +1,11 @@
-﻿using System;
+﻿namespace GUI.Services;
+
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Strategies.DTO;
 using Connectors.Info;
 using GUI.Services.Requests;
-
-namespace GUI.Services;
 
 internal static class Get
 {
@@ -26,8 +24,6 @@ internal static class Get
     };
 
     public static ConnectorInfo? ConnectorInfo => ConnectorRequests.ConnectorInfo;
-    public static ObservableCollection<MainStrategyDTO> AllSatrategies => StrategiesRequests.AllSatrategies;
-    public static ObservableCollection<MainStrategyDTO> StrategiesInTrade => TradeRequests.StrategiesInTrade;
 
     public readonly static HttpClient Client = new HttpClient()
     {

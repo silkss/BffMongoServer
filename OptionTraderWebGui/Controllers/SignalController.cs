@@ -1,12 +1,11 @@
-﻿using Connectors;
+﻿namespace OptionTraderWebGui.Controllers;
+
+using Connectors;
 using Microsoft.AspNetCore.Mvc;
 using Notifier;
 using OptionTraderWebGui.SignalParsers;
 using System.Text;
 using Traders;
-using Traders.Base;
-
-namespace OptionTraderWebGui.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

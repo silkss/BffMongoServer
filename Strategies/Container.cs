@@ -20,7 +20,8 @@ public class Container
     public Instrument? Instrument { get; set; }
     public ContainerSettings? ContainerSettings { get; set; }
     public OptionStrategySettings? OptionStrategySettings { get; set; }
-    public List<OptionStrategy> OptionStrategies { get; } = new();
+    public SpreadSettings? SpreadSettings { get; set; }
+    public List<OptionStrategy> OptionStrategies { get; set; } = new();
     public OptionStrategy? OpenStrategy
     {
         get
@@ -47,6 +48,8 @@ public class Container
     public void Stop(IConnector connector)
     {
         InTrade = false;
+        lock (OptionStrategies)
+            OptionStrategies.ForEach(os => os.Stop(connector));
     }
     public void Work(IConnector connector) 
     {

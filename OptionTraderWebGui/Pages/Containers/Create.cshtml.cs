@@ -19,10 +19,9 @@ public class CreateModel : PageModel
 
     #region BindProperty
     [BindProperty] public InstrumentRequestSettings? Instrument { get; set; }
-
     [BindProperty] public ContainerSettings? ContainerSettings { get; set; }
-
     [BindProperty] public OptionStrategySettings? OptionStrategySettings { get; set; }
+    [BindProperty] public SpreadSettings? SpreadSettings { get; set; }
     #endregion
 
     public CreateModel(IConnector connector, ContainerTrader trader)
@@ -34,7 +33,6 @@ public class CreateModel : PageModel
     public ConnectorInfo? Info { get; set; }
     public SelectList AccountsSL { get; set; }
 
-    
     public void OnGet()
     {
         Info = _connector.GetConnectionInfo();
@@ -51,6 +49,7 @@ public class CreateModel : PageModel
                 Instrument = sec,
                 ContainerSettings = ContainerSettings,
                 OptionStrategySettings = OptionStrategySettings,
+                SpreadSettings = SpreadSettings,
             };
             await _trader.AddContainerAsync(container);
         }

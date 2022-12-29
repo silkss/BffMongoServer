@@ -12,6 +12,8 @@
             <th>Instrument</th>
             <th>Account</th>
             <th></th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -26,6 +28,12 @@
                 <td>@container.ContainerSettings.Account</td>
                 <td>
                     <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@container.Id">Edit</a>
+                </td>
+                <td>
+                    <a asp-page="./Stop" asp-route-id="@container.Id">Stop</a>
                 </td>
             </tr>
         }

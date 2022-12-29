@@ -18,8 +18,7 @@ internal class TradeRequests : Base.Requests
 	{
         _mcEndpoint = mcEndpoint;
     }
-    public ObservableCollection<MainStrategyDTO> StrategiesInTrade { get; } = new();
-    public async Task<bool> AlertStopAsync(MainStrategyDTO strategy)
+    public async Task<bool> AlertStopAsync()
     {
         if (strategy.Instrument == null && strategy.MainSettings == null)
         {
@@ -27,10 +26,10 @@ internal class TradeRequests : Base.Requests
         }
 
         var query = HttpUtility.ParseQueryString(string.Empty);
-        query["symbol"] = strategy.Instrument?.FullName;
-        query["price"] = "0";
-        query["account"] = strategy.MainSettings?.Account;
-        query["type"] = "ALARMCLOSE";
+        //query["symbol"] = strategy.Instrument?.FullName;
+        //query["price"] = "0";
+        //query["account"] = strategy.MainSettings?.Account;
+        //query["type"] = "ALARMCLOSE";
 
         if (query.ToString() is string querystring)
         {

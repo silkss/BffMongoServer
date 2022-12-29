@@ -8,7 +8,7 @@ public class Order
 {
     private IOrderHolder? _orderHolder;
 
-    public Order(IOrderHolder holder, string account)
+    public Order(IOrderHolder holder, string? account)
     {
         _orderHolder = holder;
         Status = "Created";
@@ -19,7 +19,7 @@ public class Order
     public DateTime FilledTime { get; set; }
     public Directions Direction { get; set; }
     public string Status { get; set; }
-    public string Account { get; init; }
+    public string? Account { get; init; }
     public int Quantity { get; set; }
     public int FilledQuantity { get; set; }
     public decimal LimitPrice { get; set; }

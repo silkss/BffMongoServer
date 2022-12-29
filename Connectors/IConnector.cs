@@ -29,6 +29,8 @@ public interface IConnector
         double strike,
         DateTime expDate, 
         out Instrument? instrument);
+    IConnector RequestOption(
+        OptionType type, Instrument parent, double strike, DateTime exp, out Instrument? instrument);
     IConnector RequestCall(Instrument parent, double strike, DateTime expirationDate, out Instrument? instrument);
     IConnector RequestPut(Instrument parent, double strike, DateTime expirationDate, out Instrument? instrument);
     IConnector RequestOptionChain(Instrument instrument);

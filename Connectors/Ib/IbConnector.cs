@@ -168,6 +168,14 @@ public class IbConnector : IConnector
         instrument = reqContract(contract);
         return this;
     }
+    public IConnector RequestOption(
+        OptionType type,
+        Instrument parent,
+        double strike,
+        DateTime exp,
+        out Instrument? instrument) =>
+        RequestDependentInstrument(InstrumentType.Option, type, parent, strike, exp, out instrument);
+
     public IConnector RequestCall(Instrument parent, double strike, DateTime expirationDate, out Instrument? instrument) =>
         RequestDependentInstrument(InstrumentType.Option, OptionType.Call, parent, strike, expirationDate, out instrument);
     public IConnector RequestPut(Instrument parent, double strike, DateTime expirationDate, out Instrument? instrument) =>
@@ -238,29 +246,31 @@ public class IbConnector : IConnector
             try
             {
                 if (_marketRules.GetValueOrDefault(instrument.MarketRuleId) is List<PriceBorder> borders)
-                {
-                    min_tick = borders.OrderByDescending(b => b.LowEdge).First(b => order.LimitPrice > b.Incriment).Incriment;
-                }
+                    min_tick = borders
+                        .OrderByDescending(b => b.LowEdge)
+                        .First(b => order.LimitPrice > b.Incriment)
+                        .Incriment;
             }
             catch (InvalidOperationException)
             {
                 min_tick = instrument.MinTick;
             }
-            if (order.LimitPrice == 0m)
-            {
+            if (order.LimitPrice == 0m) {
                 order.LimitPrice = instrument.TradablePrice(order.Direction);
             }
-
             order.LimitPrice = Helper.RoundUp(order.LimitPrice, min_tick);
 
-            if (order.Direction == Directions.Buy)
-            {
+            if (order.Direction == Directions.Buy) {
                 order.LimitPrice += (min_tick * priceShift);
             }
-            else
-            {
+            else {
                 order.LimitPrice -= (min_tick * priceShift);
+                if (order.LimitPrice <= 0)
+                    order.LimitPrice = min_tick;
             }
+            _logger.LogInformation($"Order price - {order.LimitPrice}.\n" +
+                $"Instrument tradeprice - {instrument.TradablePrice(order.Direction)}\n" +
+                $"Bid {instrument.Bid} Ask {instrument.Ask} Last {instrument.Last}");
             _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
         }
         else

@@ -1,87 +1,71 @@
-﻿using Common.Types.Base;
+﻿namespace Traders.Builders;
+
+using System;
+using System.Linq;
+using Common.Types.Base;
 using Common.Types.Instruments;
 using Connectors;
 using Strategies;
+using Strategies.Settings;
 using Strategies.TradeUnits;
-using System;
-using System.Linq;
-
-namespace Traders.Builders;
 
 public static class SpreadBuilder
 {
-    private static OptionStrategy createShortSpread(Instrument buy, Instrument sell, int volume)
+    private static string createSpread(Instrument buy, Instrument sell, Container container, IConnector connector)
     {
-        var spread = new OptionStrategy()
-        {
-            Logic = TradeLogic.Open
-        };
-        var buyUnit = new OptionTradeUnit
-        {
-            Logic = TradeLogic.Open,
-            Instrument = buy,
-            Direction = Directions.Buy,
-            Volume = volume,
-
-        };
-        var sellUnit = new OptionTradeUnit
-        {
-            Logic = TradeLogic.Open,
-            Instrument = sell,
-            Direction = Directions.Sell,
-            Volume = volume,
-        };
-        spread.AddTradeUnit(buyUnit);
-        spread.AddTradeUnit(sellUnit);
-        return spread;
-    }
-
-    /// <summary>
-    /// Шорт. Необходимо купить пут, со страйком близким к цене(price)
-    //  продать пут со страйком НИЖЕ цены. Насколько ниже должно быть указано в настройках.
-    /// </summary>
-    /// <param name="container"></param>
-    /// <param name="price"></param>
-    /// <param name="connector"></param>
-    /// <returns></returns>
-    public static string OpenShortSpread(Container container, double price, IConnector connector)
-    {
-        if (container.Instrument == null)
-        {
-            return "Instument is null!";
-        }
-        var parent = container.Instrument;
-
-        if (container.OptionStrategySettings == null)
-        {
-            return "No option strategy settings!"; 
-        }
-
-        var oc = connector.GetOptionTradingClass(
-            parent.Id,
-            container.OptionStrategySettings.GetMinExpirationDate());
-            
-        if (oc == null)
-        {
-            return "Cant find option class for request!";
-        }
-
-        var buyStrike = oc.Strikes.MinBy(s => Math.Abs(s - price));
-        var buyStrikeIdx = oc.Strikes.FindIndex(s => s == buyStrike);
-        var sellStrike = oc.Strikes[buyStrikeIdx - 4];
-
-        connector
-             .RequestPut(parent, buyStrike, oc.ExpirationDate, out var buyPut)
-             .RequestPut(parent, sellStrike, oc.ExpirationDate, out var sellPut);
-
-        if (buyPut == null)
-            return $"Cant reqste PUT with {buyStrike} {oc.ExpirationDate}";
-        if (sellPut == null)
-            return $"Cant reqste PUT with {sellStrike} {oc.ExpirationDate}";
-        var spread = createShortSpread(buyPut, sellPut, container.OptionStrategySettings.Volume);
+        var spread = new OptionStrategy() { Logic = TradeLogic.Open };
+        spread.AddTradeUnit(new(buy, Directions.Buy, container.OptionStrategySettings!.Volume));
+        spread.AddTradeUnit(new(sell, Directions.Sell, container.OptionStrategySettings!.Volume));
         spread.Start(connector);
+
         container.AddOptionStrategy(spread);
 
-        return $"Added spread buy {buyStrike}, sell {sellStrike} exp. {oc.ExpirationDate}";
+        return $"Spread added {spread}";
+    }
+
+    private static string requestInstruments(double price,
+        Container container,
+        OptionTradingClass oc, IConnector connector, OptionType optionType)
+    {
+        var curStrike = oc.Strikes.MinBy(s => Math.Abs(s - price));
+        var curStrikeIdx = oc.Strikes.FindIndex(s => s == curStrike);
+        int buyStrikeIdx; int sellStrikeIdx;
+
+        if (optionType == OptionType.Call)
+        {
+            buyStrikeIdx = curStrikeIdx + container.SpreadSettings!.BuyStrikeShift;
+            sellStrikeIdx = curStrikeIdx 
+                + container.SpreadSettings!.BuyStrikeShift 
+                + container.SpreadSettings!.SellStrikeShift;
+        }
+        else
+        {
+            buyStrikeIdx = curStrikeIdx - container.SpreadSettings!.BuyStrikeShift;
+            sellStrikeIdx = curStrikeIdx 
+                - container.SpreadSettings!.BuyStrikeShift 
+                - container.SpreadSettings!.SellStrikeShift;
+        }
+
+        connector
+            .RequestOption(optionType, container.Instrument!, oc.Strikes[buyStrikeIdx], oc.ExpirationDate, out var buy)
+            .RequestOption(optionType, container.Instrument!, oc.Strikes[sellStrikeIdx], oc.ExpirationDate, out var sell);
+
+        if (buy == null)
+            return $"Cant request BUY {optionType} with {oc.Strikes[buyStrikeIdx]} {oc.ExpirationDate}";
+        if (sell == null)
+            return $"Cant request SELL {optionType} with {oc.Strikes[sellStrikeIdx]} {oc.ExpirationDate}";
+
+        return createSpread(buy, sell, container, connector);
+    }
+    public static string OpenSpread(Container container, double price, IConnector connector, bool isLong)
+    {
+        if (container.Instrument == null) return "Instrument is null!";
+        if (container.OptionStrategySettings == null) return "No option strategy settings!";
+        if (container.SpreadSettings == null) return "No spread settings";
+        var oc = connector.GetOptionTradingClass(
+            container.Instrument.Id,
+            container.OptionStrategySettings.GetMinExpirationDate());
+        if (oc == null) return "Cant find option class for request!";
+        return requestInstruments(price, container, oc, connector, isLong ? OptionType.Call : OptionType.Put);
     }
 }

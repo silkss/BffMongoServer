@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
+using Microsoft.Extensions.Hosting;
+using System;
 
 namespace Traders;
 
@@ -28,11 +30,13 @@ public class ContainerTrader
         }
     }
 
-    public ContainerTrader(IConnector connector, ContainerService containerService)
+    public ContainerTrader(IConnector connector, ContainerService containerService, IHostApplicationLifetime lifetime)
     {
         _connector = connector;
         _containerService = containerService;
         _allContainers = _containerService.Get();
+
+        //lifetime.ApplicationStopping.Register(StopTrade)
 
         new Thread(tradingLoop) { IsBackground = true }.Start();
     }
@@ -59,6 +63,24 @@ public class ContainerTrader
                 container.Start(_connector);
             }
         }
+    }
+
+    public async Task StopContainerAsync(string containerId)
+    {
+        Container? stopped = null;
+        lock(_containersInTrade)
+        {
+            stopped = _containersInTrade.FirstOrDefault(c => c.Id == containerId);
+            if (stopped != null)
+            {
+                _containersInTrade.Remove(stopped);
+            }
+        }
+        if (stopped == null) return;
+        stopped.Stop(_connector);
+        
+        if (stopped.Id == null) return;
+        await _containerService.UpdateAsync(stopped.Id, stopped);
     }
 
     public Container? GetContainer(string instumentName, string account)

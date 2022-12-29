@@ -1,5 +1,4 @@
-﻿using Notifier;
-using Connectors;
+﻿using Connectors;
 using Strategies.Helpers;
 using Strategies.Settings;
 using Common.Types.Base;
@@ -8,6 +7,7 @@ using Common.Types.Instruments;
 using Common.Types.Orders.Asbstractions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Strategies.TradeUnits;
 
@@ -44,7 +44,15 @@ public class OptionTradeUnit : IOrderHolder
             Orders.Add(OpenOrder);
         }
 
-        connector.SendLimitOrder(Instrument, OpenOrder,2, true);
+        connector.SendLimitOrder(Instrument, OpenOrder, containerSettings.OrderPriceShift, true);
+    }
+
+    public OptionTradeUnit() { }
+    public OptionTradeUnit(Instrument instrument, Directions directions, int volume)
+    {
+        Instrument = instrument;
+        Direction = directions;
+        Volume = volume;
     }
 
     public Instrument Instrument { get; set; }
@@ -95,16 +103,21 @@ public class OptionTradeUnit : IOrderHolder
 
         }
     }
+    public void Stop(IConnector connector) => connector.CancelOrder(OpenOrder);
 
     #region IOrderHolder
     public virtual void OnOrderCancelled(int brokerId)
     {
-        throw new NotImplementedException();
+        if (OpenOrder == null) return;
+        if (brokerId != OpenOrder.BrokerId) return;
+        OpenOrder = null;
     }
 
     public virtual void OnOrderFilled(int brokerId)
     {
-        throw new NotImplementedException();
+        if (OpenOrder == null) return;
+        if (brokerId != OpenOrder.BrokerId) return;
+        OpenOrder = null;
     }
 
     public virtual void OnSubmitted(int brokerId)
