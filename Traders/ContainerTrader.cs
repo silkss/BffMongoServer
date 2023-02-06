@@ -1,4 +1,6 @@
-﻿using Connectors;
+﻿namespace Traders;
+
+using Connectors;
 using Strategies;
 using MongoDbSettings;
 using System.Collections.Generic;
@@ -6,9 +8,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using Microsoft.Extensions.Hosting;
-using System;
-
-namespace Traders;
 
 public class ContainerTrader
 {
@@ -36,7 +35,7 @@ public class ContainerTrader
         _containerService = containerService;
         _allContainers = _containerService.Get();
 
-        //lifetime.ApplicationStopping.Register(StopTrade)
+        lifetime.ApplicationStopping.Register(StopTrader);
 
         new Thread(tradingLoop) { IsBackground = true }.Start();
     }
@@ -49,7 +48,15 @@ public class ContainerTrader
         _allContainers.Add(container);
         await _containerService.CreateAsync(container);
     }
-
+    public void StopTrader()
+    {
+        foreach(var container in _containersInTrade)
+        {
+            container.Stop(_connector);
+            if (container.Id != null)
+                _containerService.UpdateAsync(container.Id, container);
+        }
+    }
     public void StartTrade(string containerId)
     {
         var container = _allContainers.FirstOrDefault(c => c.Id == containerId);
@@ -64,7 +71,6 @@ public class ContainerTrader
             }
         }
     }
-
     public async Task StopContainerAsync(string containerId)
     {
         Container? stopped = null;
@@ -94,4 +100,6 @@ public class ContainerTrader
         }
         return container;
     }
+    public Container? GetById(string id) => _allContainers
+        .FirstOrDefault(c => c.Id == id);
 }

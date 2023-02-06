@@ -253,24 +253,34 @@ public class IbConnector : IConnector
             }
             catch (InvalidOperationException)
             {
+                _logger.LogWarning(
+                    $"Не найдено MarketRule {instrument.MarketRuleId} для инструмента " +
+                    $"{instrument.FullName}");
                 min_tick = instrument.MinTick;
             }
-            if (order.LimitPrice == 0m) {
-                order.LimitPrice = instrument.TradablePrice(order.Direction);
-            }
+            //По идеи коннектор не должен выбирать цену ордера.
+            //Этим замается торговый движок.
+            //if (order.LimitPrice == 0m) 
+            //{
+            //    _logger.LogWarning("Limit price for order is 0");
+            //    order.LimitPrice = instrument.TradablePrice(order.Direction);
+            //}
             order.LimitPrice = Helper.RoundUp(order.LimitPrice, min_tick);
 
-            if (order.Direction == Directions.Buy) {
+            if (order.Direction == Directions.Buy) 
+            {
                 order.LimitPrice += (min_tick * priceShift);
             }
             else {
                 order.LimitPrice -= (min_tick * priceShift);
                 if (order.LimitPrice <= 0)
+                {
+                    _logger.LogWarning(
+                        $"Order price still <= 0. Using min tick ({min_tick}) for limit price. " +
+                        $"Instrument {instrument.FullName}");
                     order.LimitPrice = min_tick;
+                }
             }
-            _logger.LogInformation($"Order price - {order.LimitPrice}.\n" +
-                $"Instrument tradeprice - {instrument.TradablePrice(order.Direction)}\n" +
-                $"Bid {instrument.Bid} Ask {instrument.Ask} Last {instrument.Last}");
             _client.placeOrder(order.BrokerId, instrument.ToIbContract(), order.ToIbOrder());
         }
         else

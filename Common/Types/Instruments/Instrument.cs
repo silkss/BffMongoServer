@@ -26,10 +26,16 @@ public class Instrument
     public decimal Ask { get; set; }
     [BsonIgnore]
     public decimal Bid { get; set; }
+
     [BsonIgnore]
     public decimal Last { get; set; }
+
+    private decimal _theorPrice;
     [BsonIgnore]
-    public decimal TheorPrice { get; set; }
+    public decimal TheorPrice {
+        get => _theorPrice;
+        set => _theorPrice = Helper.RoundUp(value, MinTick);
+    }
     public void OnPriceChange(object? sender, PriceChangedEventArgs args)
     {
         if (args.TickerId != Id) return;

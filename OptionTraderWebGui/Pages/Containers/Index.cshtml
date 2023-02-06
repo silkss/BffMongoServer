@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Containers";
 }
-<a asp-page="Create">Create New</a>
+<a asp-page="./Edit">Create New</a>
 <table class="table">
     <thead>
         <tr>
@@ -22,10 +22,11 @@
         foreach (var container in Model.Containers)
         {
             <tr>
-                <td>@container.Id </td>
+                <td>@container.Id</td>
                 <td>@container.InTrade</td>
                 <td>@container.Instrument.FullName</td>
                 <td>@container.ContainerSettings.Account</td>
+                <td>@container.Instrument.LastTradeDate</td>
                 <td>
                     <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>
                 </td>
@@ -35,9 +36,14 @@
                 <td>
                     <a asp-page="./Stop" asp-route-id="@container.Id">Stop</a>
                 </td>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@container.Id">Details</a>
+                </td>
+                <td>
+                    <a asp-page="./Delete" asp-route-id="@container.Id">Delete</a>
+                </td>
             </tr>
         }
     }
     </tbody>
-        
 </table>

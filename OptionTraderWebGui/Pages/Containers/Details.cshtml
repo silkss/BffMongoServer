@@ -1,0 +1,38 @@
+﻿@page "{id?}"
+@model DetailsModel
+@{
+    ViewData["Title"] = "Details";
+}
+<h1> @ViewData["Title"] </h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Position</th>
+            <th>PnL</th>
+        </tr>
+    </thead>
+    <tbody>
+    @if (Model.Strategies != null)
+    {
+        foreach (var strategy in Model.Strategies)
+        {
+            <tr>
+                <td>
+                    @foreach (var tradeUnit in strategy.OptionsTradeUnits)
+                    {
+                        <ul>
+                            <li>@tradeUnit.Instrument.FullName</li>
+                            <li>@tradeUnit.Position</li>
+                            <li>@tradeUnit.ClosedPnl</li>
+                            <li>@tradeUnit.OpenPnl</li>
+                        </ul>
+                        <br>
+                    }
+                </td>
+                <td>@strategy.GetPnl()</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>

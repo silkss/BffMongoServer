@@ -1,11 +1,10 @@
-﻿using Common.Types.Base;
+﻿namespace Strategies;
+
+using Common.Types.Base;
 using Connectors;
 using Strategies.Settings;
 using Strategies.TradeUnits;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
-namespace Strategies;
 
 public class OptionStrategy
 {
@@ -34,4 +33,5 @@ public class OptionStrategy
         lock (OptionsTradeUnits)
             OptionsTradeUnits.ForEach(otu => otu.Stop(connector));
     }
+    public decimal GetPnl() => 12.0m;
 }

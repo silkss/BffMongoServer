@@ -1,7 +1,8 @@
-﻿@page
-@model CreateModel
+﻿@page "{id?}"
+@model EditModel
+
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
 <div>
@@ -24,7 +25,8 @@
 
         <p>
             <label asp-for="ContainerSettings!.OrderPriceShift">Сдвиг цены ордеров (в пунктах)</label><br/>
-            <select asp-for="ContainerSettings!.OrderPriceShift" />
+            <input asp-for="ContainerSettings!.OrderPriceShift" />
+        </p>
 
         <p>
             <label asp-for="OptionStrategySettings!.Volume">Объем</label><br/>

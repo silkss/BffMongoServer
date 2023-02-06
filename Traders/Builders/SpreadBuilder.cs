@@ -6,8 +6,6 @@ using Common.Types.Base;
 using Common.Types.Instruments;
 using Connectors;
 using Strategies;
-using Strategies.Settings;
-using Strategies.TradeUnits;
 
 public static class SpreadBuilder
 {
@@ -22,7 +20,18 @@ public static class SpreadBuilder
 
         return $"Spread added {spread}";
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="price"></param>
+    /// <param name="container">Тут должны хранится настройки, 
+    /// согласно которым будут выбираться опционные инструменты.</param>
+    /// <param name="oc">Опционный торговый класс, внутри которого выбираются инструменты.</param>
+    /// <param name="connector"></param>
+    /// <param name="optionType">В зависимости от сигнала запрашивается разный спред:
+    /// Call - для лонгового сигнала;
+    /// Put - для шортового сигнала;</param>
+    /// <returns></returns>
     private static string requestInstruments(double price,
         Container container,
         OptionTradingClass oc, IConnector connector, OptionType optionType)
@@ -60,8 +69,8 @@ public static class SpreadBuilder
     public static string OpenSpread(Container container, double price, IConnector connector, bool isLong)
     {
         if (container.Instrument == null) return "Instrument is null!";
-        if (container.OptionStrategySettings == null) return "No option strategy settings!";
-        if (container.SpreadSettings == null) return "No spread settings";
+        if (container.OptionStrategySettings == null) return "No OptionStrategy settings!";
+        if (container.SpreadSettings == null) return "No Spread settings";
         var oc = connector.GetOptionTradingClass(
             container.Instrument.Id,
             container.OptionStrategySettings.GetMinExpirationDate());
