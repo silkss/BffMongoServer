@@ -42,17 +42,13 @@ public static class SpreadBuilder
 
         if (optionType == OptionType.Call)
         {
-            buyStrikeIdx = curStrikeIdx + container.SpreadSettings!.BuyStrikeShift;
-            sellStrikeIdx = curStrikeIdx 
-                + container.SpreadSettings!.BuyStrikeShift 
-                + container.SpreadSettings!.SellStrikeShift;
+            buyStrikeIdx = curStrikeIdx + container.SpreadSettings!.LongStrikeShift;
+            sellStrikeIdx = curStrikeIdx + container.SpreadSettings!.ShortStrikeShift;
         }
         else
         {
-            buyStrikeIdx = curStrikeIdx - container.SpreadSettings!.BuyStrikeShift;
-            sellStrikeIdx = curStrikeIdx 
-                - container.SpreadSettings!.BuyStrikeShift 
-                - container.SpreadSettings!.SellStrikeShift;
+            buyStrikeIdx = curStrikeIdx - container.SpreadSettings!.LongStrikeShift;
+            sellStrikeIdx = curStrikeIdx - container.SpreadSettings!.ShortStrikeShift;
         }
 
         connector

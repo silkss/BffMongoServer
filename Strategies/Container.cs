@@ -1,25 +1,15 @@
-﻿using Common.Types.Instruments;
+﻿namespace Strategies;
+
 using Connectors;
-using MongoDB.Bson.Serialization.Attributes;
 using Strategies.Types;
 using Strategies.Settings;
+using Strategies.Containers.Base;
 using System.Collections.Generic;
 using System.Linq;
 using Common.Types.Base;
 
-namespace Strategies;
-
-public class Container
+public class Container :  BaseContainer
 {
-    [BsonId]
-    [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
-    public string? Id { get; set; }
-
-    [BsonIgnore]
-    public bool InTrade { get; private set; }
-    public Instrument? Instrument { get; set; }
-    public ContainerSettings? ContainerSettings { get; set; }
-    public OptionStrategySettings? OptionStrategySettings { get; set; }
     public SpreadSettings? SpreadSettings { get; set; }
     public List<OptionStrategy> OptionStrategies { get; set; } = new();
     public OptionStrategy? OpenStrategy
@@ -72,4 +62,8 @@ public class Container
 
         return OptionStrategyStatus.Working;
     }
+
+    public override bool IsWorking() => throw new System.NotImplementedException();
+    public override string CreateSpread(IConnector connector, double basisPrice, bool isLong) => 
+        throw new System.NotImplementedException();
 }

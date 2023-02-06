@@ -3,6 +3,7 @@
 using Connectors;
 using Notifier;
 using Strategies;
+using Strategies.Containers;
 using Strategies.Types;
 using Traders.Builders;
 
@@ -39,4 +40,14 @@ internal class SpreadSignalParser
             OptionStrategyStatus.Working => "Working",
             _ => "Неизвестный статус опционной стратегии."
         };
+
+    public static string ParseSpreadWithHedgeSpreadSignal(int direction, double price,
+        SpreadWithHedgeSpreadContainer container, IConnector connector, IBffLogger logger)
+    {
+        if (container.IsWorking()) return "Container working";
+        if (direction == 1)
+            return container.CreateSpread(connector, price, isLong: true);
+        else
+            return "Not implemented";
+    }
 }

@@ -7,10 +7,10 @@
 <table class="table">
     <thead>
         <tr>
-            <th>ID</th>
             <th>InTrade</th>
             <th>Instrument</th>
             <th>Account</th>
+            <th>PnL</th>
             <th></th>
             <th></th>
             <th></th>
@@ -22,10 +22,10 @@
         foreach (var container in Model.Containers)
         {
             <tr>
-                <td>@container.Id</td>
                 <td>@container.InTrade</td>
                 <td>@container.Instrument.FullName</td>
                 <td>@container.ContainerSettings.Account</td>
+                <td>--</td>
                 <td>@container.Instrument.LastTradeDate</td>
                 <td>
                     <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>

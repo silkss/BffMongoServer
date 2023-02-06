@@ -11,13 +11,13 @@ public class SpreadSettings
 {
     /// <summary>
     /// Смещение покупного опциона относительно цены БАЗИСА.
-    /// Смещенеи (сдвиг) указывает в шагах страйка.
+    /// Смещенеи (сдвиг) указывает в шагах.
     /// </summary>
-    public int BuyStrikeShift { get; set; }
+    public int LongStrikeShift { get; set; }
 
     /// <summary>
-    /// Смещение продажного опциона относительно цены ПОКУПНОГО.
-    /// Смещенеи (сдвиг) указывает в шагах страйка.
+    /// Смещение продажного опциона относительно цены БАЗИСА.
+    /// Смещенеи (сдвиг) указывает в шагах.
     /// </summary>
-    public int SellStrikeShift { get; set; }
+    public int ShortStrikeShift { get; set; }
 }
