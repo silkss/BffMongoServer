@@ -95,8 +95,8 @@ public class ContainerTrader
         lock (_containersInTrade)
         {
             container = _containersInTrade.FirstOrDefault(c =>
-                c.Instrument.FullName == instumentName.Trim().ToUpper() &&
-                c.ContainerSettings.Account == account.Trim().ToUpper());
+                c.Instrument?.FullName == instumentName.Trim().ToUpper() &&
+                c.ContainerSettings?.Account == account.Trim().ToUpper());
         }
         return container;
     }

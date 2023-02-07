@@ -9,7 +9,6 @@ using Common.Types.Instruments;
 using Common.Types.Orders.Asbstractions;
 using System;
 using System.Collections.Generic;
-using Common.Helpers;
 
 public class OptionTradeUnit : IOrderHolder
 {
@@ -48,7 +47,11 @@ public class OptionTradeUnit : IOrderHolder
     }
     private void updateTradeInfo() =>
         (Position, ClosedPnl) = StrategyHelper.GetPosition(Orders);
-
+    public decimal GetCurrencyPnl()
+    {
+        var pnl = Logic == TradeLogic.Open ? OpenPnl : ClosedPnl;
+        return pnl * Instrument.Multiplier;
+    }
     public OptionTradeUnit() => updateTradeInfo();
     public OptionTradeUnit(Instrument instrument, Directions directions, int volume)
     {
@@ -72,7 +75,12 @@ public class OptionTradeUnit : IOrderHolder
             Directions.Sell => ClosedPnl -  Instrument.TheorPrice,
             _ => 0m
         };
-
+    public bool IsDone() => Logic switch
+    {
+        TradeLogic.Open => Math.Abs(Position) == Volume,
+        TradeLogic.Close => Position == 0,
+        _ => throw new NotSupportedException("Unknow TradeLogic!")
+    };
     public void Start(IConnector connector)
     {
         if (Instrument.LastTradeDate < DateTime.Now) return;
@@ -86,6 +94,7 @@ public class OptionTradeUnit : IOrderHolder
         {
             case TradeLogic.Open when OpenOrder == null:
                 if (Math.Abs(Position) == Volume) break;
+                if (Instrument.TradablePrice(Direction) <= 0m) break;
                 createAndSendOrder(true, connector, containerSettings);
                 break;
             case TradeLogic.Open when OpenOrder != null:

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 public class OptionStrategy
 {
     public List<OptionTradeUnit> OptionsTradeUnits { get; set; } = new();
+    public OptionStrategy? Closure { get; set; }
     public TradeLogic Logic { get; set; }
     public void Start(IConnector connector)
     {
@@ -16,6 +17,8 @@ public class OptionStrategy
         {
             tradeUnit.Start(connector);
         }
+        if (Closure != null)
+            Closure.Start(connector);
     }
     public void AddTradeUnit(OptionTradeUnit unit)
     {
@@ -25,13 +28,50 @@ public class OptionStrategy
     public void Work(IConnector connector, ContainerSettings containerSettings)
     {
         lock (OptionsTradeUnits)
-            foreach (var otu in OptionsTradeUnits)
-                otu.Work(connector, containerSettings);
+        {
+            foreach (var unit in OptionsTradeUnits)
+            {
+                unit.Work(connector, containerSettings);
+            }
+        }
+        if (IsDone() && Closure != null)
+        {
+            if (Logic == TradeLogic.Open  || Closure.Logic == TradeLogic.Close)
+            {
+                Closure.Logic = TradeLogic.Open;
+            }
+            Closure.Work(connector, containerSettings);
+        }
+            
+    }
+    public bool IsDone()
+    {
+        lock (OptionsTradeUnits)
+        {
+            foreach (var unit in OptionsTradeUnits)
+            {
+                if (!unit.IsDone()) return false;
+            }
+        }
+
+        return true;
     }
     public void Stop(IConnector connector)
     {
         lock (OptionsTradeUnits)
             OptionsTradeUnits.ForEach(otu => otu.Stop(connector));
+    }
+    public decimal GetCurrencyPnl()
+    {
+        var pnl = 0m;
+        lock (OptionsTradeUnits)
+        {
+            foreach (var unit in OptionsTradeUnits)
+            {
+                pnl += unit.GetCurrencyPnl();
+            }
+        }
+        return pnl;
     }
     public decimal GetPnl() => 12.0m;
 }

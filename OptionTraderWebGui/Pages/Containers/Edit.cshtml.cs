@@ -28,6 +28,7 @@ public class EditModel : PageModel
     [BindProperty] public ContainerSettings? ContainerSettings { get; set; }
     [BindProperty] public OptionStrategySettings? OptionStrategySettings { get; set; }
     [BindProperty] public SpreadSettings? SpreadSettings { get; set; }
+    [BindProperty] public SpreadSettings? ClosureSpreadSettings { get; set; }
 
     public void OnGet(string? id)
     {
@@ -57,14 +58,14 @@ public class EditModel : PageModel
             if (_trader.GetById(id) is Container container)
             {
                 container.SpreadSettings = SpreadSettings;
-                if (ContainerSettings.Account != null)
+                if (ContainerSettings?.Account != null)
                     container.ContainerSettings = ContainerSettings;
                 container.OptionStrategySettings = OptionStrategySettings;
 
                 return RedirectToPage("./Index");
             }
         }
-        var sec = await _connector.RequestInstrumentAsync(Instrument.Name, Instrument.Exchange);
+        var sec = await _connector.RequestInstrumentAsync(Instrument!.Name, Instrument.Exchange);
 
         if (sec != null)
         {
@@ -74,6 +75,7 @@ public class EditModel : PageModel
                 ContainerSettings = ContainerSettings,
                 OptionStrategySettings = OptionStrategySettings,
                 SpreadSettings = SpreadSettings,
+                ClosureSpreadSettings = ClosureSpreadSettings,
             };
             await _trader.AddContainerAsync(container);
         }

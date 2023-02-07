@@ -21,6 +21,7 @@ public class Container
     public ContainerSettings? ContainerSettings { get; set; }
     public OptionStrategySettings? OptionStrategySettings { get; set; }
     public SpreadSettings? SpreadSettings { get; set; }
+    public SpreadSettings? ClosureSpreadSettings { get; set; }
     public List<OptionStrategy> OptionStrategies { get; set; } = new();
     public OptionStrategy? OpenStrategy
     {
@@ -51,7 +52,7 @@ public class Container
         lock (OptionStrategies)
             OptionStrategies.ForEach(os => os.Stop(connector));
     }
-    public void Work(IConnector connector) 
+    public void Work(IConnector connector)
     {
         if (!InTrade) return;
         lock (OptionStrategies)
@@ -71,5 +72,27 @@ public class Container
             return OptionStrategyStatus.NotExist;
 
         return OptionStrategyStatus.Working;
+    }
+    public decimal GetCurrencyPnl()
+    {
+        var pnl = 0m;
+        lock (OptionStrategies)
+        {
+            foreach (var strategy in OptionStrategies)
+            {
+                pnl += strategy.GetCurrencyPnl();
+            }
+        }
+        return pnl;
+    }
+
+    public decimal? GetOpenCurrencyPnl()
+    {
+        OptionStrategy? openStrategy;
+        lock (OptionStrategies)
+        {
+            openStrategy = OptionStrategies.FirstOrDefault(os => os.Logic == TradeLogic.Open);
+        }
+        return openStrategy?.GetCurrencyPnl();
     }
 }

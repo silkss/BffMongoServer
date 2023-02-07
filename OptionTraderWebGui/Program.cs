@@ -14,7 +14,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
 builder.Services.Configure<DatabaseSettings>(
-    builder.Configuration.GetSection("DatabaseSettingsDev"));
+    builder.Configuration.GetSection("DatabaseSettings"));
 
 builder.Services.AddSingleton<ContainerService>();
 builder.Services.AddSingleton<ContainerTrader>();

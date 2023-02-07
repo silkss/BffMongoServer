@@ -9,7 +9,8 @@
     <thead>
         <tr>
             <th>Position</th>
-            <th>PnL</th>
+            <th>Closure</th>
+            <th>TotolPnL</th>
         </tr>
     </thead>
     <tbody>
@@ -22,12 +23,24 @@
                     @foreach (var tradeUnit in strategy.OptionsTradeUnits)
                     {
                         <ul>
-                            <li>@tradeUnit.Instrument.FullName</li>
+                            <li>@tradeUnit.Instrument.OptionType @tradeUnit.Instrument.Strike</li>
+                            <li>@tradeUnit.Logic</li>
                             <li>@tradeUnit.Position</li>
                             <li>@tradeUnit.ClosedPnl</li>
                             <li>@tradeUnit.OpenPnl</li>
                         </ul>
-                        <br>
+                    }
+                </td>
+                <td>
+                    @foreach (var tradeUnit in strategy.Closure?.OptionsTradeUnits)
+                    {
+                        <ul>
+                            <li>@tradeUnit.Instrument.OptionType @tradeUnit.Instrument.Strike</li>
+                            <li>@tradeUnit.Logic</li>
+                            <li>@tradeUnit.Position</li>
+                            <li>@tradeUnit.ClosedPnl</li>
+                            <li>@tradeUnit.OpenPnl</li>
+                        </ul>
                     }
                 </td>
                 <td>@strategy.GetPnl()</td>

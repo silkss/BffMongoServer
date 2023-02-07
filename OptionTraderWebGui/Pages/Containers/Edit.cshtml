@@ -39,18 +39,38 @@
         </p>
 
         <p>
-           <label asp-for="OptionStrategySettings!.MinDaysToExpiration">MinDaysToExpiration</label><br/> 
-           <input asp-for="OptionStrategySettings!.MinDaysToExpiration" />
+           <label
+                title="Минимальное кол-во дней до дня экспирации опционного класса."
+                asp-for="OptionStrategySettings!.MinDaysToExpiration">Дней до экспирации</label><br/> 
+           <input asp-for="OptionStrategySettings!.MinDaysToExpiration"/>
         </p>
 
         <p>
-            <label asp-for="SpreadSettings!.BuyStrikeShift">Buy strike shift</label><br/>
+            <label 
+                title="На сколько шагов-страйка будет сдвинут страйк покупного опциона относительно цены базиса"
+                asp-for="SpreadSettings!.BuyStrikeShift">Сдвиг покупного страйка (в шагах)</label><br/>
             <input asp-for="SpreadSettings!.BuyStrikeShift" />
         </p>
 
         <p>
-            <label asp-for="SpreadSettings!.SellStrikeShift">Sell strike shift</label><br/>
+            <label
+                title="На сколько шагов-страйка будет сдвинут страйк продаваемого опциона относительно цены базиса"
+                asp-for="SpreadSettings!.SellStrikeShift">Сдвиг продаваемого страйка (в шагах)</label><br/>
             <input asp-for="SpreadSettings!.SellStrikeShift" />
+        </p>
+
+        <p>
+            <label 
+                title="На сколько шагов-страйка будет сдвинут страйк покупного опциона относительно цены базиса"
+                asp-for="ClosureSpreadSettings!.BuyStrikeShift">Сдвиг замыкающего покупного страйка (в шагах)</label><br/>
+            <input asp-for="ClosureSpreadSettings!.BuyStrikeShift" />
+        </p>
+
+        <p>
+            <label
+                title="На сколько шагов-страйка будет сдвинут страйк продаваемого опциона относительно цены базиса"
+                asp-for="ClosureSpreadSettings!.SellStrikeShift">Сдвиг замыкающего продаваемого страйка (в шагах)</label><br/>
+            <input asp-for="ClosureSpreadSettings!.SellStrikeShift" />
         </p>
 
         <input type="submit" />
