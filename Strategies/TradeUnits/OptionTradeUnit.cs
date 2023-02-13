@@ -126,6 +126,10 @@ public class OptionTradeUnit : IOrderHolder
         }
     }
     public void Stop(IConnector connector) => connector.CancelOrder(OpenOrder);
+    public void Close()
+    {
+        Logic = TradeLogic.Close;
+    }
 
     #region IOrderHolder
     public virtual void OnOrderCancelled(int brokerId)

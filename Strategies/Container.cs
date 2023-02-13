@@ -64,7 +64,16 @@ public class Container
         lock (OptionStrategies)
             OptionStrategies.Add(strategy);
     }
-
+    public void Close()
+    {
+        lock (OptionStrategies)
+        {
+            foreach (var strategy in OptionStrategies)
+            {
+                strategy.Close();
+            }
+        }
+    }
     public OptionStrategyStatus GetOpenStrategyStatus()
     {
         var open = OpenStrategy;
@@ -85,7 +94,6 @@ public class Container
         }
         return pnl;
     }
-
     public decimal? GetOpenCurrencyPnl()
     {
         OptionStrategy? openStrategy;

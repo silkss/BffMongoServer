@@ -36,13 +36,16 @@ public class OptionStrategy
         }
         if (IsDone() && Closure != null)
         {
-            if (Logic == TradeLogic.Open  || Closure.Logic == TradeLogic.Close)
+            if (Logic == TradeLogic.Open  && Closure.Logic == TradeLogic.Close)
             {
                 Closure.Logic = TradeLogic.Open;
             }
+            if (Logic == TradeLogic.Close && Closure.Logic == TradeLogic.Open)
+            {
+                Closure.Close();
+            }
             Closure.Work(connector, containerSettings);
         }
-            
     }
     public bool IsDone()
     {
@@ -73,5 +76,12 @@ public class OptionStrategy
         }
         return pnl;
     }
-    public decimal GetPnl() => 12.0m;
+    public void Close()
+    {
+        lock (OptionsTradeUnits)
+        {
+            foreach (var unit in OptionsTradeUnits)
+                unit.Close();
+        }
+    }
 }

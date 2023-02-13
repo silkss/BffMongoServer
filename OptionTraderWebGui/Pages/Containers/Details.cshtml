@@ -5,6 +5,14 @@
 }
 <h1> @ViewData["Title"] </h1>
 
+<nav aria-label="Breadcrumb" class="breadcrumb">
+    <ul>
+        <li> <a asp-area="" asp-page="/Index">Home</a></li>
+        <li> <a asp-area="" asp-page="/Containers/Index">Containers</a></li>
+        <li> <span aria-current="page">@ViewData["Title"]</span></li>
+    </ul>
+</nav>
+
 <table class="table">
     <thead>
         <tr>
@@ -43,7 +51,7 @@
                         </ul>
                     }
                 </td>
-                <td>@strategy.GetPnl()</td>
+                <td>@strategy.GetCurrencyPnl()</td>
             </tr>
         }
     }

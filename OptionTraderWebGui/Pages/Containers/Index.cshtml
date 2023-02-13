@@ -3,6 +3,13 @@
 @{
     ViewData["Title"] = "Containers";
 }
+
+<nav aria-label="Breadcrumb" class="breadcrumb">
+    <ul>
+        <li> <a asp-area="" asp-page="/Index">Home</a></li>
+        <li> <span aria-current="page">@ViewData["Title"]</span></li>
+    </ul>
+</nav>
 <a asp-page="./Edit">Create New</a>
 <table class="table">
     <thead>
@@ -13,6 +20,8 @@
             <th>LastTradeDate</th>
             <th>Open PnL</th>
             <th>Pnl</th>
+            <th></th>
+            <th></th>
             <th></th>
             <th></th>
             <th></th>
@@ -34,16 +43,16 @@
                     <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>
                 </td>
                 <td>
-                    <a asp-page="./Edit" asp-route-id="@container.Id">Edit</a>
-                </td>
-                <td>
                     <a asp-page="./Stop" asp-route-id="@container.Id">Stop</a>
                 </td>
                 <td>
-                    <a asp-page="./Details" asp-route-id="@container.Id">Details</a>
+                    <a asp-page="./Edit" asp-route-id="@container.Id">Edit</a>
                 </td>
                 <td>
-                    <a asp-page="./Delete" asp-route-id="@container.Id">Delete</a>
+                    <a asp-page="./Close" asp-route-id="@container.Id">Close</a>
+                </td>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@container.Id">Details</a>
                 </td>
             </tr>
         }
