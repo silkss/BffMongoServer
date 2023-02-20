@@ -17,7 +17,7 @@ public class OptionTradeUnit : IOrderHolder
         : Directions.Buy;
     private int getTradableVolume()
     {
-        (var pos, _) = StrategyHelper.GetPosition(Orders);
+        (var pos, _, _) = StrategyHelper.GetPosition(Orders);
         return Volume - Math.Abs(pos);
     }
     private Order createOpenOrder(ContainerSettings settings) => new Order(this, settings.Account)
@@ -38,6 +38,7 @@ public class OptionTradeUnit : IOrderHolder
             OpenOrder = createOpenOrder(containerSettings);
         else
             OpenOrder = createCloseOrder(containerSettings);
+
         lock (Orders)
         {
             Orders.Add(OpenOrder);
@@ -46,12 +47,8 @@ public class OptionTradeUnit : IOrderHolder
         connector.SendLimitOrder(Instrument, OpenOrder, containerSettings.OrderPriceShift, true);
     }
     private void updateTradeInfo() =>
-        (Position, ClosedPnl) = StrategyHelper.GetPosition(Orders);
-    public decimal GetCurrencyPnl()
-    {
-        var pnl = Logic == TradeLogic.Open ? OpenPnl : ClosedPnl;
-        return pnl * Instrument.Multiplier;
-    }
+        (Position, ClosedPnl, CommissionCurrency) = StrategyHelper.GetPosition(Orders);
+    
     public OptionTradeUnit() => updateTradeInfo();
     public OptionTradeUnit(Instrument instrument, Directions directions, int volume)
     {
@@ -66,6 +63,7 @@ public class OptionTradeUnit : IOrderHolder
     public TradeLogic Logic { get; set; }
     public int Volume { get; set; }
     public int Position { get; private set; }
+    public decimal CommissionCurrency { get; private set; }
     public decimal ClosedPnl { get; private set; }
     public decimal OpenPnl => Instrument.TheorPrice == 0 ?
         0m :
@@ -75,6 +73,11 @@ public class OptionTradeUnit : IOrderHolder
             Directions.Sell => ClosedPnl -  Instrument.TheorPrice,
             _ => 0m
         };
+    public decimal GetCurrencyPnl()
+    {
+        var pnl = Logic == TradeLogic.Open ? OpenPnl : ClosedPnl;
+        return pnl * Instrument.Multiplier - CommissionCurrency;
+    }
     public bool IsDone() => Logic switch
     {
         TradeLogic.Open => Math.Abs(Position) == Volume,

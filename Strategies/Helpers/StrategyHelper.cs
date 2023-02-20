@@ -8,10 +8,11 @@ namespace Strategies.Helpers;
 
 public static class StrategyHelper
 {
-    public static (int pos, decimal closedPnl) GetPosition(IEnumerable<Order> orders)
+    public static (int pos, decimal closedPnl, decimal commission) GetPosition(IEnumerable<Order> orders)
     {
         var position = 0;
         var pnl = 0m;
+        var commission = 0m;
         foreach (var order in orders)
         {
             if (order.Direction == Directions.Buy)
@@ -24,8 +25,9 @@ public static class StrategyHelper
                 position -= order.FilledQuantity;
                 pnl += (order.FilledQuantity * order.AvgFilledPrice);
             }
+            commission += order.Commission;
         }
-        return (position, pnl);
+        return (position, pnl, commission);
     }
     /// <summary>
     /// Вернет Истина если позиция равна объему.

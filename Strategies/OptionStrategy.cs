@@ -74,7 +74,27 @@ public class OptionStrategy
                 pnl += unit.GetCurrencyPnl();
             }
         }
+        if (Closure != null)
+        {
+            pnl += Closure.GetCurrencyPnl();
+        }
         return pnl;
+    }
+    public decimal GetCommission()
+    {
+        var commission = 0m;
+        lock (OptionsTradeUnits)
+        {
+            foreach (var unit in OptionsTradeUnits)
+            {
+                commission += unit.CommissionCurrency;
+            }
+        }
+        if (Closure != null)
+        {
+            commission += Closure.GetCommission();
+        }
+        return commission;
     }
     public void Close()
     {

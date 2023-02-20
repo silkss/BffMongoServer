@@ -103,4 +103,16 @@ public class Container
         }
         return openStrategy?.GetCurrencyPnl();
     }
+    public decimal GetCommission()
+    {
+        decimal commission = 0m;
+        lock (OptionStrategies)
+        {
+            foreach (var strategy in OptionStrategies)
+            {
+                commission += strategy.GetCommission();
+            }
+        }
+        return commission;
+    }
 }

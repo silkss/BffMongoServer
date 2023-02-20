@@ -20,6 +20,7 @@
             <th>LastTradeDate</th>
             <th>Open PnL</th>
             <th>Pnl</th>
+            <th>Commission</th>
             <th></th>
             <th></th>
             <th></th>
@@ -39,6 +40,7 @@
                 <td>@container.Instrument.LastTradeDate.ToString("dd.MM.yyyy")</td>
                 <td>@container.GetOpenCurrencyPnl()</td>
                 <td>@container.GetCurrencyPnl()</td>
+                <td>@container.GetCommission()</td>
                 <td>
                     <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>
                 </td>
