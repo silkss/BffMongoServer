@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace OptionTraderWebGui.Pages.Containers;
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Strategies;
+using Strategies.BatmanStrategy;
 using System.Collections.Generic;
 using Traders;
-
-namespace OptionTraderWebGui.Pages.Containers;
 
 public class IndexModel : PageModel
 {
@@ -16,7 +16,7 @@ public class IndexModel : PageModel
     }
 
     [BindProperty]
-    public IEnumerable<Container>? Containers { get; set; }
+    public IEnumerable<BatmanContainer>? Containers { get; set; }
     public void OnGet()
     {
         Containers = _trader.GetAllContainers();

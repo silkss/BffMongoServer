@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Connectors;
 using Connectors.Ib;
 using Traders;
-using Notifier;
 using MongoDbSettings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +18,6 @@ builder.Services.Configure<DatabaseSettings>(
 builder.Services.AddSingleton<ContainerService>();
 builder.Services.AddSingleton<ContainerTrader>();
 builder.Services.AddSingleton<IConnector, IbConnector>();
-builder.Services.AddSingleton<IBffLogger, BaseNotifier>();
 
 var app = builder.Build();
 

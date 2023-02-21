@@ -8,14 +8,14 @@ using IBApi;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Notifier;
 using Common.Types.Base;
+using Microsoft.Extensions.Logging;
 
 namespace Connectors.Ib;
 
 internal class IbCallbacks : DefaultEWrapper
 {
-	private readonly IBffLogger _logger;
+	private readonly ILogger<IbConnector> _logger;
 	private readonly RequestInstrumentCache _requestInstrument;
 	private readonly Dictionary<int, OptionChain> _optionChains;
 	private readonly OpenOrdersCache _openOrdersCache;
@@ -39,7 +39,7 @@ internal class IbCallbacks : DefaultEWrapper
 		private set => _nextOrderId = value;
 	}
     public IbCallbacks(
-        IBffLogger logger, RequestInstrumentCache requestInstrument, 
+        ILogger<IbConnector> logger, RequestInstrumentCache requestInstrument, 
 		Dictionary<int, OptionChain> optionChains, OpenOrdersCache openOrdersCache,
 		Dictionary<int, List<PriceBorder>> marketRules, ConnectorInfo connectionInfo)
 	{
@@ -71,8 +71,8 @@ internal class IbCallbacks : DefaultEWrapper
 		{
 			var price_border = new PriceBorder
 			{
-				LowEdge = Helper.ConvertDoubleToDecimal(inc.LowEdge),
-				Incriment = Helper.ConvertDoubleToDecimal(inc.Increment)
+				LowEdge = MathHelper.ConvertDoubleToDecimal(inc.LowEdge),
+				Incriment = MathHelper.ConvertDoubleToDecimal(inc.Increment)
 			};
 			_marketRules[marketRuleId].Add(price_border);
 		}
@@ -164,7 +164,7 @@ internal class IbCallbacks : DefaultEWrapper
 		{
 			if (openorder.FilledQuantity == openorder.Quantity)
 			{
-				openorder.Commission = Helper.ConvertDoubleToDecimal(orderState.Commission);
+				openorder.Commission = MathHelper.ConvertDoubleToDecimal(orderState.Commission);
 				openorder.Filled();
 				_openOrdersCache.Remove(openorder);
 			}
@@ -174,7 +174,7 @@ internal class IbCallbacks : DefaultEWrapper
 	{
         if (_openOrdersCache.GetById(orderId) is Common.Types.Orders.Order openorder)
         {
-            openorder.AvgFilledPrice = Helper.ConvertDoubleToDecimal(avgFillPrice);
+            openorder.AvgFilledPrice = MathHelper.ConvertDoubleToDecimal(avgFillPrice);
             openorder.FilledQuantity = (int)filled;
 
             if (openorder.Status == "Submitted")
@@ -202,12 +202,7 @@ internal class IbCallbacks : DefaultEWrapper
 				break;
             case 504:   // NotConnected
 				_requestInstrument.ReceivedSignal(); // если вдруг ктото ждет инструмент.
-#if DEBUG
-				_logger.LogError("NOT CONNECTED!", toTelegram: false);
-#else
-				_logger.LogError("NOT CONNECTED!", toTelegram: true);
-#endif
-
+				_logger.LogCritical("Not connected!");
 				_connectionInfo.IsConnected = false;
                 ConnectionChanged?.Invoke(false);
                 break;

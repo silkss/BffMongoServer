@@ -1,9 +1,9 @@
 ﻿namespace OptionTraderWebGui.Pages.Containers;
 
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using Strategies;
 using Traders;
+using Strategies.BatmanStrategy;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 public class DetailsModel : PageModel
 {
@@ -14,15 +14,15 @@ public class DetailsModel : PageModel
         _trader = trader;
     }
 
-    public List<OptionStrategy>? Strategies { get; set; }
+    public List<BatmanOptionStrategy>? Strategies { get; set; }
 
     public void OnGet(string? id)
     {
         if (id != null)
         {
-            if (_trader.GetById(id) is Container container)
+            if (_trader.GetById(id) is BatmanContainer container)
             {
-                Strategies = container.OptionStrategies;
+                Strategies = container.Strategies;
             }
         }
     }

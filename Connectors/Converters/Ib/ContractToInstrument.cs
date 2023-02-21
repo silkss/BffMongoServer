@@ -15,7 +15,7 @@ internal static class ContractToInstrument
         Id = contract.Contract.ConId,
         Type = Helper.IbSecTypeToBffEnum(contract.Contract.SecType),
         Symbol = contract.Contract.Symbol,
-        MinTick = Helper.ConvertDoubleToDecimal(contract.MinTick),
+        MinTick = MathHelper.ConvertDoubleToDecimal(contract.MinTick),
         FullName = contract.Contract.LocalSymbol,
         Exchange = contract.Contract.Exchange,
         Currency = contract.Contract.Currency,
@@ -24,7 +24,7 @@ internal static class ContractToInstrument
         MarketRuleId = int.Parse(contract.MarketRuleIds.Split(',').First()),
         LastTradeDate = DateTime
             .ParseExact(contract.Contract.LastTradeDateOrContractMonth, "yyyyMMdd", CultureInfo.CurrentCulture),
-        Strike = Helper.ConvertDoubleToDecimal(contract.Contract.Strike),
+        Strike = MathHelper.ConvertDoubleToDecimal(contract.Contract.Strike),
         OptionType = contract.Contract.Right == "C" ? OptionType.Call : OptionType.Put
     };
     public static Contract ToIbContract(this Instrument instrument) => new Contract

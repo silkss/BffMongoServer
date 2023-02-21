@@ -9,7 +9,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Common\Common.csproj" />
         <ProjectReference Include="..\IBApi\IBApi.csproj" />
-        <ProjectReference Include="..\Notifier\Notifier.csproj" />
     </ItemGroup>
 
 </Project>

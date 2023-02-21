@@ -36,7 +36,7 @@ public interface IConnector
     IConnector RequestOptionChain(Instrument instrument);
     IConnector RequestMarketData(Instrument? instrument);
     OptionTradingClass? GetOptionTradingClass(int parentId, DateTime approximateDate);
-    IEnumerable<OptionTradingClass> GetOptionTradingClasses(Instrument parent, string tradingClass);
+    IEnumerable<OptionTradingClass>? GetOptionTradingClasses(Instrument parent, string tradingClass);
     void ReqMarketRule(int id);
     #endregion
 

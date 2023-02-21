@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OptionTraderWebGui.Models;
 using Traders;
-using Strategies;
 using Strategies.Settings;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Strategies.BatmanStrategy;
 
 public class EditModel : PageModel
 {
@@ -25,15 +25,13 @@ public class EditModel : PageModel
     public SelectList AccountsSL { get; set; }
 
     [BindProperty] public InstrumentRequestSettings? Instrument { get; set; }
-    [BindProperty] public ContainerSettings? ContainerSettings { get; set; }
-    [BindProperty] public OptionStrategySettings? OptionStrategySettings { get; set; }
-    [BindProperty] public SpreadSettings? SpreadSettings { get; set; }
-    [BindProperty] public SpreadSettings? ClosureSpreadSettings { get; set; }
+    [BindProperty] public BatmanSettings? Settings { get; set; }
+
 
     public void OnGet(string? id)
     {
         if (id == null) return;
-        if (_trader.GetById(id) is Container container)
+        if (_trader.GetById(id) is BatmanContainer container)
         {
             if (container.Instrument != null)
             {
@@ -43,25 +41,17 @@ public class EditModel : PageModel
                     Exchange = container.Instrument.Exchange!
                 };
             }
-            if (container.ContainerSettings != null)
-                ContainerSettings = container.ContainerSettings;
-            if (container.SpreadSettings != null)
-                SpreadSettings = container.SpreadSettings;
-            if (container.OptionStrategySettings != null)
-                OptionStrategySettings = container.OptionStrategySettings;
+            if (container.Settings != null)
+                Settings= container.Settings;
         }
     }
     public async Task<IActionResult> OnPostAsync(string? id)
     {
         if (id != null)
         {
-            if (_trader.GetById(id) is Container container)
+            if (_trader.GetById(id) is BatmanContainer container)
             {
-                container.SpreadSettings = SpreadSettings;
-                if (ContainerSettings?.Account != null)
-                    container.ContainerSettings = ContainerSettings;
-                container.OptionStrategySettings = OptionStrategySettings;
-
+                container.Settings = Settings;
                 return RedirectToPage("./Index");
             }
         }
@@ -69,14 +59,12 @@ public class EditModel : PageModel
 
         if (sec != null)
         {
-            var container = new Container
+            var container = new BatmanContainer
             {
                 Instrument = sec,
-                ContainerSettings = ContainerSettings,
-                OptionStrategySettings = OptionStrategySettings,
-                SpreadSettings = SpreadSettings,
-                ClosureSpreadSettings = ClosureSpreadSettings,
+                Settings = Settings
             };
+
             await _trader.AddContainerAsync(container);
         }
         return RedirectToPage("./Index");

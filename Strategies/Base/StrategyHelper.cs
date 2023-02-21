@@ -1,10 +1,9 @@
-﻿using Common.Types.Base;
+﻿namespace Strategies.Base;
+
+using Common.Types.Base;
 using Common.Types.Orders;
-using Strategies.Settings;
 using System;
 using System.Collections.Generic;
-
-namespace Strategies.Helpers;
 
 public static class StrategyHelper
 {
@@ -18,12 +17,12 @@ public static class StrategyHelper
             if (order.Direction == Directions.Buy)
             {
                 position += order.FilledQuantity;
-                pnl -= (order.FilledQuantity * order.AvgFilledPrice);
+                pnl -= order.FilledQuantity * order.AvgFilledPrice;
             }
             else
             {
                 position -= order.FilledQuantity;
-                pnl += (order.FilledQuantity * order.AvgFilledPrice);
+                pnl += order.FilledQuantity * order.AvgFilledPrice;
             }
             commission += order.Commission;
         }
@@ -35,10 +34,10 @@ public static class StrategyHelper
     /// <param name="orders"></param>
     /// <param name="volume"></param>
     /// <returns></returns>
-    public static bool Opened(IEnumerable<Order> orders, int volume) => 
+    public static bool Opened(IEnumerable<Order> orders, int volume) =>
         Math.Abs(GetPosition(orders).pos) == volume;
-    public static bool Closed(IEnumerable<Order> orders) => 
+    public static bool Closed(IEnumerable<Order> orders) =>
         GetPosition(orders).pos == 0;
-    public static bool OrderPriceOutBound(Order order, decimal actualPrice, ContainerSettings settings) =>
+    public static bool OrderPriceOutBound(Order order, decimal actualPrice) =>
         Math.Abs(order.LimitPrice - actualPrice) > 5;// settings.OrderPriceShift * 4;
-}   
+}

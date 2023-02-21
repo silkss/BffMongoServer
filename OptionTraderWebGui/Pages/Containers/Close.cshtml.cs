@@ -1,7 +1,7 @@
 ﻿namespace OptionTraderWebGui.Pages.Containers;
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Strategies;
+using Strategies.BatmanStrategy;
 using Traders;
 
 public class CloseModel : PageModel
@@ -13,7 +13,7 @@ public class CloseModel : PageModel
     public void OnGetAsync(string? id)
     {
         if (id == null) return;
-        if (_trader.GetById(id) is Container container)
+        if (_trader.GetById(id) is BatmanContainer container)
         {
             container.Close();
         }

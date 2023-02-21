@@ -2,8 +2,9 @@
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
-using Strategies;
 using Traders;
+using Strategies.Base;
+using Strategies.BatmanStrategy;
 
 public class DeleteModel : PageModel
 {
@@ -14,15 +15,15 @@ public class DeleteModel : PageModel
         _trader = trader;
     }
 
-    public List<OptionStrategy>? Strategies { get; set; }
+    public List<BatmanOptionStrategy>? Strategies { get; set; }
 
     public void OnGet(string? id)
     {
         if (id != null)
         {
-            if (_trader.GetById(id) is Container container)
+            if (_trader.GetById(id) is BatmanContainer container)
             {
-                Strategies = container.OptionStrategies;
+                Strategies = container.Strategies;
             }
         }
     }

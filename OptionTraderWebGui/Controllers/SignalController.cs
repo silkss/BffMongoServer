@@ -1,21 +1,22 @@
 ﻿namespace OptionTraderWebGui.Controllers;
 
 using Connectors;
+using DnsClient.Internal;
 using Microsoft.AspNetCore.Mvc;
-using Notifier;
+using Microsoft.Extensions.Logging;
 using OptionTraderWebGui.SignalParsers;
-using System.Text;
 using Traders;
+using Traders.Builders;
 
 [Route("api/[controller]")]
 [ApiController]
 public class SignalController : ControllerBase
 {
     private readonly IConnector _connector;
-    private readonly IBffLogger _logger;
+    private readonly ILogger<SignalController> _logger;
     private readonly ContainerTrader _trader;
 
-    public SignalController(IConnector connector, IBffLogger logger, ContainerTrader trader)
+    public SignalController(IConnector connector, ILogger<SignalController> logger, ContainerTrader trader)
     {
         _connector = connector;
         _logger = logger;
@@ -34,20 +35,20 @@ public class SignalController : ControllerBase
     [HttpGet]
     public IActionResult Get(string symbol, int direction, double price, string account)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine($"SIGNAL: {symbol}::{account}::{price}::{direction}");
-
+        _logger.LogInformation("SIGNAL: {symbol}::{account}::{price}::{direction}", symbol, account, price, direction);
         var container = _trader.GetContainer(symbol, account);
         if (container is null)
         {
-            sb.AppendLine("No container in trade.");
-            _logger.LogInformation(sb.ToString(), toTelegram: true);
+            _logger.LogWarning("No container in trade.");
             return Ok();
         }
 
-        sb.AppendLine(SpreadSignalParser.ParseSignal(direction, price, container, _connector, _logger));
-        sb.AppendLine($"Account: {account}. Price: {price}.");
-        _logger.LogInformation(sb.ToString(), toTelegram: true);
+        //sb.AppendLine(SpreadSignalParser.ParseSignal(direction, price, container, _connector, _logger));
+        (bool isOk,var message) = BatmanBuilder.CreateAndAddContainer(container, price, _connector);
+        if (isOk)
+            _logger.LogInformation(message);
+        else
+            _logger.LogError(message);
         return Ok();
     }
 }

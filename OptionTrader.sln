@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IBApi", "IBApi\IBApi.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDbSettings", "MongoDbSettings\MongoDbSettings.csproj", "{F636CDEC-D92C-4F9B-A563-3645812AD432}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifier", "Notifier\Notifier.csproj", "{69E13AD7-B2AA-47FE-842D-1D83693FB789}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OptionTraderWebGui", "OptionTraderWebGui\OptionTraderWebGui.csproj", "{668CD8A1-AFE8-48BA-BFED-946F42CB744B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strategies", "Strategies\Strategies.csproj", "{3EDA4513-685B-433D-A13A-CA5111E42324}"
@@ -41,10 +39,6 @@ Global
 		{F636CDEC-D92C-4F9B-A563-3645812AD432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F636CDEC-D92C-4F9B-A563-3645812AD432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F636CDEC-D92C-4F9B-A563-3645812AD432}.Release|Any CPU.Build.0 = Release|Any CPU
-		{69E13AD7-B2AA-47FE-842D-1D83693FB789}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{69E13AD7-B2AA-47FE-842D-1D83693FB789}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{69E13AD7-B2AA-47FE-842D-1D83693FB789}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{69E13AD7-B2AA-47FE-842D-1D83693FB789}.Release|Any CPU.Build.0 = Release|Any CPU
 		{668CD8A1-AFE8-48BA-BFED-946F42CB744B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{668CD8A1-AFE8-48BA-BFED-946F42CB744B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{668CD8A1-AFE8-48BA-BFED-946F42CB744B}.Release|Any CPU.ActiveCfg = Release|Any CPU

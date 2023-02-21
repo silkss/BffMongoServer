@@ -30,18 +30,6 @@ internal class TelegramNotifier
     {
         var handler = update.Type switch
         {
-            // UpdateType.Unknown:
-            // UpdateType.ChannelPost:
-            // UpdateType.EditedChannelPost:
-            // UpdateType.ShippingQuery:
-            // UpdateType.PreCheckoutQuery:
-            // UpdateType.Poll:
-            //UpdateType.Message => MessageRecievedAsync(update.Message!),
-            //UpdateType.EditedMessage => BotOnMessageReceived(botClient, update.EditedMessage!),
-            //UpdateType.ChatJoinRequest => BotOnChatJoinRequestReceived(botClient, update),
-            //UpdateType.CallbackQuery => BotOnCallbackQueryReceived(botClient, update.CallbackQuery!),
-            //UpdateType.InlineQuery => BotOnInlineQueryReceived(botClient, update.InlineQuery!),
-            //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
             _ => UnknownUpdateHandlerAsync(botClient, update)
         };
 

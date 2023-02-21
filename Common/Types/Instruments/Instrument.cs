@@ -34,7 +34,7 @@ public class Instrument
     [BsonIgnore]
     public decimal TheorPrice {
         get => _theorPrice;
-        set => _theorPrice = Helper.RoundUp(value, MinTick);
+        set => _theorPrice = MathHelper.RoundUp(value, MinTick);
     }
     public void OnPriceChange(object? sender, PriceChangedEventArgs args)
     {
@@ -63,13 +63,13 @@ public class Instrument
         Directions.Sell => Type switch
         {
             InstrumentType.Future => Last,
-            InstrumentType.Option => TheorPrice < Bid ? Bid : Helper.RoundUp(TheorPrice, MinTick),
+            InstrumentType.Option => TheorPrice < Bid ? Bid : MathHelper.RoundUp(TheorPrice, MinTick),
             _ => Last,
         },
         Directions.Buy => Type switch
         {
             InstrumentType.Future => Last,
-            InstrumentType.Option => TheorPrice > Ask && Ask > 0 ? Ask : Helper.RoundUp(TheorPrice, MinTick),
+            InstrumentType.Option => TheorPrice > Ask && Ask > 0 ? Ask : MathHelper.RoundUp(TheorPrice, MinTick),
             _ => Last,
         },
         _ => Last,

@@ -1,20 +1,20 @@
 ﻿namespace Traders;
 
 using Connectors;
-using Strategies;
 using MongoDbSettings;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using Microsoft.Extensions.Hosting;
+using Strategies.BatmanStrategy;
 
 public class ContainerTrader
 {
     private readonly IConnector _connector;
     private readonly ContainerService _containerService;
-    private List<Container> _allContainers;
-    private List<Container> _containersInTrade = new();
+    private List<BatmanContainer> _allContainers;
+    private List<BatmanContainer> _containersInTrade = new();
 
     private void tradingLoop()
     {
@@ -40,9 +40,9 @@ public class ContainerTrader
         new Thread(tradingLoop) { IsBackground = true }.Start();
     }
 
-    public IEnumerable<Container> GetAllContainers() => _allContainers;
+    public IEnumerable<BatmanContainer> GetAllContainers() => _allContainers;
 
-    public async Task AddContainerAsync(Container container)
+    public async Task AddContainerAsync(BatmanContainer container)
     {
         if (_allContainers.Contains(container)) return;
         _allContainers.Add(container);
@@ -73,7 +73,7 @@ public class ContainerTrader
     }
     public async Task StopContainerAsync(string containerId)
     {
-        Container? stopped = null;
+        BatmanContainer? stopped = null;
         lock(_containersInTrade)
         {
             stopped = _containersInTrade.FirstOrDefault(c => c.Id == containerId);
@@ -89,17 +89,17 @@ public class ContainerTrader
         await _containerService.UpdateAsync(stopped.Id, stopped);
     }
 
-    public Container? GetContainer(string instumentName, string account)
+    public BatmanContainer? GetContainer(string instumentName, string account)
     {
-        Container? container = null;
+        BatmanContainer? container = null;
         lock (_containersInTrade)
         {
             container = _containersInTrade.FirstOrDefault(c =>
                 c.Instrument?.FullName == instumentName.Trim().ToUpper() &&
-                c.ContainerSettings?.Account == account.Trim().ToUpper());
+                c.Settings?.Account == account.Trim().ToUpper());
         }
         return container;
     }
-    public Container? GetById(string id) => _allContainers
+    public BatmanContainer? GetById(string id) => _allContainers
         .FirstOrDefault(c => c.Id == id);
 }

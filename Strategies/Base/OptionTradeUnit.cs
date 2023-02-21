@@ -1,8 +1,6 @@
-﻿namespace Strategies.TradeUnits;
+﻿namespace Strategies.Base;
 
 using Connectors;
-using Strategies.Helpers;
-using Strategies.Settings;
 using Common.Types.Base;
 using Common.Types.Orders;
 using Common.Types.Instruments;
@@ -12,49 +10,46 @@ using System.Collections.Generic;
 
 public class OptionTradeUnit : IOrderHolder
 {
-    private Directions getCloseDirection() => Direction == Directions.Buy
-        ? Directions.Sell
-        : Directions.Buy;
+    private Directions getCloseDirection() => Direction == Directions.Buy ? Directions.Sell : Directions.Buy;
     private int getTradableVolume()
     {
         (var pos, _, _) = StrategyHelper.GetPosition(Orders);
         return Volume - Math.Abs(pos);
     }
-    private Order createOpenOrder(ContainerSettings settings) => new Order(this, settings.Account)
+    private Order createOpenOrder(string account) => new Order(this, account)
     {
         Quantity = getTradableVolume(),
         LimitPrice = Instrument.TradablePrice(Direction),
         Direction = Direction,
     };
-    private Order createCloseOrder(ContainerSettings settings) => new Order(this, settings.Account)
+    private Order createCloseOrder(string account) => new Order(this, account)
     {
         Quantity = Math.Abs(StrategyHelper.GetPosition(Orders).pos),
         LimitPrice = Instrument.TradablePrice(getCloseDirection()),
         Direction = getCloseDirection(),
     };
-    private void createAndSendOrder(bool isOpen, IConnector connector, ContainerSettings containerSettings)
+    private void createAndSendOrder(bool isOpen, IConnector connector, string account, int priceShift)
     {
-        if (isOpen)
-            OpenOrder = createOpenOrder(containerSettings);
-        else
-            OpenOrder = createCloseOrder(containerSettings);
+        if (isOpen) OpenOrder = createOpenOrder(account);
+        else OpenOrder = createCloseOrder(account);
 
         lock (Orders)
         {
             Orders.Add(OpenOrder);
         }
 
-        connector.SendLimitOrder(Instrument, OpenOrder, containerSettings.OrderPriceShift, true);
+        connector.SendLimitOrder(Instrument, OpenOrder, priceShift, true);
     }
     private void updateTradeInfo() =>
         (Position, ClosedPnl, CommissionCurrency) = StrategyHelper.GetPosition(Orders);
-    
+
     public OptionTradeUnit() => updateTradeInfo();
-    public OptionTradeUnit(Instrument instrument, Directions directions, int volume)
+    public OptionTradeUnit(Instrument instrument, Directions directions, int volume, TradeLogic logic)
     {
         Instrument = instrument;
         Direction = directions;
         Volume = volume;
+        Logic = logic;
     }
     public Instrument Instrument { get; set; }
     public Directions Direction { get; set; }
@@ -70,10 +65,10 @@ public class OptionTradeUnit : IOrderHolder
         Direction switch
         {
             Directions.Buy => ClosedPnl + Instrument.TheorPrice, //при покупке СlosePnl отрицательная.
-            Directions.Sell => ClosedPnl -  Instrument.TheorPrice,
+            Directions.Sell => ClosedPnl - Instrument.TheorPrice,
             _ => 0m
         };
-    public decimal GetCurrencyPnl()
+    public decimal GetCurrencyPnlWithCommission()
     {
         var pnl = Logic == TradeLogic.Open ? OpenPnl : ClosedPnl;
         return pnl * Instrument.Multiplier - CommissionCurrency;
@@ -90,7 +85,7 @@ public class OptionTradeUnit : IOrderHolder
         connector.RequestMarketData(Instrument);
         connector.ReqMarketRule(Instrument.MarketRuleId);
     }
-    public void Work(IConnector connector, ContainerSettings containerSettings)
+    public void Work(IConnector connector, string account, int priceShift)
     {
         updateTradeInfo();
         switch (Logic)
@@ -98,7 +93,7 @@ public class OptionTradeUnit : IOrderHolder
             case TradeLogic.Open when OpenOrder == null:
                 if (Math.Abs(Position) == Volume) break;
                 if (Instrument.TradablePrice(Direction) <= 0m) break;
-                createAndSendOrder(true, connector, containerSettings);
+                createAndSendOrder(true, connector, account, priceShift);
                 break;
             case TradeLogic.Open when OpenOrder != null:
                 if (!connector.IsOrderOpen(OpenOrder))
@@ -106,12 +101,14 @@ public class OptionTradeUnit : IOrderHolder
                     OpenOrder = null;
                     break;
                 }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), containerSettings))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction)))
+                {
                     connector.CancelOrder(OpenOrder);
+                }
                 break;
             case TradeLogic.Close when OpenOrder == null:
                 if (Position == 0) break;
-                createAndSendOrder(false, connector, containerSettings);
+                createAndSendOrder(false, connector, account, priceShift);
                 break;
             case TradeLogic.Close when OpenOrder != null:
                 if (!connector.IsOrderOpen(OpenOrder))
@@ -119,8 +116,10 @@ public class OptionTradeUnit : IOrderHolder
                     OpenOrder = null;
                     break;
                 }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), containerSettings))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction)))
+                {
                     connector.CancelOrder(OpenOrder);
+                }
 
                 break;
             default:

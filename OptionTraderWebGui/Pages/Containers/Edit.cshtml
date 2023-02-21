@@ -19,58 +19,54 @@
         </p>
 
         <p>
-            <label asp-for="ContainerSettings!.Account">Аккаунт</label><br/>
-            <select asp-for="ContainerSettings!.Account"  asp-items="Model.AccountsSL"></select>
+            <label asp-for="Settings!.Account">Аккаунт</label><br/>
+            <select asp-for="Settings!.Account"  asp-items="Model.AccountsSL"></select>
         </p>
 
         <p>
-            <label asp-for="ContainerSettings!.OrderPriceShift">Сдвиг цены ордеров (в пунктах)</label><br/>
-            <input asp-for="ContainerSettings!.OrderPriceShift" />
+            <label asp-for="Settings!.OrderPriceShift">Сдвиг цены ордеров (в пунктах)</label><br/>
+            <input asp-for="Settings!.OrderPriceShift" />
         </p>
 
         <p>
-            <label asp-for="OptionStrategySettings!.Volume">Объем</label><br/>
-            <input asp-for="OptionStrategySettings!.Volume" />
+            <label asp-for="Settings!.Volume">Объем</label><br/>
+            <input asp-for="Settings!.Volume" />
         </p>
 
-        <p>
-           <label asp-for="OptionStrategySettings!.StrategyTargetPnl">Target PnL</label><br/> 
-           <input asp-for="OptionStrategySettings!.StrategyTargetPnl" />
-        </p>
 
         <p>
            <label
                 title="Минимальное кол-во дней до дня экспирации опционного класса."
-                asp-for="OptionStrategySettings!.MinDaysToExpiration">Дней до экспирации</label><br/> 
-           <input asp-for="OptionStrategySettings!.MinDaysToExpiration"/>
+                asp-for="Settings!.MinDaysToExpiration">Дней до экспирации</label><br/> 
+           <input asp-for="Settings!.MinDaysToExpiration"/>
         </p>
 
         <p>
             <label 
                 title="На сколько шагов-страйка будет сдвинут страйк покупного опциона относительно цены базиса"
-                asp-for="SpreadSettings!.BuyStrikeShift">Сдвиг покупного страйка (в шагах)</label><br/>
-            <input asp-for="SpreadSettings!.BuyStrikeShift" />
+                asp-for="Settings!.BaseBuyStrikeShift">Сдвиг покупного страйка (в шагах)</label><br/>
+            <input asp-for="Settings!.BaseBuyStrikeShift" />
         </p>
 
         <p>
             <label
                 title="На сколько шагов-страйка будет сдвинут страйк продаваемого опциона относительно цены базиса"
-                asp-for="SpreadSettings!.SellStrikeShift">Сдвиг продаваемого страйка (в шагах)</label><br/>
-            <input asp-for="SpreadSettings!.SellStrikeShift" />
+                asp-for="Settings!.BaseSellStrikeShift">Сдвиг продаваемого страйка (в шагах)</label><br/>
+            <input asp-for="Settings!.BaseSellStrikeShift" />
         </p>
 
         <p>
             <label 
                 title="На сколько шагов-страйка будет сдвинут страйк покупного опциона относительно цены базиса"
-                asp-for="ClosureSpreadSettings!.BuyStrikeShift">Сдвиг замыкающего покупного страйка (в шагах)</label><br/>
-            <input asp-for="ClosureSpreadSettings!.BuyStrikeShift" />
+                asp-for="Settings!.ClosureBuyStikeShift">Сдвиг замыкающего покупного страйка (в шагах)</label><br/>
+            <input asp-for="Settings!.ClosureBuyStikeShift" />
         </p>
 
         <p>
             <label
                 title="На сколько шагов-страйка будет сдвинут страйк продаваемого опциона относительно цены базиса"
-                asp-for="ClosureSpreadSettings!.SellStrikeShift">Сдвиг замыкающего продаваемого страйка (в шагах)</label><br/>
-            <input asp-for="ClosureSpreadSettings!.SellStrikeShift" />
+                asp-for="Settings!.ClosureSellStikeShift">Сдвиг замыкающего продаваемого страйка (в шагах)</label><br/>
+            <input asp-for="Settings!.ClosureSellStikeShift" />
         </p>
 
         <input type="submit" />

@@ -1,4 +1,6 @@
-﻿using Connectors.Ib.Caches;
+﻿namespace Connectors.Ib;
+
+using Connectors.Ib.Caches;
 using Connectors.Converters.Ib;
 using System.Threading;
 using System.Collections.Generic;
@@ -6,13 +8,11 @@ using IBApi;
 using System;
 using System.Linq;
 using Common.Helpers;
-using Notifier;
 using Connectors.Info;
 using Common.Types.Instruments;
 using Common.Types.Base;
 using System.Threading.Tasks;
-
-namespace Connectors.Ib;
+using Microsoft.Extensions.Logging;
 
 public class IbConnector : IConnector
 {
@@ -23,7 +23,7 @@ public class IbConnector : IConnector
     private readonly EClientSocket _client;
     private readonly IbCallbacks _callbacks;
     private readonly EReaderSignal _signalMonitor = new EReaderMonitorSignal();
-    private readonly IBffLogger _logger;
+    private readonly ILogger<IbConnector> _logger;
     private readonly Dictionary<int, List<PriceBorder>> _marketRules = new();
     private readonly Dictionary<int, OptionChain> _optionChains = new();
     private Timer? _timer;
@@ -34,7 +34,7 @@ public class IbConnector : IConnector
             $"Requested {contract.SecType}: {contract.LocalSymbol}" :
             $"Requested {contract.SecType}: {contract.Strike} {contract.Symbol} {contract.Right}";
 
-        _logger.LogInformation(msg, toTelegram: false);
+        _logger.LogInformation(msg);
 
         var reqid = _callbacks.NextOrderId; 
         _client.reqContractDetails(reqid, contract);
@@ -63,7 +63,7 @@ public class IbConnector : IConnector
             Connect(_connectionInfo.Host, _connectionInfo.Port, _connectionInfo.ClientId);
         }
     }
-    public IbConnector(IBffLogger logger)
+    public IbConnector(ILogger<IbConnector> logger)
 	{
         _logger = logger;
 
@@ -253,9 +253,10 @@ public class IbConnector : IConnector
             }
             catch (InvalidOperationException)
             {
+                var instrumentName = instrument.FullName;
+                var marketRuleId = instrument.MarketRuleId;
                 _logger.LogWarning(
-                    $"Не найдено MarketRule {instrument.MarketRuleId} для инструмента " +
-                    $"{instrument.FullName}");
+                    "Не найдено MarketRule {marketRuleId} для инструмента {instrumentName}", marketRuleId, instrumentName);
                 min_tick = instrument.MinTick;
             }
             //По идеи коннектор не должен выбирать цену ордера.
@@ -265,7 +266,7 @@ public class IbConnector : IConnector
             //    _logger.LogWarning("Limit price for order is 0");
             //    order.LimitPrice = instrument.TradablePrice(order.Direction);
             //}
-            order.LimitPrice = Helper.RoundUp(order.LimitPrice, min_tick);
+            order.LimitPrice = MathHelper.RoundUp(order.LimitPrice, min_tick);
 
             if (order.Direction == Directions.Buy) 
             {
@@ -275,9 +276,8 @@ public class IbConnector : IConnector
                 order.LimitPrice -= (min_tick * priceShift);
                 if (order.LimitPrice <= 0)
                 {
-                    _logger.LogWarning(
-                        $"Order price still <= 0. Using min tick ({min_tick}) for limit price. " +
-                        $"Instrument {instrument.FullName}");
+                    var instumentName = instrument.FullName;
+                    _logger.LogWarning("Order price still <= 0. Using min tick ({min_tick}) for limit price. Instrument {instumentName}", min_tick, instumentName);
                     order.LimitPrice = min_tick;
                 }
             }
