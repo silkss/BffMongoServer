@@ -11,5 +11,71 @@
         <li> <a asp-area="" asp-page="/Containers/Index">Containers</a></li>
         <li> <span aria-current="page">@ViewData["Title"]</span></li>
     </ul>
+    <table>
+    <thead>
+        <tr>
+            <th>BasisPriceAtOpenMoment</th>
+            <th>Total Pnl$</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var strategy in Model.Strategies)
+    {
+        <tr>
+            <td> @strategy.BasisPriceAtOpenMoment </td>
+            <td> @strategy.GetTotalCurrencyPnl() </td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    <li>Call</li>
+                    <li>@strategy.CallLeg?.GetBasisCurrencyPnl()</li>
+                    <li>@strategy.CallLeg?.GetClosureCurrencyPnlWithCommission()</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li>Put</li>
+                    <li>@strategy.PutLeg?.GetBasisCurrencyPnl()</li>
+                    <li>@strategy.PutLeg?.GetClosureCurrencyPnlWithCommission()</li>
+                </ul>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <ul>
+                    <li>Basis</li>
+                    <li>@strategy.CallLeg?.BuyLeg.GetCurrencyPnlWithCommission()</li>
+                    <li>@strategy.CallLeg?.SellLeg.GetCurrencyPnlWithCommission()</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li>Basis</li>
+                    <li>@strategy.PutLeg?.BuyLeg.GetCurrencyPnlWithCommission()</li>
+                    <li>@strategy.PutLeg?.SellLeg.GetCurrencyPnlWithCommission()</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    <li>Z-Closure</li>
+                    <li>@strategy.CallLeg?.ClosureBuyLeg.GetCurrencyPnlWithCommission()</li>
+                    <li>@strategy.CallLeg?.ClosureSellLeg.GetCurrencyPnlWithCommission()</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li>Z-Closure</li>
+                    <li>@strategy.PutLeg?.ClosureBuyLeg.GetCurrencyPnlWithCommission()</li>
+                    <li>@strategy.PutLeg?.ClosureSellLeg.GetCurrencyPnlWithCommission()</li>
+                </ul>
+            </td>
+        </tr>
+    }
+    </tbody>
+    </table>
 </nav>
 

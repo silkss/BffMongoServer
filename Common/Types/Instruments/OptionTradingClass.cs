@@ -24,8 +24,5 @@ public class OptionTradingClass
     public DateTime ExpirationDate { get; set; }
     public List<double> Strikes { get; set; }
 
-    public int GetIdOfClosestStrike(double price)
-    {
-        return Strikes.FindIndex(s => s == Strikes.MinBy(s => Math.Abs(s - price)));
-    }
+    public int GetIdOfClosestStrike(double price) => Strikes.FindIndex(s => s == Strikes.MinBy(s => Math.Abs(s - price)));
 }

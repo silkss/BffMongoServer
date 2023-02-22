@@ -15,10 +15,11 @@ public class ContainerTrader
     private readonly ContainerService _containerService;
     private List<BatmanContainer> _allContainers;
     private List<BatmanContainer> _containersInTrade = new();
+    private bool _isTrading = true;
 
     private void tradingLoop()
     {
-        while (true)
+        while (_isTrading)
         {
             lock (_containersInTrade)
             {
@@ -54,8 +55,9 @@ public class ContainerTrader
         {
             container.Stop(_connector);
             if (container.Id != null)
-                _containerService.UpdateAsync(container.Id, container);
+                _containerService.UpdateAsync(container.Id, container).Wait();
         }
+        _isTrading = false;
     }
     public void StartTrade(string containerId)
     {

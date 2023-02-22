@@ -36,11 +36,39 @@ public class BatmanContainer : Base.Container
 
     public override void Stop(IConnector connector)
     {
-        
+        lock (Strategies)
+        {
+            foreach (var strat in Strategies)
+            {
+                strat.Stop(connector);
+            }
+        }
+        InTrade = false;
     }
 
     public override void Work(IConnector connector)
     {
+        if (!InTrade) return;
+        if (Settings == null) return;
+        if (Instrument == null) return;
         
+
+        lock (Strategies)
+        {
+            foreach (var strategy in Strategies)
+            {
+                strategy.Work(connector, Settings, Instrument.Last);
+            }
+        }
+    }
+
+    public decimal GetTotalCurrencyPnl()
+    {
+        decimal pnl = 0m;
+        foreach (var strategy in Strategies)
+        {
+            pnl += strategy.GetTotalCurrencyPnl();
+        }
+        return pnl;
     }
 }

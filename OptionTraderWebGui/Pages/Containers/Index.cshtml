@@ -18,6 +18,7 @@
             <th>Instrument</th>
             <th>Account</th>
             <th>LastTradeDate</th>
+            <th>Total Pnl $</th>
             <th></th>
             <th></th>
             <th></th>
@@ -35,6 +36,7 @@
                 <td>@container.Instrument.FullName</td>
                 <td>@container.Settings.Account</td>
                 <td>@container.Instrument.LastTradeDate.ToString("dd.MM.yyyy")</td>
+                <td>@container.GetTotalCurrencyPnl()</td>
                 <td>
                     <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>
                 </td>

@@ -7,15 +7,13 @@ using Common.Types.Instruments;
 using Common.Types.Orders.Asbstractions;
 using System;
 using System.Collections.Generic;
+using MongoDB.Bson.Serialization.Attributes;
 
 public class OptionTradeUnit : IOrderHolder
 {
+    
     private Directions getCloseDirection() => Direction == Directions.Buy ? Directions.Sell : Directions.Buy;
-    private int getTradableVolume()
-    {
-        (var pos, _, _) = StrategyHelper.GetPosition(Orders);
-        return Volume - Math.Abs(pos);
-    }
+    private int getTradableVolume() => Volume - Math.Abs(Position);
     private Order createOpenOrder(string account) => new Order(this, account)
     {
         Quantity = getTradableVolume(),
@@ -24,7 +22,7 @@ public class OptionTradeUnit : IOrderHolder
     };
     private Order createCloseOrder(string account) => new Order(this, account)
     {
-        Quantity = Math.Abs(StrategyHelper.GetPosition(Orders).pos),
+        Quantity = Math.Abs(Position),
         LimitPrice = Instrument.TradablePrice(getCloseDirection()),
         Direction = getCloseDirection(),
     };
@@ -41,9 +39,9 @@ public class OptionTradeUnit : IOrderHolder
         connector.SendLimitOrder(Instrument, OpenOrder, priceShift, true);
     }
     private void updateTradeInfo() =>
-        (Position, ClosedPnl, CommissionCurrency) = StrategyHelper.GetPosition(Orders);
+        (Position, ClosedPnlWithoutCommission, CommissionCurrency, EnterPriceWithCommission) = StrategyHelper.GetPosition(Orders, Direction, Instrument.Multiplier);
 
-    public OptionTradeUnit() => updateTradeInfo();
+    public OptionTradeUnit() { }
     public OptionTradeUnit(Instrument instrument, Directions directions, int volume, TradeLogic logic)
     {
         Instrument = instrument;
@@ -57,20 +55,23 @@ public class OptionTradeUnit : IOrderHolder
     public Order? OpenOrder { get; set; }
     public TradeLogic Logic { get; set; }
     public int Volume { get; set; }
-    public int Position { get; private set; }
-    public decimal CommissionCurrency { get; private set; }
-    public decimal ClosedPnl { get; private set; }
-    public decimal OpenPnl => Instrument.TheorPrice == 0 ?
+
+    [BsonIgnore] public decimal EnterPriceWithCommission { get; private set; }
+    [BsonIgnore] public int Position { get; private set; }
+    [BsonIgnore] public decimal CommissionCurrency { get; private set; }
+    [BsonIgnore] public decimal ClosedPnlWithoutCommission { get; private set; }
+
+    public decimal GetOpenPnlWithoutCommision() => Instrument.TheorPrice == 0 ?
         0m :
         Direction switch
         {
-            Directions.Buy => ClosedPnl + Instrument.TheorPrice, //при покупке СlosePnl отрицательная.
-            Directions.Sell => ClosedPnl - Instrument.TheorPrice,
+            Directions.Buy => ClosedPnlWithoutCommission  + Instrument.TheorPrice, //при покупке СlosePnl отрицательная.
+            Directions.Sell => ClosedPnlWithoutCommission - Instrument.TheorPrice,
             _ => 0m
         };
     public decimal GetCurrencyPnlWithCommission()
     {
-        var pnl = Logic == TradeLogic.Open ? OpenPnl : ClosedPnl;
+        var pnl = Logic == TradeLogic.Open ? GetOpenPnlWithoutCommision() : ClosedPnlWithoutCommission;
         return pnl * Instrument.Multiplier - CommissionCurrency;
     }
     public bool IsDone() => Logic switch
@@ -84,6 +85,7 @@ public class OptionTradeUnit : IOrderHolder
         if (Instrument.LastTradeDate < DateTime.Now) return;
         connector.RequestMarketData(Instrument);
         connector.ReqMarketRule(Instrument.MarketRuleId);
+        updateTradeInfo();
     }
     public void Work(IConnector connector, string account, int priceShift)
     {
@@ -101,7 +103,7 @@ public class OptionTradeUnit : IOrderHolder
                     OpenOrder = null;
                     break;
                 }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction)))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), Instrument.MinTick))
                 {
                     connector.CancelOrder(OpenOrder);
                 }
@@ -116,7 +118,7 @@ public class OptionTradeUnit : IOrderHolder
                     OpenOrder = null;
                     break;
                 }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction)))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), Instrument.MinTick))
                 {
                     connector.CancelOrder(OpenOrder);
                 }
@@ -132,7 +134,6 @@ public class OptionTradeUnit : IOrderHolder
     {
         Logic = TradeLogic.Close;
     }
-
     #region IOrderHolder
     public virtual void OnOrderCancelled(int brokerId)
     {

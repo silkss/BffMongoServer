@@ -4,7 +4,6 @@ using Common.Types.Base;
 using Common.Types.Instruments;
 using Connectors;
 using Strategies.BatmanStrategy;
-using System.Reflection;
 
 public static class BatmanBuilder
 {
@@ -73,7 +72,7 @@ public static class BatmanBuilder
         if (oc == null) return (false, "Cant find option clas for request");
 
         var closestStrikeId = oc.GetIdOfClosestStrike(price);
-        if (closestStrikeId == 0)
+        if (closestStrikeId < 0)
             return (false, "Cant find closes strike id!");
 
         string message;
@@ -90,7 +89,7 @@ public static class BatmanBuilder
             return (false, message);
 
         var newStrategy = new BatmanOptionStrategy(price, callLeg, putleg);
-
+        newStrategy.Start(connector);
         container.AddStrategy(newStrategy);
         return (true, "Strategy added");
     }

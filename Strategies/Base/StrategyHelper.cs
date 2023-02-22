@@ -7,13 +7,19 @@ using System.Collections.Generic;
 
 public static class StrategyHelper
 {
-    public static (int pos, decimal closedPnl, decimal commission) GetPosition(IEnumerable<Order> orders)
+    public static (int pos, decimal closedPnl, decimal commission, decimal enterPriceWithCommission) GetPosition(IEnumerable<Order> orders, Directions strategyDirection, int multiplier)
     {
-        var position = 0;
         var pnl = 0m;
+        var position = 0;
         var commission = 0m;
+        var enterPriceWithCommission = 0m;
+
         foreach (var order in orders)
         {
+            if (order.Status == "Filled" && order.Direction == strategyDirection)
+            {
+                enterPriceWithCommission = order.AvgFilledPrice * order.Quantity * multiplier  - order.Commission;
+            }
             if (order.Direction == Directions.Buy)
             {
                 position += order.FilledQuantity;
@@ -26,18 +32,8 @@ public static class StrategyHelper
             }
             commission += order.Commission;
         }
-        return (position, pnl, commission);
+        return (position, pnl, commission, enterPriceWithCommission);
     }
-    /// <summary>
-    /// Вернет Истина если позиция равна объему.
-    /// </summary>
-    /// <param name="orders"></param>
-    /// <param name="volume"></param>
-    /// <returns></returns>
-    public static bool Opened(IEnumerable<Order> orders, int volume) =>
-        Math.Abs(GetPosition(orders).pos) == volume;
-    public static bool Closed(IEnumerable<Order> orders) =>
-        GetPosition(orders).pos == 0;
-    public static bool OrderPriceOutBound(Order order, decimal actualPrice) =>
-        Math.Abs(order.LimitPrice - actualPrice) > 5;// settings.OrderPriceShift * 4;
+    public static bool OrderPriceOutBound(Order order, decimal actualPrice, decimal minTick) =>
+        Math.Abs(order.LimitPrice - actualPrice) > (5 * minTick);// settings.OrderPriceShift * 4;
 }
