@@ -3,14 +3,9 @@
 @{
     ViewData["Title"] = "Containers";
 }
-
-<nav aria-label="Breadcrumb" class="breadcrumb">
-    <ul>
-        <li> <a asp-area="" asp-page="/Index">Home</a></li>
-        <li> <span aria-current="page">@ViewData["Title"]</span></li>
-    </ul>
-</nav>
-<a asp-page="./Edit">Create New</a>
+<div class="row">
+    <a asp-page="./Edit">Create New</a>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -36,7 +31,7 @@
                 <td>@container.Instrument.FullName</td>
                 <td>@container.Settings.Account</td>
                 <td>@container.Instrument.LastTradeDate.ToString("dd.MM.yyyy")</td>
-                <td>@container.GetTotalCurrencyPnl()</td>
+                <td>@container.GetTotalCurrencyPnlWithCommission()</td>
                 <td>
                     <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>
                 </td>
@@ -56,4 +51,4 @@
         }
     }
     </tbody>
-</table>
+</table> 

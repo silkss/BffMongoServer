@@ -1,68 +1,63 @@
-﻿html {
-  font-size: 14px;
+﻿* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: monospace;
+	list-style:none;
+}
+.container {
+	margin: auto 10%;
+	margin-bottom: 1rem;
+}
+.row {
+	margin-bottom: 1rem;
+}
+.nav-menu {
+	background-color: #bbb;
+	margin-bottom: 1rem;
+}
+.nav-menu > li {
+	font-size: 1.5rem;
+	font-weight: 700;
+	display: inline-block;
+	margin-right: 1em;
+	text-decoration: none;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.table {
+	width: 100%;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.table, .table td, .table th  {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+.strategies-leg-table th ,
+.strategies-leg-table td {
+	padding: .2em;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.strategies-leg-table {
+	margin-bottom: .2em;
 }
 
-body {
-  margin-bottom: 60px;
+.strategies-leg-table td, .strategies-leg-table th {
+	padding: .3em;
+	text-align: left; 
+	vertical-align: bottom;
+}
+.collapsing-checkbox{
+	display: none;
+}
+.collapsing-strategy-row {
+	display:none;
+	background-color: #ccc;
 }
 
-table {
-    border-collapse: collapse;
-    width: 100%;
-    font-weight: 600;
+.collapsing-checkbox:checked + .strategies-leg-table .collapsing-strategy-row {
+	display: table-row;
 }
 
-td, th {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-tr:hover { 
-    background-color:#ddd;
-}
-
-th {
-    padding-top: 12px;
-    padding-bottom:12px;
-    text-align: left;
-    background-color: #04AA6D;
-    color: white;
-    text-transform: uppercase;
-}
-
-.breadcrumb {
-    padding: 0 .5rem;
-}
-
-.breadcrumb ul {
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.breadcrumb li:not(:last-child)::after {
-    display: inline-block;
-    margin: 0 .25rem;
-    content: "→";
+.option-leg-table-collapse-row {
+	display: none;
 }

@@ -50,12 +50,30 @@ public class BatmanLeg
         }
         if (ClosureBuyLeg.Logic == TradeLogic.Open && ClosureSellLeg.Logic == TradeLogic.Open)
         {
-            if (GetClosureCurrencyPnlWithCommission() > ClosureBuyLeg.EnterPriceWithCommission)
+            if (GetClosureCurrencyPnlWithCommission() > ClosureBuyLeg.EnterPriceWithCommission &&
+                ClosureBuyLeg.EnterPriceWithCommission != 0m)
             {
                 ClosureBuyLeg.Logic = TradeLogic.Close;
                 ClosureSellLeg.Logic = TradeLogic.Close;
             }
         }
+        if (isPriceShifted)
+        {
+            var positionCost = GetTotalCurrencyPositionCost();
+
+            if (positionCost != 0 && GetTotalCurrencyPnlWithCommission() > GetTotalCurrencyPositionCost() * 0.8m)
+            {
+                SetLogic(TradeLogic.Close);
+            }
+        }
+    }
+    public void SetLogic(TradeLogic logic)
+    {
+        Logic = logic;
+        BuyLeg.Logic = logic;
+        SellLeg.Logic = logic;
+        ClosureBuyLeg.Logic = logic;
+        ClosureSellLeg.Logic = logic;
     }
     public void Stop(IConnector connector)
     {
@@ -70,10 +88,10 @@ public class BatmanLeg
     public decimal GetClosureCurrencyPnlWithCommission() =>
         ClosureBuyLeg.GetCurrencyPnlWithCommission() + ClosureSellLeg.GetCurrencyPnlWithCommission();
 
-    public decimal GetBasisCurrencyPnl() =>
+    public decimal GetBasisCurrencyPnlWithCommission() =>
         BuyLeg.GetCurrencyPnlWithCommission() + SellLeg.GetCurrencyPnlWithCommission();
 
-    public decimal GetTotalCurrencyPnl()
+    public decimal GetTotalCurrencyPnlWithCommission()
     {
         var pnl = 0m;
         pnl += BuyLeg.GetCurrencyPnlWithCommission();
@@ -81,5 +99,14 @@ public class BatmanLeg
         pnl += ClosureBuyLeg.GetCurrencyPnlWithCommission();
         pnl += ClosureSellLeg.GetCurrencyPnlWithCommission();
         return pnl;
+    }
+    public decimal GetTotalCurrencyPositionCost()
+    {
+        var positionCost = 0m;
+        positionCost += BuyLeg.EnterPriceWithCommission;
+        positionCost += SellLeg.EnterPriceWithCommission;
+        positionCost += ClosureBuyLeg.EnterPriceWithCommission;
+        positionCost += ClosureSellLeg.EnterPriceWithCommission;
+        return positionCost;
     }
 }

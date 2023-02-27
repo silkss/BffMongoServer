@@ -65,8 +65,8 @@ public class OptionTradeUnit : IOrderHolder
         0m :
         Direction switch
         {
-            Directions.Buy => ClosedPnlWithoutCommission  + Instrument.TheorPrice, //при покупке СlosePnl отрицательная.
-            Directions.Sell => ClosedPnlWithoutCommission - Instrument.TheorPrice,
+            Directions.Buy => ClosedPnlWithoutCommission == 0m ? 0m : ClosedPnlWithoutCommission + Instrument.TheorPrice, //при покупке СlosePnl отрицательная.
+            Directions.Sell => ClosedPnlWithoutCommission == 0m ? 0m : ClosedPnlWithoutCommission - Instrument.TheorPrice,
             _ => 0m
         };
     public decimal GetCurrencyPnlWithCommission()

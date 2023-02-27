@@ -62,12 +62,12 @@ public class BatmanContainer : Base.Container
         }
     }
 
-    public decimal GetTotalCurrencyPnl()
+    public decimal GetTotalCurrencyPnlWithCommission()
     {
         decimal pnl = 0m;
         foreach (var strategy in Strategies)
         {
-            pnl += strategy.GetTotalCurrencyPnl();
+            pnl += strategy.GetTotalCurrencyPnlWithCommission();
         }
         return pnl;
     }

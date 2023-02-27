@@ -33,18 +33,56 @@ public class BatmanOptionStrategy
         CallLeg?.Stop(connector);
         PutLeg?.Stop(connector);
     }
-
-    public decimal GetTotalCurrencyPnl() 
+    public decimal GetBasisCurrencyPnlWithCommission()
     {
         var pnl = 0m;
         if (CallLeg != null)
         {
-            pnl += CallLeg.GetTotalCurrencyPnl();
+            pnl += CallLeg.GetBasisCurrencyPnlWithCommission();
         }
         if (PutLeg != null)
         {
-            pnl += PutLeg.GetTotalCurrencyPnl();
+            pnl += PutLeg.GetBasisCurrencyPnlWithCommission();
         }
         return pnl;
+    }
+    public decimal GetClosureCurrencyPnlWithCommission()
+    {
+        var pnl = 0m;
+        if (CallLeg != null)
+        {
+            pnl += CallLeg.GetClosureCurrencyPnlWithCommission();
+        }
+        if (PutLeg != null)
+        {
+            pnl += PutLeg.GetClosureCurrencyPnlWithCommission();
+        }
+        return pnl;
+    }
+    public decimal GetTotalCurrencyPnlWithCommission() 
+    {
+        var pnl = 0m;
+        if (CallLeg != null)
+        {
+            pnl += CallLeg.GetTotalCurrencyPnlWithCommission();
+        }
+        if (PutLeg != null)
+        {
+            pnl += PutLeg.GetTotalCurrencyPnlWithCommission();
+        }
+        return pnl;
+    }
+    public decimal GetTotalCurrencyPositionCost()
+    {
+        var positionCost = 0m;
+        if (CallLeg != null)
+        {
+            positionCost += CallLeg.GetTotalCurrencyPositionCost();
+        }
+        if (PutLeg != null)
+        {
+            positionCost += PutLeg.GetTotalCurrencyPositionCost();
+        }
+        return positionCost;
     }
 }
