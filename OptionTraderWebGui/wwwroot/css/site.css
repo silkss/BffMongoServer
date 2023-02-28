@@ -5,15 +5,28 @@
 	font-family: monospace;
 	list-style:none;
 }
+
+header {
+	margin-top: 1rem;
+}
+
 .container {
-	margin: auto 10%;
+	margin-left: 10%;
+	margin-right: 10%;
 	margin-bottom: 1rem;
+}
+
+.form-label, .form-input{
+	display: block;
+	font-size: 1.1rem;
+	padding: .2em;
 }
 .row {
+	width: 100%;
 	margin-bottom: 1rem;
 }
+
 .nav-menu {
-	background-color: #bbb;
 	margin-bottom: 1rem;
 }
 .nav-menu > li {
@@ -26,38 +39,60 @@
 
 .table {
 	width: 100%;
-}
-
-.table, .table td, .table th  {
-	border: 1px solid black;
 	border-collapse: collapse;
 }
-.strategies-leg-table th ,
+
 .strategies-leg-table td {
 	padding: .2em;
 }
-
-.strategies-leg-table {
-	margin-bottom: .2em;
+.table-row:hover {
+	background-color: #ccc;
 }
+.table-header {
+	 font-size: 1.2rem;
+	 vertical-align: middle;
+	 text-align: left;
+	 padding: .2em;
+	 border: 2px solid black;
+	 border-top: 0;
+	 border-left: 0;
+ }
+ .table-data {
+	 font-size: 1.1rem;
+	 padding: .2em;
+ }
+ .table-header:last-child{
+	 border-right: 0;
+ }
+
 
 .strategies-leg-table td, .strategies-leg-table th {
 	padding: .3em;
 	text-align: left; 
 	vertical-align: bottom;
 }
+
+.collapsing-leg-checkbox,
 .collapsing-checkbox{
 	display: none;
 }
-.collapsing-strategy-row {
+
+.option-leg-table-collapse-row,
+.collapsing-strategy-row,
+.collapsed-strategy-leg {
 	display:none;
+}
+
+.collapsing-strategy-row {
 	background-color: #ccc;
 }
 
-.collapsing-checkbox:checked + .strategies-leg-table .collapsing-strategy-row {
-	display: table-row;
+.collapsed-strategy-leg {
+	background-color: #ddd;
 }
 
-.option-leg-table-collapse-row {
-	display: none;
+.collapsing-checkbox:checked + .strategies-leg-table .collapsing-strategy-row,
+.collapsing-leg-checkbox:checked + .option-strategies-table .collapsed-strategy-leg
+{
+	display: table-row;
 }

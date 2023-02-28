@@ -33,19 +33,6 @@ public class BatmanOptionStrategy
         CallLeg?.Stop(connector);
         PutLeg?.Stop(connector);
     }
-    public decimal GetBasisCurrencyPnlWithCommission()
-    {
-        var pnl = 0m;
-        if (CallLeg != null)
-        {
-            pnl += CallLeg.GetBasisCurrencyPnlWithCommission();
-        }
-        if (PutLeg != null)
-        {
-            pnl += PutLeg.GetBasisCurrencyPnlWithCommission();
-        }
-        return pnl;
-    }
     public decimal GetClosureCurrencyPnlWithCommission()
     {
         var pnl = 0m;
@@ -56,6 +43,19 @@ public class BatmanOptionStrategy
         if (PutLeg != null)
         {
             pnl += PutLeg.GetClosureCurrencyPnlWithCommission();
+        }
+        return pnl;
+    }
+    public decimal GetBasisCurrencyPnlWithCommission()
+    {
+        var pnl = 0m;
+        if (CallLeg != null)
+        {
+            pnl += CallLeg.GetBasisCurrencyPnlWithCommission();
+        }
+        if (PutLeg != null)
+        {
+            pnl += PutLeg.GetBasisCurrencyPnlWithCommission();
         }
         return pnl;
     }

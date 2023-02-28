@@ -8,121 +8,135 @@
 @foreach (var strategy in Model.Strategies)
 {   
 <div class="row">
-    <table class="table option-strategies-table">
-        <tr>
-            <th>Batman Option Strategy</th>
-        </tr>
+    <label> <input class="collapsing-leg-checkbox" type="checkbox"/>
+        <table class="table option-strategies-table">
+            <tr>
+                <th class="table-header"> Strategy </th>
+                <th title="Basis PnL" class="table-header"> @strategy.GetBasisCurrencyPnlWithCommission() </th>
+                <th title="Z-Closure PnL" class="table-header"> @strategy.GetClosureCurrencyPnlWithCommission() </th>
+                <th title="Total PnL" class="table-header"> @strategy.GetTotalCurrencyPnlWithCommission() </th>
+            </tr>
 
-        <tr class="row">
-            <td>
-                <label> <input class="collapsing-checkbox" type="checkbox"/>
-                    <table class="table strategies-leg-table">
-                        <tr>
-                            <th> Call Leg </th>
-                            <th title="Closure PnL"> @strategy.CallLeg.GetClosureCurrencyPnlWithCommission() </th>
-                            <th title="Basis PnL"> @strategy.CallLeg.GetBasisCurrencyPnlWithCommission() </th>
-                            <th title="Total PnL"> @strategy.CallLeg.GetTotalCurrencyPnlWithCommission() </th>
-                            <th title="Position Cost"> @strategy.CallLeg.GetTotalCurrencyPositionCost() </th>
-                            <th title="Leg Logic"> @strategy.CallLeg.Logic </th>
-                        </tr>
+            <tr class="row collapsed-strategy-leg">
+                <td colspan="100%">
+                    <label> <input class="collapsing-checkbox" type="checkbox"/>
+                        <table class="table strategies-leg-table">
+                            <tr>
+                                <th class="table-header"> Call Leg </th>
+                                <th class="table-header" title="Closure PnL"> @strategy.CallLeg.GetClosureCurrencyPnlWithCommission() </th>
+                                <th class="table-header" title="Basis PnL"> @strategy.CallLeg.GetBasisCurrencyPnlWithCommission() </th>
+                                <th class="table-header" title="Total PnL"> @strategy.CallLeg.GetTotalCurrencyPnlWithCommission() </th>
+                                <th class="table-header" title="Position Cost"> @strategy.CallLeg.GetTotalCurrencyPositionCost() </th>
+                                <th class="table-header" title="Leg Logic"> @strategy.CallLeg.Logic </th>
+                            </tr>
 
-                        <tr class="collapsing-strategy-row">
-                            <td> Basis</td>
-                            <td> @strategy.CallLeg.BuyLeg.Direction </td>
-                            <td> @strategy.CallLeg.BuyLeg.Instrument.OptionType </td>
-                            <td> @strategy.CallLeg.BuyLeg.Instrument.Strike </td>
-                            <td> @strategy.CallLeg.BuyLeg.Instrument.LastTradeDate.ToString("d") </td>
-                            <td> @strategy.CallLeg.BuyLeg.Logic </td>
-                            <td> @strategy.CallLeg.BuyLeg.GetCurrencyPnlWithCommission() </td>
-                        </tr>
+                            <tr class="collapsing-strategy-row">
+                                <td> Basis</td>
+                                <td> @strategy.CallLeg.BuyLeg.Direction </td>
+                                <td> @strategy.CallLeg.BuyLeg.Instrument.OptionType </td>
+                                <td> @strategy.CallLeg.BuyLeg.Instrument.Strike </td>
+                                <td> @strategy.CallLeg.BuyLeg.Instrument.LastTradeDate.ToString("d") </td>
+                                <td> @strategy.CallLeg.BuyLeg.Logic </td>
+                                <td title="PnL"> @strategy.CallLeg.BuyLeg.GetCurrencyPnlWithCommission() </td>
+                                <td title="Position"> @strategy.CallLeg.BuyLeg.Position </td>
+                            </tr>
 
-                        <tr class="collapsing-strategy-row">
-                            <td> Basis</td>
-                            <td> @strategy.CallLeg.SellLeg.Direction</td>
-                            <td> @strategy.CallLeg.SellLeg.Instrument.OptionType </td>
-                            <td> @strategy.CallLeg.SellLeg.Instrument.Strike </td>
-                            <td> @strategy.CallLeg.SellLeg.Instrument.LastTradeDate.ToString("d") </td>
-                            <td> @strategy.CallLeg.SellLeg.Logic </td>
-                            <td> @strategy.CallLeg.SellLeg.GetCurrencyPnlWithCommission() </td>
-                        </tr>
-                        <tr class="collapsing-strategy-row">
-                            <td> Z-Closure</td>
-                            <td> @strategy.CallLeg.ClosureBuyLeg.Direction</td>
-                            <td> @strategy.CallLeg.ClosureBuyLeg.Instrument.OptionType</td>
-                            <td> @strategy.CallLeg.ClosureBuyLeg.Instrument.Strike</td>
-                            <td> @strategy.CallLeg.ClosureBuyLeg.Instrument.LastTradeDate.ToString("d") </td>
-                            <td> @strategy.CallLeg.ClosureBuyLeg.Logic </td>
-                            <td> @strategy.CallLeg.ClosureBuyLeg.GetCurrencyPnlWithCommission() </td>
-                        </tr>
+                            <tr class="collapsing-strategy-row">
+                                <td> Basis</td>
+                                <td> @strategy.CallLeg.SellLeg.Direction</td>
+                                <td> @strategy.CallLeg.SellLeg.Instrument.OptionType </td>
+                                <td> @strategy.CallLeg.SellLeg.Instrument.Strike </td>
+                                <td> @strategy.CallLeg.SellLeg.Instrument.LastTradeDate.ToString("d") </td>
+                                <td> @strategy.CallLeg.SellLeg.Logic </td>
+                                <td title="PnL"> @strategy.CallLeg.SellLeg.GetCurrencyPnlWithCommission() </td>
+                                <td title="Position"> @strategy.CallLeg.SellLeg.Position </td>
+                            </tr>
 
-                        <tr class="collapsing-strategy-row">
-                            <td> Z-Closure</td>
-                            <td> @strategy.CallLeg.ClosureSellLeg.Direction </td>
-                            <td> @strategy.CallLeg.ClosureSellLeg.Instrument.OptionType </td>
-                            <td> @strategy.CallLeg.ClosureSellLeg.Instrument.Strike </td>
-                            <td> @strategy.CallLeg.ClosureSellLeg.Instrument.LastTradeDate.ToString("d") </td>
-                            <td> @strategy.CallLeg.ClosureSellLeg.Logic </td>
-                            <td> @strategy.CallLeg.ClosureSellLeg.GetCurrencyPnlWithCommission() </td>
-                        </tr>
-                    </table>
-                </label>
-            </td>
-        </tr>
+                            <tr class="collapsing-strategy-row">
+                                <td> Z-Closure</td>
+                                <td> @strategy.CallLeg.ClosureBuyLeg.Direction</td>
+                                <td> @strategy.CallLeg.ClosureBuyLeg.Instrument.OptionType</td>
+                                <td> @strategy.CallLeg.ClosureBuyLeg.Instrument.Strike</td>
+                                <td> @strategy.CallLeg.ClosureBuyLeg.Instrument.LastTradeDate.ToString("d") </td>
+                                <td> @strategy.CallLeg.ClosureBuyLeg.Logic </td>
+                                <td title="PnL"> @strategy.CallLeg.ClosureBuyLeg.GetCurrencyPnlWithCommission() </td>
+                                <td title="Position"> @strategy.CallLeg.ClosureBuyLeg.Position </td>
+                            </tr>
 
-        <tr class="row">
-            <td>
-                <label> <input class="collapsing-checkbox" type="checkbox"/>
-                    <table class="table strategies-leg-table">
-                        <tr>
-                            <th> Put Leg </th>
-                            <th title="Closure PnL"> @strategy.PutLeg.GetClosureCurrencyPnlWithCommission() </th>
-                            <th title="Basis PnL"> @strategy.PutLeg.GetBasisCurrencyPnlWithCommission() </th>
-                            <th title="Total PnL"> @strategy.PutLeg.GetTotalCurrencyPnlWithCommission() </th>
-                            <th title="Position Cost"> @strategy.PutLeg.GetTotalCurrencyPositionCost() </th>
-                            <th title="Leg logic"> @strategy.PutLeg.Logic </th>
-                        </tr>
-                        <tr class="collapsing-strategy-row">
-                            <td> Basis </td>
-                            <td> @strategy.PutLeg.BuyLeg.Direction </td>
-                            <td> @strategy.PutLeg.BuyLeg.Instrument.OptionType </td>
-                            <td> @strategy.PutLeg.BuyLeg.Instrument.Strike </td>
-                            <td> @strategy.PutLeg.BuyLeg.Instrument.LastTradeDate.ToString("d") </td>
-                            <td> @strategy.PutLeg.BuyLeg.Logic </td>
-                            <td> @strategy.PutLeg.BuyLeg.GetCurrencyPnlWithCommission() </td>
-                        </tr>
-                        <tr class="collapsing-strategy-row">
-                            <td> Basis </td>
-                            <td> @strategy.PutLeg.SellLeg.Direction </td>
-                            <td> @strategy.PutLeg.SellLeg.Instrument.OptionType </td>
-                            <td> @strategy.PutLeg.SellLeg.Instrument.Strike </td>
-                            <td> @strategy.PutLeg.SellLeg.Instrument.LastTradeDate.ToString("d") </td>
-                            <td> @strategy.PutLeg.SellLeg.Logic </td>
-                            <td> @strategy.PutLeg.SellLeg.GetCurrencyPnlWithCommission() </td>
-                        </tr>
-                        <tr class="collapsing-strategy-row">
-                            <td> Z-Closure </td>
-                            <td> @strategy.PutLeg.ClosureBuyLeg.Direction </td>
-                            <td> @strategy.PutLeg.ClosureBuyLeg.Instrument.OptionType </td>
-                            <td> @strategy.PutLeg.ClosureBuyLeg.Instrument.Strike </td>
-                            <td> @strategy.PutLeg.ClosureBuyLeg.Instrument.LastTradeDate.ToString("d") </td>
-                            <td> @strategy.PutLeg.ClosureBuyLeg.Logic </td>
-                            <td> @strategy.PutLeg.ClosureBuyLeg.GetCurrencyPnlWithCommission() </td>
-                        </tr>
-                        <tr class="collapsing-strategy-row">
-                            <td> Z-Closure </td>
-                            <td> @strategy.PutLeg.ClosureSellLeg.Direction </td>
-                            <td> @strategy.PutLeg.ClosureSellLeg.Instrument.OptionType </td>
-                            <td> @strategy.PutLeg.ClosureSellLeg.Instrument.Strike </td>
-                            <td> @strategy.PutLeg.ClosureSellLeg.Instrument.LastTradeDate.ToString("d") </td>
-                            <td> @strategy.PutLeg.ClosureSellLeg.Logic </td>
-                            <td> @strategy.PutLeg.ClosureSellLeg.GetCurrencyPnlWithCommission() </td>
-                        </tr>
-                    </table>
-                </labeL>
-            </td>
-        </tr>
+                            <tr class="collapsing-strategy-row">
+                                <td> Z-Closure</td>
+                                <td> @strategy.CallLeg.ClosureSellLeg.Direction </td>
+                                <td> @strategy.CallLeg.ClosureSellLeg.Instrument.OptionType </td>
+                                <td> @strategy.CallLeg.ClosureSellLeg.Instrument.Strike </td>
+                                <td> @strategy.CallLeg.ClosureSellLeg.Instrument.LastTradeDate.ToString("d") </td>
+                                <td> @strategy.CallLeg.ClosureSellLeg.Logic </td>
+                                <td title="PnL"> @strategy.CallLeg.ClosureSellLeg.GetCurrencyPnlWithCommission() </td>
+                                <td title="Position"> @strategy.CallLeg.ClosureSellLeg.Position </td>
+                            </tr>
 
-    </table>
+                        </table>
+                    </label>
+                </td>
+            </tr>
+
+            <tr class="row collapsed-strategy-leg">
+                <td colspan="100%">
+                    <label> <input class="collapsing-checkbox" type="checkbox"/>
+                        <table class="table strategies-leg-table">
+                            <tr>
+                                <th class="table-header"> Put Leg </th>
+                                <th class="table-header" title="Closure PnL"> @strategy.PutLeg.GetClosureCurrencyPnlWithCommission() </th>
+                                <th class="table-header" title="Basis PnL"> @strategy.PutLeg.GetBasisCurrencyPnlWithCommission() </th>
+                                <th class="table-header" title="Total PnL"> @strategy.PutLeg.GetTotalCurrencyPnlWithCommission() </th>
+                                <th class="table-header" title="Position Cost"> @strategy.PutLeg.GetTotalCurrencyPositionCost() </th>
+                                <th class="table-header" title="Leg logic"> @strategy.PutLeg.Logic </th>
+                            </tr>
+                            <tr class="collapsing-strategy-row">
+                                <td> Basis </td>
+                                <td> @strategy.PutLeg.BuyLeg.Direction </td>
+                                <td> @strategy.PutLeg.BuyLeg.Instrument.OptionType </td>
+                                <td> @strategy.PutLeg.BuyLeg.Instrument.Strike </td>
+                                <td> @strategy.PutLeg.BuyLeg.Instrument.LastTradeDate.ToString("d") </td>
+                                <td> @strategy.PutLeg.BuyLeg.Logic </td>
+                                <td title="PnL"> @strategy.PutLeg.BuyLeg.GetCurrencyPnlWithCommission() </td>
+                                <td title="Position"> @strategy.PutLeg.BuyLeg.Position </td>
+                            </tr>
+                            <tr class="collapsing-strategy-row">
+                                <td> Basis </td>
+                                <td> @strategy.PutLeg.SellLeg.Direction </td>
+                                <td> @strategy.PutLeg.SellLeg.Instrument.OptionType </td>
+                                <td> @strategy.PutLeg.SellLeg.Instrument.Strike </td>
+                                <td> @strategy.PutLeg.SellLeg.Instrument.LastTradeDate.ToString("d") </td>
+                                <td> @strategy.PutLeg.SellLeg.Logic </td>
+                                <td title="PnL"> @strategy.PutLeg.SellLeg.GetCurrencyPnlWithCommission() </td>
+                                <td title="Position"> @strategy.PutLeg.SellLeg.Position </td>
+                            </tr>
+                            <tr class="collapsing-strategy-row">
+                                <td> Z-Closure </td>
+                                <td> @strategy.PutLeg.ClosureBuyLeg.Direction </td>
+                                <td> @strategy.PutLeg.ClosureBuyLeg.Instrument.OptionType </td>
+                                <td> @strategy.PutLeg.ClosureBuyLeg.Instrument.Strike </td>
+                                <td> @strategy.PutLeg.ClosureBuyLeg.Instrument.LastTradeDate.ToString("d") </td>
+                                <td> @strategy.PutLeg.ClosureBuyLeg.Logic </td>
+                                <td title="PnL"> @strategy.PutLeg.ClosureBuyLeg.GetCurrencyPnlWithCommission() </td>
+                                <td title="Position"> @strategy.PutLeg.ClosureBuyLeg.Position </td>
+                            </tr>
+                            <tr class="collapsing-strategy-row">
+                                <td> Z-Closure </td>
+                                <td> @strategy.PutLeg.ClosureSellLeg.Direction </td>
+                                <td> @strategy.PutLeg.ClosureSellLeg.Instrument.OptionType </td>
+                                <td> @strategy.PutLeg.ClosureSellLeg.Instrument.Strike </td>
+                                <td> @strategy.PutLeg.ClosureSellLeg.Instrument.LastTradeDate.ToString("d") </td>
+                                <td> @strategy.PutLeg.ClosureSellLeg.Logic </td>
+                                <td title="PnL"> @strategy.PutLeg.ClosureSellLeg.GetCurrencyPnlWithCommission() </td>
+                                <td title="Position"> @strategy.PutLeg.ClosureSellLeg.Position </td>
+                            </tr>
+                        </table>
+                    </labeL>
+                </td>
+            </tr>
+        </table>
+    </label>
 </div>
 }
 

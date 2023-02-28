@@ -8,67 +8,66 @@
 <div>
     <h1>@ViewData["Title"]</h1>
     <form method="post">
-        <p>
-            <label asp-for="Instrument!.Name">Имя инструмента:</label><br />
-            <input asp-for="Instrument!.Name" />
-        </p>
+        <div class="row">
+            <label class="form-label" asp-for="Instrument!.Name">Имя инструмента:</label>
+            <input class="form-input" asp-for="Instrument!.Name" />
+        </div>
+        <div class="row">
+            <label class="form-label" asp-for="Instrument!.Name">Биржа:</label>
+            <input class="form-input" asp-for="Instrument!.Exchange" />
+        </div>
 
-        <p>
-            <label asp-for="Instrument!.Name">Биржа:</label><br />
-            <input asp-for="Instrument!.Exchange" />
-        </p>
-
-        <p>
+        <div class="row">
             <label asp-for="Settings!.Account">Аккаунт</label><br/>
             <select asp-for="Settings!.Account"  asp-items="Model.AccountsSL"></select>
-        </p>
+        </div>
 
-        <p>
+        <div class="row">
             <label asp-for="Settings!.OrderPriceShift">Сдвиг цены ордеров (в пунктах)</label><br/>
             <input asp-for="Settings!.OrderPriceShift" />
-        </p>
+        </div>
 
-        <p>
+        <div class="row">
             <label asp-for="Settings!.Volume">Объем</label><br/>
             <input asp-for="Settings!.Volume" />
-        </p>
+        </div>
 
 
-        <p>
-           <label
+        <div class="row">
+           <label class="form-label"
                 title="Минимальное кол-во дней до дня экспирации опционного класса."
                 asp-for="Settings!.MinDaysToExpiration">Дней до экспирации</label><br/> 
-           <input asp-for="Settings!.MinDaysToExpiration"/>
-        </p>
+           <input class="form-input" asp-for="Settings!.MinDaysToExpiration"/>
+        </div>
 
-        <p>
-            <label 
+        <div class="row">
+            <label class="form-label"
                 title="На сколько шагов-страйка будет сдвинут страйк покупного опциона относительно цены базиса"
                 asp-for="Settings!.BaseBuyStrikeShift">Сдвиг покупного страйка (в шагах)</label><br/>
             <input asp-for="Settings!.BaseBuyStrikeShift" />
-        </p>
+        </div>
 
-        <p>
-            <label
+        <div class="row">
+            <label class="form-label"
                 title="На сколько шагов-страйка будет сдвинут страйк продаваемого опциона относительно цены базиса"
                 asp-for="Settings!.BaseSellStrikeShift">Сдвиг продаваемого страйка (в шагах)</label><br/>
-            <input asp-for="Settings!.BaseSellStrikeShift" />
-        </p>
+            <input class-"form-input" asp-for="Settings!.BaseSellStrikeShift" />
+        </div>
 
-        <p>
-            <label 
+        <div class="row">
+            <label class="form-label"
                 title="На сколько шагов-страйка будет сдвинут страйк покупного опциона относительно цены базиса"
                 asp-for="Settings!.ClosureBuyStikeShift">Сдвиг замыкающего покупного страйка (в шагах)</label><br/>
             <input asp-for="Settings!.ClosureBuyStikeShift" />
-        </p>
+        </div>
 
-        <p>
-            <label
+        <div class="row">
+            <label class="form-label"
                 title="На сколько шагов-страйка будет сдвинут страйк продаваемого опциона относительно цены базиса"
                 asp-for="Settings!.ClosureSellStikeShift">Сдвиг замыкающего продаваемого страйка (в шагах)</label><br/>
             <input asp-for="Settings!.ClosureSellStikeShift" />
-        </p>
+        </div>
 
-        <input type="submit" />
+        <input class="form-input" type="submit" />
     </form>
 </div>

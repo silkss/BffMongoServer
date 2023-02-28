@@ -9,16 +9,16 @@
 <table class="table">
     <thead>
         <tr>
-            <th>InTrade</th>
-            <th>Instrument</th>
-            <th>Account</th>
-            <th>LastTradeDate</th>
-            <th>Total Pnl $</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th class="table-header">InTrade</th>
+            <th class="table-header">Instrument</th>
+            <th class="table-header">Account</th>
+            <th class="table-header">LastTradeDate</th>
+            <th class="table-header">Total Pnl $</th>
+            <th class="table-header"></th>
+            <th class="table-header"></th>
+            <th class="table-header"></th>
+            <th class="table-header"></th>
+            <th class="table-header"></th>
         </tr>
     </thead>
     <tbody>
@@ -26,25 +26,25 @@
     {
         foreach (var container in Model.Containers)
         {
-            <tr>
-                <td>@container.InTrade</td>
-                <td>@container.Instrument.FullName</td>
-                <td>@container.Settings.Account</td>
-                <td>@container.Instrument.LastTradeDate.ToString("dd.MM.yyyy")</td>
-                <td>@container.GetTotalCurrencyPnlWithCommission()</td>
-                <td>
+            <tr class="table-row">
+                <td class="table-data">@container.InTrade</td>
+                <td class="table-data">@container.Instrument.FullName</td>
+                <td class="table-data">@container.Settings.Account</td>
+                <td class="table-data">@container.Instrument.LastTradeDate.ToString("dd.MM.yyyy")</td>
+                <td class="table-data">@container.GetTotalCurrencyPnlWithCommission()</td>
+                <td class="table-data">
                     <a asp-page="./StartTrade" asp-route-id="@container.Id">Trade</a>
                 </td>
-                <td>
+                <td class="table-data">
                     <a asp-page="./Stop" asp-route-id="@container.Id">Stop</a>
                 </td>
-                <td>
+                <td class="table-data">
                     <a asp-page="./Edit" asp-route-id="@container.Id">Edit</a>
                 </td>
-                <td>
+                <td class="table-data">
                     <a asp-page="./Close" asp-route-id="@container.Id">Close</a>
                 </td>
-                <td>
+                <td class="table-data">
                     <a asp-page="./Details" asp-route-id="@container.Id">Details</a>
                 </td>
             </tr>
