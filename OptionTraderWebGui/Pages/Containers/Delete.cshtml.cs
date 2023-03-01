@@ -3,8 +3,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using Traders;
-using Strategies.Base;
-using Strategies.BatmanStrategy;
+using Traders.Strategies.BatmanStrategy;
 
 public class DeleteModel : PageModel
 {

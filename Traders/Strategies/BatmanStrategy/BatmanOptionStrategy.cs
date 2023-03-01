@@ -1,4 +1,4 @@
-﻿namespace Strategies.BatmanStrategy;
+﻿namespace Traders.Strategies.BatmanStrategy;
 
 using Connectors;
 
@@ -23,7 +23,7 @@ public class BatmanOptionStrategy
 
     public void Work(IConnector connector, BatmanSettings containerSettings, decimal basisPrice)
     {
-        var priceShift = (basisPrice / BasisPriceAtOpenMoment) - 1;
+        var priceShift = basisPrice / BasisPriceAtOpenMoment - 1;
         CallLeg?.Work(connector, containerSettings, priceShift > 1.5m);
         PutLeg?.Work(connector, containerSettings, priceShift < -1.5m);
     }
@@ -59,7 +59,7 @@ public class BatmanOptionStrategy
         }
         return pnl;
     }
-    public decimal GetTotalCurrencyPnlWithCommission() 
+    public decimal GetTotalCurrencyPnlWithCommission()
     {
         var pnl = 0m;
         if (CallLeg != null)

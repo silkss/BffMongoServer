@@ -1,10 +1,10 @@
-﻿namespace MongoDbSettings;
+﻿namespace Traders.DbSettings.MongoDb;
 
 using MongoDB.Driver;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
-using Strategies.BatmanStrategy;
+using Traders.Strategies.BatmanStrategy;
 
 public class ContainerService
 {

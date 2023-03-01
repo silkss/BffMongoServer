@@ -1,9 +1,9 @@
 ﻿namespace OptionTraderWebGui.Pages.Containers;
 
 using Traders;
-using Strategies.BatmanStrategy;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Traders.Strategies.BatmanStrategy;
 
 public class DetailsModel : PageModel
 {

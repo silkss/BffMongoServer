@@ -1,4 +1,4 @@
-﻿namespace Strategies.Base;
+﻿namespace Traders.Strategies.Base;
 
 using Common.Types.Instruments;
 using Connectors;
@@ -12,10 +12,10 @@ public abstract class Container
     private bool inTrade;
 
     [BsonIgnore]
-    public bool InTrade 
-    { 
-        get => inTrade; 
-        protected set => inTrade = value; 
+    public bool InTrade
+    {
+        get => inTrade;
+        protected set => inTrade = value;
     }
 
     public Instrument? Instrument { get; set; }

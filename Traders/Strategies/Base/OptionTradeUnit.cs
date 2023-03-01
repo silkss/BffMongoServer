@@ -1,4 +1,4 @@
-﻿namespace Strategies.Base;
+﻿namespace Traders.Strategies.Base;
 
 using Connectors;
 using Common.Types.Base;
@@ -11,7 +11,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 public class OptionTradeUnit : IOrderHolder
 {
-    
+
     private Directions getCloseDirection() => Direction == Directions.Buy ? Directions.Sell : Directions.Buy;
     private int getTradableVolume() => Volume - Math.Abs(Position);
     private Order createOpenOrder(string account) => new Order(this, account)

@@ -1,4 +1,4 @@
-﻿namespace Strategies.Types;
+﻿namespace Traders.Strategies.Types;
 
 public enum OptionStrategyStatus
 {

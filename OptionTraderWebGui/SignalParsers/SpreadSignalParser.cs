@@ -1,9 +1,8 @@
 ﻿namespace OptionTraderWebGui.SignalParsers;
 
 using Connectors;
-using Strategies.Base;
-using Strategies.BatmanStrategy;
 using Traders.Builders;
+using Traders.Strategies.BatmanStrategy;
 
 internal class SpreadSignalParser
 {

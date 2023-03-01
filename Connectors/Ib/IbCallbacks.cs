@@ -194,9 +194,9 @@ internal class IbCallbacks : DefaultEWrapper
             case 200: // что-то не то с запросом инструмента.
                 _requestInstrument.Add(id, null);
                 _requestInstrument.ReceivedSignal();
-				_logger.LogError($"Чтото не так с запросом инструмента.CODE:{errorCode}\nMESSAGE:{errorMsg}");
+				_logger.LogError("Чтото не так с запросом инструмента.CODE:{errorCode}\nMESSAGE:{errorMsg}",errorCode, errorMsg);
                 break;
-			case 2106:  // Connected!
+            case 2106:  // Connected!
 				_connectionInfo.IsConnected = true;
 				ConnectionChanged?.Invoke(true);
 				break;

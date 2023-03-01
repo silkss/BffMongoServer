@@ -1,4 +1,4 @@
-﻿namespace Strategies.Base;
+﻿namespace Traders.Strategies.Base;
 
 using Common.Types.Base;
 using Common.Types.Orders;
@@ -42,5 +42,5 @@ public static class StrategyHelper
         return (position, pnl, commission, enterPriceWithCommission);
     }
     public static bool OrderPriceOutBound(Order order, decimal actualPrice, decimal minTick) =>
-        Math.Abs(order.LimitPrice - actualPrice) > (8 * minTick);// settings.OrderPriceShift * 4;
+        Math.Abs(order.LimitPrice - actualPrice) > 8 * minTick;// settings.OrderPriceShift * 4;
 }

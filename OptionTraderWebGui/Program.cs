@@ -4,9 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Connectors;
 using Connectors.Ib;
 using Traders;
-using MongoDbSettings;
+using BffLogger;
+using Traders.DbSettings.MongoDb;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging
+    .ClearProviders()
+    .AddBffLogger();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -29,9 +35,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
-app.UseEndpoints(endpoints => {
-    endpoints.MapRazorPages();
-    endpoints.MapControllers();
-});
+app.MapRazorPages();
+app.MapControllers();
+
 
 app.Run();

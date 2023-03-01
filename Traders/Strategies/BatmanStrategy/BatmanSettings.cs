@@ -1,4 +1,4 @@
-﻿namespace Strategies.BatmanStrategy;
+﻿namespace Traders.Strategies.BatmanStrategy;
 using System;
 
 public class BatmanSettings

@@ -1,13 +1,13 @@
 ﻿namespace Traders;
 
 using Connectors;
-using MongoDbSettings;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using Microsoft.Extensions.Hosting;
 using Strategies.BatmanStrategy;
+using Traders.DbSettings.MongoDb;
 
 public class ContainerTrader
 {

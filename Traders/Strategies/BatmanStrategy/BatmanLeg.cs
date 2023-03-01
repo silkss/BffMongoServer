@@ -1,9 +1,9 @@
-﻿namespace Strategies.BatmanStrategy;
+﻿namespace Traders.Strategies.BatmanStrategy;
 
 using Common.Types.Base;
 using Common.Types.Instruments;
 using Connectors;
-using Strategies.Base;
+using Traders.Strategies.Base;
 
 public class BatmanLeg
 {

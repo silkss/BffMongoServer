@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BffLogger\BffLogger.csproj" />
     <ProjectReference Include="..\Connectors\Connectors.csproj" />
     <ProjectReference Include="..\Traders\Traders.csproj" />
   </ItemGroup>

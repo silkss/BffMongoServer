@@ -2,9 +2,9 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Strategies.BatmanStrategy;
 using System.Collections.Generic;
 using Traders;
+using Traders.Strategies.BatmanStrategy;
 
 public class IndexModel : PageModel
 {

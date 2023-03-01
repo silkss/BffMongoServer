@@ -8,13 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Connectors\Connectors.csproj" />
-    <ProjectReference Include="..\MongoDbSettings\MongoDbSettings.csproj" />
-    <ProjectReference Include="..\Strategies\Strategies.csproj" />
   </ItemGroup>
 
 </Project>

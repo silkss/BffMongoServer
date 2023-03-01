@@ -1,8 +1,8 @@
 ﻿namespace OptionTraderWebGui.Pages.Containers;
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Strategies.BatmanStrategy;
 using Traders;
+using Traders.Strategies.BatmanStrategy;
 
 public class CloseModel : PageModel
 {

@@ -1,4 +1,4 @@
-﻿namespace Strategies.BatmanStrategy;
+﻿namespace Traders.Strategies.BatmanStrategy;
 
 using Connectors;
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ public class BatmanContainer : Base.Container
         if (!InTrade) return;
         if (Settings == null) return;
         if (Instrument == null) return;
-        
+
 
         lock (Strategies)
         {

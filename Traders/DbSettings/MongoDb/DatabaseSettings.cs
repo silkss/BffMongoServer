@@ -1,4 +1,4 @@
-﻿namespace MongoDbSettings;
+﻿namespace Traders.DbSettings.MongoDb;
 
 public class DatabaseSettings
 {

@@ -7,7 +7,7 @@ using OptionTraderWebGui.Models;
 using Traders;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Strategies.BatmanStrategy;
+using Traders.Strategies.BatmanStrategy;
 
 public class EditModel : PageModel
 {
