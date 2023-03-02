@@ -8,11 +8,13 @@ using System.Linq;
 using Microsoft.Extensions.Hosting;
 using Strategies.BatmanStrategy;
 using Traders.DbSettings.MongoDb;
+using Microsoft.Extensions.Logging;
 
 public class ContainerTrader
 {
     private readonly IConnector _connector;
     private readonly ContainerService _containerService;
+    private readonly ILogger<ContainerTrader> _logger;
     private List<BatmanContainer> _allContainers;
     private List<BatmanContainer> _containersInTrade = new();
     private bool _isTrading = true;
@@ -24,16 +26,21 @@ public class ContainerTrader
             lock (_containersInTrade)
             {
                 foreach (var container in _containersInTrade)
-                    container.Work(_connector);
+                    container.Work(_connector, _logger);
             }
             Thread.Sleep(1000);
         }
     }
 
-    public ContainerTrader(IConnector connector, ContainerService containerService, IHostApplicationLifetime lifetime)
+    public ContainerTrader(
+        IConnector connector, 
+        ContainerService containerService, 
+        IHostApplicationLifetime lifetime,
+        ILogger<ContainerTrader> logger)
     {
         _connector = connector;
         _containerService = containerService;
+        _logger = logger;
         _allContainers = _containerService.Get();
 
         lifetime.ApplicationStopping.Register(StopTrader);
@@ -53,7 +60,7 @@ public class ContainerTrader
     {
         foreach(var container in _containersInTrade)
         {
-            container.Stop(_connector);
+            container.Stop(_connector, _logger);
             if (container.Id != null)
                 _containerService.UpdateAsync(container.Id, container).Wait();
         }
@@ -69,7 +76,7 @@ public class ContainerTrader
             if (!_containersInTrade.Contains(container))
             {
                 _containersInTrade.Add(container);
-                container.Start(_connector);
+                container.Start(_connector, _logger);
             }
         }
     }
@@ -85,7 +92,7 @@ public class ContainerTrader
             }
         }
         if (stopped == null) return;
-        stopped.Stop(_connector);
+        stopped.Stop(_connector, _logger);
         
         if (stopped.Id == null) return;
         await _containerService.UpdateAsync(stopped.Id, stopped);

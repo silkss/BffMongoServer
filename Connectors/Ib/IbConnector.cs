@@ -52,7 +52,7 @@ public class IbConnector : IConnector
     }
     private void reqServerTime(object? state)
     {
-        _logger.LogInformation($"{DateTime.Now} request time sended.");
+        //_logger.LogWarning("{DateTime.Now} request time sended.", DateTime.Now);
         _client.reqCurrentTime();
     }
     private void reconnect(bool isConnected)
@@ -237,6 +237,11 @@ public class IbConnector : IConnector
     public void SendLimitOrder(Instrument instrument, 
         Common.Types.Orders.Order order, int priceShift = 0, bool needToRound = true)
     {
+        if (order.Account == null)
+        {
+            _logger.LogCritical("Не указан ордер!");
+            return;
+        }
         order.BrokerId = _callbacks.NextOrderId;
         _openOrdersCache.Add(order);
         
@@ -272,7 +277,8 @@ public class IbConnector : IConnector
             {
                 order.LimitPrice += (min_tick * priceShift);
             }
-            else {
+            else 
+            {
                 order.LimitPrice -= (min_tick * priceShift);
                 if (order.LimitPrice <= 0)
                 {

@@ -1,6 +1,8 @@
 ﻿namespace Traders.Strategies.BatmanStrategy;
 
+using Amazon.Runtime.Internal.Util;
 using Connectors;
+using Microsoft.Extensions.Logging;
 
 public class BatmanOptionStrategy
 {
@@ -21,11 +23,13 @@ public class BatmanOptionStrategy
         PutLeg?.Start(connector);
     }
 
-    public void Work(IConnector connector, BatmanSettings containerSettings, decimal basisPrice)
+    public void Work(IConnector connector, ILogger<ContainerTrader> logger, BatmanSettings containerSettings, decimal basisPrice)
     {
-        var priceShift = basisPrice / BasisPriceAtOpenMoment - 1;
-        CallLeg?.Work(connector, containerSettings, priceShift > 1.5m);
-        PutLeg?.Work(connector, containerSettings, priceShift < -1.5m);
+        if (basisPrice == 0m)
+            return;
+        var priceShift = (basisPrice / BasisPriceAtOpenMoment - 1) * 100;
+        CallLeg?.Work(connector, logger, containerSettings, priceShift > 2m, priceShift < 0);
+        PutLeg?.Work(connector, logger, containerSettings, priceShift < -2m, priceShift > 0);
     }
 
     public void Stop(IConnector connector)
@@ -51,11 +55,11 @@ public class BatmanOptionStrategy
         var pnl = 0m;
         if (CallLeg != null)
         {
-            pnl += CallLeg.GetBasisCurrencyPnlWithCommission();
+            pnl += CallLeg.GetMainCurrencyPnlWithCommission();
         }
         if (PutLeg != null)
         {
-            pnl += PutLeg.GetBasisCurrencyPnlWithCommission();
+            pnl += PutLeg.GetMainCurrencyPnlWithCommission();
         }
         return pnl;
     }

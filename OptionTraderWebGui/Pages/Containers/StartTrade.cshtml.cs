@@ -16,7 +16,6 @@ public class StartTradeModel : PageModel
     }
     public void OnGet(string? id)
     {
-        _logger.LogInformation($"Some one start strategy with id {id}");
         if (id != null)
             _trader.StartTrade(id);
     }

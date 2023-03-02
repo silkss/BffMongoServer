@@ -8,6 +8,8 @@ using Common.Types.Orders.Asbstractions;
 using System;
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
+using Amazon.Runtime.Internal.Util;
+using Microsoft.Extensions.Logging;
 
 public class OptionTradeUnit : IOrderHolder
 {
@@ -18,12 +20,14 @@ public class OptionTradeUnit : IOrderHolder
     {
         Quantity = getTradableVolume(),
         LimitPrice = Instrument.TradablePrice(Direction),
+        Account = account,
         Direction = Direction,
     };
     private Order createCloseOrder(string account) => new Order(this, account)
     {
         Quantity = Math.Abs(Position),
         LimitPrice = Instrument.TradablePrice(getCloseDirection()),
+        Account = account,
         Direction = getCloseDirection(),
     };
     private void createAndSendOrder(bool isOpen, IConnector connector, string account, int priceShift)
@@ -87,14 +91,15 @@ public class OptionTradeUnit : IOrderHolder
         connector.ReqMarketRule(Instrument.MarketRuleId);
         updateTradeInfo();
     }
-    public void Work(IConnector connector, string account, int priceShift)
+    public void Work(IConnector connector, ILogger<ContainerTrader> logger, string account, int priceShift)
     {
         updateTradeInfo();
+        var tradablePrice = Instrument.TradablePrice(Direction);
         switch (Logic)
         {
             case TradeLogic.Open when OpenOrder == null:
                 if (Math.Abs(Position) == Volume) break;
-                if (Instrument.TradablePrice(Direction) <= 0m) break;
+                if (tradablePrice <= 0m) break;
                 createAndSendOrder(true, connector, account, priceShift);
                 break;
             case TradeLogic.Open when OpenOrder != null:
@@ -103,8 +108,12 @@ public class OptionTradeUnit : IOrderHolder
                     OpenOrder = null;
                     break;
                 }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), Instrument.MinTick))
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, tradablePrice, Instrument.MinTick))
                 {
+                   
+                    logger.LogError("Order out of bound!\n" +
+                        "LimitPrice = {OpenOrder.LimitPrice}\n" +
+                        "TradablePrice = {tadablePrice}", OpenOrder.LimitPrice, tradablePrice);
                     connector.CancelOrder(OpenOrder);
                 }
                 break;
@@ -118,8 +127,12 @@ public class OptionTradeUnit : IOrderHolder
                     OpenOrder = null;
                     break;
                 }
-                if (StrategyHelper.OrderPriceOutBound(OpenOrder, Instrument.TradablePrice(Direction), Instrument.MinTick))
+                
+                if (StrategyHelper.OrderPriceOutBound(OpenOrder, tradablePrice, Instrument.MinTick))
                 {
+                    logger.LogError("Order out of bound!\n" +
+                        "LimitPrice = {OpenOrder.LimitPrice}\n" +
+                        "TradablePrice = {tadablePrice}", OpenOrder.LimitPrice, tradablePrice);
                     connector.CancelOrder(OpenOrder);
                 }
 

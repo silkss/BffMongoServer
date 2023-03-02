@@ -44,10 +44,12 @@ public class BffLogger : ILogger
             var msg = formatter(state, exception);
             Console.ForegroundColor = config.LogLevelToColorMap[logLevel];
             Console.Write(msg);
+#if !DEBUG
             if (config.ToTelegram(logLevel))
             {
                 _telegramLogger.SendMessage(msg);
             }
+#endif
             Console.ForegroundColor = originalColor;
             Console.WriteLine();
         }

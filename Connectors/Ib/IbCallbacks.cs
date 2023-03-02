@@ -215,14 +215,14 @@ internal class IbCallbacks : DefaultEWrapper
 			case 321: // Зачемто послан ордер с нулевым объемом!
                 if (_openOrdersCache.GetById(id) is Common.Types.Orders.Order canceledorder)
                 {
-					_logger.LogError($"Something wrong with order: {errorMsg}");
+					_logger.LogError("Something wrong with order: {errorMsg}", errorMsg);
 
 					_openOrdersCache.Remove(canceledorder);
                     canceledorder.Canceled();
                 }
                 break;
             default:
-                _logger.LogError($"ID:{id} : ERROR_CODE:{errorCode} : MESSAGE:{errorMsg}");
+                _logger.LogError("ID:{id} : ERROR_CODE:{errorCode} : MESSAGE:{errorMsg}", id, errorCode, errorMsg);
 				break;
         }
 	}

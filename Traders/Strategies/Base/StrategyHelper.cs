@@ -20,11 +20,11 @@ public static class StrategyHelper
             {
                 if (strategyDirection == Directions.Sell)
                 {
-                    enterPriceWithCommission = -(order.AvgFilledPrice * order.Quantity * multiplier - order.Commission);
+                    enterPriceWithCommission = order.AvgFilledPrice * order.Quantity * multiplier - order.Commission;
                 }
                 else
                 {
-                    enterPriceWithCommission = order.AvgFilledPrice * order.Quantity * multiplier - order.Commission;
+                    enterPriceWithCommission = -(order.AvgFilledPrice * order.Quantity * multiplier - order.Commission);
                 }
             }
             if (order.Direction == Directions.Buy)
@@ -42,5 +42,5 @@ public static class StrategyHelper
         return (position, pnl, commission, enterPriceWithCommission);
     }
     public static bool OrderPriceOutBound(Order order, decimal actualPrice, decimal minTick) =>
-        Math.Abs(order.LimitPrice - actualPrice) > 8 * minTick;// settings.OrderPriceShift * 4;
+        Math.Abs(order.LimitPrice - actualPrice) > 10 * minTick;// settings.OrderPriceShift * 4;
 }

@@ -1,6 +1,8 @@
 ﻿namespace Traders.Strategies.BatmanStrategy;
 
+using Amazon.Runtime.Internal.Util;
 using Connectors;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 public class BatmanContainer : Base.Container
@@ -19,7 +21,7 @@ public class BatmanContainer : Base.Container
         throw new System.NotImplementedException();
     }
 
-    public override void Start(IConnector connector)
+    public override void Start(IConnector connector, ILogger<ContainerTrader> logger)
     {
         if (Instrument == null) return;
         connector.RequestMarketData(Instrument);
@@ -32,9 +34,10 @@ public class BatmanContainer : Base.Container
             }
         }
         InTrade = true;
+        logger.LogInformation("{this} is started", this);
     }
 
-    public override void Stop(IConnector connector)
+    public override void Stop(IConnector connector, ILogger<ContainerTrader> logger)
     {
         lock (Strategies)
         {
@@ -43,21 +46,22 @@ public class BatmanContainer : Base.Container
                 strat.Stop(connector);
             }
         }
+        
         InTrade = false;
+        logger.LogInformation("{this} is stopped", this);
     }
 
-    public override void Work(IConnector connector)
+    public override void Work(IConnector connector, ILogger<ContainerTrader> logger)
     {
         if (!InTrade) return;
         if (Settings == null) return;
         if (Instrument == null) return;
 
-
         lock (Strategies)
         {
             foreach (var strategy in Strategies)
             {
-                strategy.Work(connector, Settings, Instrument.Last);
+                strategy.Work(connector, logger, Settings, Instrument.Last);
             }
         }
     }
@@ -71,4 +75,7 @@ public class BatmanContainer : Base.Container
         }
         return pnl;
     }
+
+    public override string ToString() =>
+        $"Container-{Instrument?.FullName}-{Settings?.Account}";
 }
