@@ -19,13 +19,6 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <TabControl>
-            <TabItem Header="In Trade">
-                <controls:TradingStrategies/>
-            </TabItem>
-            <TabItem Header="All">
-                <controls:AllStrategies/>
-            </TabItem>
-        </TabControl>
+        <DataGrid/>
     </DockPanel>
 </Window>

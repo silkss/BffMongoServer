@@ -42,5 +42,5 @@ public static class StrategyHelper
         return (position, pnl, commission, enterPriceWithCommission);
     }
     public static bool OrderPriceOutBound(Order order, decimal actualPrice, decimal minTick) =>
-        Math.Abs(order.LimitPrice - actualPrice) > 10 * minTick;// settings.OrderPriceShift * 4;
+        Math.Abs(order.LimitPrice - actualPrice) > 5 * minTick;// settings.OrderPriceShift * 4;
 }

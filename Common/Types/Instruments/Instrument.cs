@@ -74,4 +74,9 @@ public class Instrument
         },
         _ => Last,
     };
+    public decimal GetBidAskTradablePrice(Directions direction) => direction switch {
+        Directions.Sell => Bid,
+        Directions.Buy => Ask,
+        _ => Last,
+    };
 }

@@ -1,6 +1,5 @@
 ﻿namespace Traders.Strategies.BatmanStrategy;
 
-using Amazon.Runtime.Internal.Util;
 using Common.Types.Base;
 using Common.Types.Instruments;
 using Connectors;
@@ -33,6 +32,11 @@ public class BatmanLeg
         ClosureBuyLeg.Start(connector);
         ClosureSellLeg.Start(connector);
     }
+    public bool IsClosed() => 
+        BuyLeg.IsClosed() && 
+        SellLeg.IsClosed() && 
+        ClosureBuyLeg.IsClosed() && 
+        ClosureSellLeg.IsClosed();
 
     public void Work(IConnector connector, ILogger<ContainerTrader> logger, BatmanSettings settings, 
         bool isPriceShifted, 
@@ -58,7 +62,11 @@ public class BatmanLeg
         }
         if (ClosureBuyLeg.Logic == TradeLogic.Open && ClosureSellLeg.Logic == TradeLogic.Open)
         {
-            var pnl = GetClosureCurrencyPnlWithCommission();
+            if (!ClosureBuyLeg.HasTradeDate() || !ClosureSellLeg.HasTradeDate()) {
+                return;
+            }
+
+            var pnl = GetClosureCurrencyBidAskPnlWithCommission();
             var enterPrice = Math.Abs(ClosureBuyLeg.EnterPriceWithCommission);
 
             if (pnl > enterPrice * 1.2m &&
@@ -83,7 +91,7 @@ public class BatmanLeg
 
             var positionCost = GetTotalCurrencyPositionCost();
 
-            var pnl = GetTotalCurrencyPnlWithCommission();
+            var pnl = GetTotalCurrencyBidAskPnlWithCommission();
             var optionType = ClosureBuyLeg.Instrument.OptionType;
 
             if (positionCost > 0 && pnl > positionCost * 0.8m)
@@ -97,6 +105,15 @@ public class BatmanLeg
             }
         }
     }
+
+    public void Close() {
+        Logic = TradeLogic.Close;
+        BuyLeg.Logic = TradeLogic.Close;
+        SellLeg.Logic = TradeLogic.Close;
+        ClosureBuyLeg.Logic = TradeLogic.Close; 
+        ClosureSellLeg.Logic = TradeLogic.Close; 
+    }
+
     public void SetLogic(TradeLogic logic)
     {
         Logic = logic;
@@ -114,20 +131,31 @@ public class BatmanLeg
     }
 
     public decimal GetClosureBuyLegPositionPrice() => ClosureBuyLeg.EnterPriceWithCommission;
-
-    public decimal GetClosureCurrencyPnlWithCommission() =>
-        ClosureBuyLeg.GetCurrencyPnlWithCommission() + ClosureSellLeg.GetCurrencyPnlWithCommission();
-
-    public decimal GetMainCurrencyPnlWithCommission() =>
-        BuyLeg.GetCurrencyPnlWithCommission() + SellLeg.GetCurrencyPnlWithCommission();
-
-    public decimal GetTotalCurrencyPnlWithCommission()
+    
+    public decimal GetClosureCurrencyBidAskPnlWithCommission() =>
+        ClosureBuyLeg.GetCurrencyBidAskPnlWithCommission() + ClosureSellLeg.GetCurrencyBidAskPnlWithCommission();
+    public decimal GetClosureCurrencyTheorPnlWithCommission() =>
+        ClosureBuyLeg.GetCurrencyTheorPnlWithCommission() + ClosureSellLeg.GetCurrencyTheorPnlWithCommission();
+    public decimal GetMainCurrencyTheorPnlWithCommission() =>
+        BuyLeg.GetCurrencyTheorPnlWithCommission() + SellLeg.GetCurrencyTheorPnlWithCommission();
+    public decimal GetMainCurrencyBidAskPnlWithCommission() =>
+        BuyLeg.GetCurrencyBidAskPnlWithCommission() + SellLeg.GetCurrencyBidAskPnlWithCommission();
+    public decimal GetTotalCurrencyTheorPnlWithCommission()
     {
         var pnl = 0m;
-        pnl += BuyLeg.GetCurrencyPnlWithCommission();
-        pnl += SellLeg.GetCurrencyPnlWithCommission();
-        pnl += ClosureBuyLeg.GetCurrencyPnlWithCommission();
-        pnl += ClosureSellLeg.GetCurrencyPnlWithCommission();
+        pnl += BuyLeg.GetCurrencyTheorPnlWithCommission();
+        pnl += SellLeg.GetCurrencyTheorPnlWithCommission();
+        pnl += ClosureBuyLeg.GetCurrencyTheorPnlWithCommission();
+        pnl += ClosureSellLeg.GetCurrencyTheorPnlWithCommission();
+        return pnl;
+    }
+    public decimal GetTotalCurrencyBidAskPnlWithCommission()
+    {
+        var pnl = 0m;
+        pnl += BuyLeg.GetCurrencyBidAskPnlWithCommission();
+        pnl += SellLeg.GetCurrencyBidAskPnlWithCommission();
+        pnl += ClosureBuyLeg.GetCurrencyBidAskPnlWithCommission();
+        pnl += ClosureSellLeg.GetCurrencyBidAskPnlWithCommission();
         return pnl;
     }
     public decimal GetTotalCurrencyPositionCost()

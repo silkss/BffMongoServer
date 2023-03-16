@@ -1,6 +1,5 @@
 ﻿namespace Traders.Strategies.BatmanStrategy;
 
-using Amazon.Runtime.Internal.Util;
 using Connectors;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -18,7 +17,11 @@ public class BatmanContainer : Base.Container
     }
     public override void Close()
     {
-        throw new System.NotImplementedException();
+        lock (Strategies) {
+            foreach (var strategy in Strategies) {
+                strategy.Close();
+            }
+        }
     }
 
     public override void Start(IConnector connector, ILogger<ContainerTrader> logger)
@@ -61,6 +64,7 @@ public class BatmanContainer : Base.Container
         {
             foreach (var strategy in Strategies)
             {
+                if (strategy.IsClosed()) continue;
                 strategy.Work(connector, logger, Settings, Instrument.Last);
             }
         }
@@ -71,7 +75,7 @@ public class BatmanContainer : Base.Container
         decimal pnl = 0m;
         foreach (var strategy in Strategies)
         {
-            pnl += strategy.GetTotalCurrencyPnlWithCommission();
+            pnl += strategy.GetTotalCurrencyTheorPnlWithCommission();
         }
         return pnl;
     }

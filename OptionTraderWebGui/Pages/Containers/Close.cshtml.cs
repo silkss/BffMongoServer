@@ -10,11 +10,9 @@ public class CloseModel : PageModel
 
     public CloseModel(ContainerTrader trader) => _trader = trader;
 
-    public void OnGetAsync(string? id)
-    {
+    public void OnGet(string? id) {
         if (id == null) return;
-        if (_trader.GetById(id) is BatmanContainer container)
-        {
+        if (_trader.GetById(id) is BatmanContainer container) {
             container.Close();
         }
     }

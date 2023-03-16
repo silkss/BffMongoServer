@@ -4,48 +4,56 @@ using Common.Types.Base;
 using Common.Types.Instruments;
 using Connectors;
 using Strategies.BatmanStrategy;
+using System.Linq;
 
 public static class BatmanBuilder
 {
     private static (BatmanLeg? leg, string message) _createLeg(
         OptionType type,
         BatmanContainer container, OptionTradingClass oc, IConnector connector,
-        int closestStrikeId)
+        double price)
     {
         var parent = container.Instrument!;
         var settings = container.Settings!;
-
+        
         var expirationDate = oc.ExpirationDate;
 
-        int baseBuyStrikeId;
-        int baseSellStrikeId;
-
-        int closureBuyStrikeId;
-        int closureSellStrikeId;
+        double mainBuyStrike, mainSellStrike;
+        double z_closureBuyStrike, z_closureSellStrike;
 
         if (type == OptionType.Call)
         {
-            baseBuyStrikeId = closestStrikeId + settings.BaseBuyStrikeShift;
-            baseSellStrikeId = closestStrikeId + settings.BaseSellStrikeShift;
-            closureBuyStrikeId = closestStrikeId + settings.ClosureBuyStikeShift;
-            closureSellStrikeId = closestStrikeId + settings.ClosureSellStikeShift;
+            mainBuyStrike = price * (settings.BaseBuyStrikeShift / 100.0 + 1.0);
+            mainSellStrike = price * (settings.BaseSellStrikeShift / 100.0 + 1.0);
+            z_closureBuyStrike = price * (settings.ClosureBuyStikeShift / 100.0 + 1.0);
+            z_closureSellStrike = price * (settings.ClosureSellStikeShift / 100.0 + 1.0);
+
+            var ordered_strikes = oc.Strikes.OrderBy(s => s);
+
+            mainBuyStrike = ordered_strikes.First(s => s >= mainBuyStrike);
+            mainSellStrike = ordered_strikes.First(s => s >= mainSellStrike);
+            z_closureBuyStrike = ordered_strikes.First(s => s >= z_closureBuyStrike);
+            z_closureSellStrike = ordered_strikes.First(s => s >= z_closureSellStrike);
         }
         else
         {
-            baseBuyStrikeId = closestStrikeId - settings.BaseBuyStrikeShift;
-            baseSellStrikeId = closestStrikeId - settings.BaseSellStrikeShift;
-            closureBuyStrikeId = closestStrikeId - settings.ClosureBuyStikeShift;
-            closureSellStrikeId = closestStrikeId - settings.ClosureSellStikeShift;
+            mainBuyStrike = price * (1.0 - settings.BaseBuyStrikeShift / 100.0);
+            mainSellStrike = price * (1.0 - settings.BaseSellStrikeShift / 100.0);
+            z_closureBuyStrike = price * (1.0 - settings.ClosureBuyStikeShift / 100.0);
+            z_closureSellStrike = price * (1.0 - settings.ClosureSellStikeShift / 100.0);
+
+            var ordered_strikes = oc.Strikes.OrderByDescending(s => s);
+
+            mainBuyStrike = ordered_strikes.First(s => s <= mainBuyStrike);
+            mainSellStrike = ordered_strikes.First(s => s <= mainSellStrike);
+            z_closureBuyStrike = ordered_strikes.First(s => s <= z_closureBuyStrike);
+            z_closureSellStrike = ordered_strikes.First(s => s <= z_closureSellStrike);
         }
         connector
-            .RequestOption(type, parent, oc.Strikes[baseBuyStrikeId],
-                expirationDate, out var buyBasis)
-            .RequestOption(type,parent, oc.Strikes[baseSellStrikeId],
-                expirationDate, out var sellBasis)
-            .RequestOption(type, parent, oc.Strikes[closureBuyStrikeId],
-                expirationDate, out var zClosureBuy)
-            .RequestOption(type, parent, oc.Strikes[closureSellStrikeId],
-                expirationDate, out var zClosureSell);
+            .RequestOption(type, parent, mainBuyStrike, expirationDate, out var buyBasis)
+            .RequestOption(type, parent, mainSellStrike, expirationDate, out var sellBasis)
+            .RequestOption(type, parent, z_closureBuyStrike, expirationDate, out var zClosureBuy)
+            .RequestOption(type, parent, z_closureSellStrike, expirationDate, out var zClosureSell);
 
         if (buyBasis == null)
             return (null, $"cant request basis buy {type}");
@@ -71,19 +79,15 @@ public static class BatmanBuilder
             container.Settings.GetMinExpirationDate());
         if (oc == null) return (false, "Cant find option clas for request");
 
-        var closestStrikeId = oc.GetIdOfClosestStrike(price);
-        if (closestStrikeId < 0)
-            return (false, "Cant find closes strike id!");
-
         string message;
         (var callLeg, message) = _createLeg(OptionType.Call,
-            container, oc, connector, closestStrikeId);
+            container, oc, connector, price);
 
         if (callLeg == null)
             return (false, message);
 
         (var putleg, message) = _createLeg(OptionType.Put,
-            container, oc, connector, closestStrikeId);
+            container, oc, connector, price);
 
         if (putleg == null)
             return (false, message);

@@ -41,13 +41,17 @@ header {
 	width: 100%;
 	border-collapse: collapse;
 }
-
+.strategies-leg-table {
+	margin-bottom: .5em;
+}
 .strategies-leg-table td {
 	padding: .2em;
 }
+
 .table-row:hover {
 	background-color: #ccc;
 }
+
 .table-header {
 	 font-size: 1.2rem;
 	 vertical-align: middle;
@@ -57,10 +61,20 @@ header {
 	 border-top: 0;
 	 border-left: 0;
  }
+ .five-cols {
+	 width: 20%;
+ }
+ .four-cols{
+	 width: 25%;
+ }
+ .nine-cols{
+	 width: 11%;
+ }
  .table-data {
 	 font-size: 1.1rem;
 	 padding: .2em;
  }
+
  .table-header:last-child{
 	 border-right: 0;
  }
@@ -87,9 +101,6 @@ header {
 	background-color: #ccc;
 }
 
-.collapsed-strategy-leg {
-	background-color: #ddd;
-}
 
 .collapsing-checkbox:checked + .strategies-leg-table .collapsing-strategy-row,
 .collapsing-leg-checkbox:checked + .option-strategies-table .collapsed-strategy-leg

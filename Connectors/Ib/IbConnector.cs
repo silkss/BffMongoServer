@@ -14,8 +14,7 @@ using Common.Types.Base;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-public class IbConnector : IConnector
-{
+public class IbConnector : IConnector {
     private const int CHECK_CONNECTION_INTERVAL = 5; //in minutes
     private readonly RequestInstrumentCache _requestInstrument = new();
     private readonly OpenOrdersCache _openOrdersCache = new();
@@ -29,13 +28,6 @@ public class IbConnector : IConnector
     private Timer? _timer;
     private Instrument? reqContract(Contract contract)
     {
-
-        var msg = contract.SecType == "FUT" ?
-            $"Requested {contract.SecType}: {contract.LocalSymbol}" :
-            $"Requested {contract.SecType}: {contract.Strike} {contract.Symbol} {contract.Right}";
-
-        _logger.LogInformation(msg);
-
         var reqid = _callbacks.NextOrderId; 
         _client.reqContractDetails(reqid, contract);
 

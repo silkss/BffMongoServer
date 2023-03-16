@@ -15,6 +15,7 @@ public class DetailsModel : PageModel
     }
 
     public List<BatmanOptionStrategy>? Strategies { get; set; }
+    public decimal? BasisPrice { get; set; }
 
     public void OnGet(string? id)
     {
@@ -23,6 +24,7 @@ public class DetailsModel : PageModel
             if (_trader.GetById(id) is BatmanContainer container)
             {
                 Strategies = container.Strategies;
+                BasisPrice = container.Instrument?.Last;
             }
         }
     }

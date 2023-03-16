@@ -4,7 +4,6 @@ using Connectors;
 using DnsClient.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OptionTraderWebGui.SignalParsers;
 using Traders;
 using Traders.Builders;
 
@@ -43,7 +42,9 @@ public class SignalController : ControllerBase
             return Ok();
         }
 
-        //sb.AppendLine(SpreadSignalParser.ParseSignal(direction, price, container, _connector, _logger));
+        if (direction == 0) {
+            return Ok();
+        }
         (bool isOk,var message) = BatmanBuilder.CreateAndAddContainer(container, price, _connector);
         if (isOk)
             _logger.LogInformation(message);

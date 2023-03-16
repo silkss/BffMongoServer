@@ -9,19 +9,8 @@ using GUI.Services.Requests;
 
 internal static class Get
 {
-
-    public const string TRADER_ENDPOINT = "/api/trader/";
     public const string MCAPI_ENDPOINT = "/api/mcapi/";
     public const string STRATEGIES_ENDPOINT = "/api/containers/";
-    public const string INSTRUMENT_ENDPOINT = "/api/instrument/";
-    public const string CONNECTOR_ENDPOINT = "/api/connector/";
-    
-    public static readonly IEnumerable<string> Exchanges = new List<string>
-    {
-        "CME",
-        "GLOBEX",
-        "NYMEX"
-    };
 
     public static ConnectorInfo? ConnectorInfo => ConnectorRequests.ConnectorInfo;
 

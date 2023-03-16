@@ -1,8 +1,9 @@
 ﻿namespace Traders.Strategies.BatmanStrategy;
 
-using Amazon.Runtime.Internal.Util;
 using Connectors;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 public class BatmanOptionStrategy
 {
@@ -13,7 +14,6 @@ public class BatmanOptionStrategy
         CallLeg = callLeg;
         PutLeg = putLeg;
     }
-
     public decimal BasisPriceAtOpenMoment { get; set; }
     public BatmanLeg? CallLeg { get; set; }
     public BatmanLeg? PutLeg { get; set; }
@@ -32,47 +32,74 @@ public class BatmanOptionStrategy
         PutLeg?.Work(connector, logger, containerSettings, priceShift < -2m, priceShift > 0);
     }
 
+    public void Close() {
+        CallLeg?.Close();
+        PutLeg?.Close();
+    }
+
     public void Stop(IConnector connector)
     {
         CallLeg?.Stop(connector);
         PutLeg?.Stop(connector);
     }
-    public decimal GetClosureCurrencyPnlWithCommission()
-    {
+    public decimal GetClosureCurrencyTheorPnlWithCommission() {
         var pnl = 0m;
-        if (CallLeg != null)
-        {
-            pnl += CallLeg.GetClosureCurrencyPnlWithCommission();
+        if (CallLeg != null) {
+            pnl += CallLeg.GetClosureCurrencyTheorPnlWithCommission();
         }
-        if (PutLeg != null)
-        {
-            pnl += PutLeg.GetClosureCurrencyPnlWithCommission();
+        if (PutLeg != null) {
+            pnl += PutLeg.GetClosureCurrencyTheorPnlWithCommission();
         }
         return pnl;
     }
-    public decimal GetBasisCurrencyPnlWithCommission()
+
+    public bool IsClosed() {
+        if (PutLeg != null) {
+            var isdone = PutLeg.IsClosed();
+            if (!isdone) return isdone;
+        }
+        if (CallLeg != null) {
+            return CallLeg.IsClosed();
+        }
+        return false;
+    }
+
+    public decimal GetMainCurrencyTheorPnlWithCommission()
     {
         var pnl = 0m;
         if (CallLeg != null)
         {
-            pnl += CallLeg.GetMainCurrencyPnlWithCommission();
+            pnl += CallLeg.GetMainCurrencyTheorPnlWithCommission();
         }
         if (PutLeg != null)
         {
-            pnl += PutLeg.GetMainCurrencyPnlWithCommission();
+            pnl += PutLeg.GetMainCurrencyTheorPnlWithCommission();
         }
         return pnl;
     }
-    public decimal GetTotalCurrencyPnlWithCommission()
+    public decimal GetTotalCurrencyBidAskPnlWithCommission()
     {
         var pnl = 0m;
         if (CallLeg != null)
         {
-            pnl += CallLeg.GetTotalCurrencyPnlWithCommission();
+            pnl += CallLeg.GetTotalCurrencyBidAskPnlWithCommission();
         }
         if (PutLeg != null)
         {
-            pnl += PutLeg.GetTotalCurrencyPnlWithCommission();
+            pnl += PutLeg.GetTotalCurrencyBidAskPnlWithCommission();
+        }
+        return pnl;
+    }
+    public decimal GetTotalCurrencyTheorPnlWithCommission()
+    {
+        var pnl = 0m;
+        if (CallLeg != null)
+        {
+            pnl += CallLeg.GetTotalCurrencyTheorPnlWithCommission();
+        }
+        if (PutLeg != null)
+        {
+            pnl += PutLeg.GetTotalCurrencyTheorPnlWithCommission();
         }
         return pnl;
     }
