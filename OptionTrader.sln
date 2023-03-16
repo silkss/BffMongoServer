@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traders", "Traders\Traders.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BffLogger", "BffLogger\BffLogger.csproj", "{D5C4D2A3-4169-442B-A666-48137204D6C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionTraderClient", "OptionTraderClient\OptionTraderClient.csproj", "{889BAD2F-38CC-42CE-A869-692501E8829D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTransferObjects", "DataTransferObjects\DataTransferObjects.csproj", "{A30D5B04-145B-47F1-ABB5-995655486487}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{D5C4D2A3-4169-442B-A666-48137204D6C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5C4D2A3-4169-442B-A666-48137204D6C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5C4D2A3-4169-442B-A666-48137204D6C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{889BAD2F-38CC-42CE-A869-692501E8829D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{889BAD2F-38CC-42CE-A869-692501E8829D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{889BAD2F-38CC-42CE-A869-692501E8829D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{889BAD2F-38CC-42CE-A869-692501E8829D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A30D5B04-145B-47F1-ABB5-995655486487}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A30D5B04-145B-47F1-ABB5-995655486487}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A30D5B04-145B-47F1-ABB5-995655486487}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A30D5B04-145B-47F1-ABB5-995655486487}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BffLogger\BffLogger.csproj" />
     <ProjectReference Include="..\Connectors\Connectors.csproj" />
+    <ProjectReference Include="..\DataTransferObjects\DataTransferObjects.csproj" />
     <ProjectReference Include="..\Traders\Traders.csproj" />
   </ItemGroup>
 

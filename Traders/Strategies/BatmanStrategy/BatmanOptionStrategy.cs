@@ -7,6 +7,11 @@ using System;
 
 public class BatmanOptionStrategy
 {
+    [BsonId]
+    [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+    public string? Id { get; set; }
+    public DateTime CreationTime { get; set; }
+
     public BatmanOptionStrategy() { }
     public BatmanOptionStrategy(double basisPrice, BatmanLeg callLeg, BatmanLeg putLeg)
     {
@@ -90,15 +95,12 @@ public class BatmanOptionStrategy
         }
         return pnl;
     }
-    public decimal GetTotalCurrencyTheorPnlWithCommission()
-    {
+    public decimal GetTotalCurrencyTheorPnlWithCommission() {
         var pnl = 0m;
-        if (CallLeg != null)
-        {
+        if (CallLeg != null) {
             pnl += CallLeg.GetTotalCurrencyTheorPnlWithCommission();
         }
-        if (PutLeg != null)
-        {
+        if (PutLeg != null) {
             pnl += PutLeg.GetTotalCurrencyTheorPnlWithCommission();
         }
         return pnl;
@@ -106,12 +108,10 @@ public class BatmanOptionStrategy
     public decimal GetTotalCurrencyPositionCost()
     {
         var positionCost = 0m;
-        if (CallLeg != null)
-        {
+        if (CallLeg != null) {
             positionCost += CallLeg.GetTotalCurrencyPositionCost();
         }
-        if (PutLeg != null)
-        {
+        if (PutLeg != null) {
             positionCost += PutLeg.GetTotalCurrencyPositionCost();
         }
         return positionCost;

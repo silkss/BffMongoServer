@@ -10,13 +10,14 @@ public abstract class Container
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
     public string? Id { get; set; }
-    private bool inTrade;
+
+    private bool _inTrade;
 
     [BsonIgnore]
     public bool InTrade
     {
-        get => inTrade;
-        protected set => inTrade = value;
+        get => _inTrade;
+        protected set => _inTrade = value;
     }
 
     public Instrument? Instrument { get; set; }
